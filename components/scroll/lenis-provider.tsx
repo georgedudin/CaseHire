@@ -3,7 +3,7 @@
 import { ReactLenis, useLenis } from "lenis/react";
 import type { LenisRef } from "lenis/react";
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger, registerGsapPlugins } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
 
 /**
  * Drives smooth scroll for the whole page and keeps GSAP's ScrollTrigger
@@ -24,8 +24,6 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<LenisRef>(null);
 
   useEffect(() => {
-    registerGsapPlugins();
-
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
