@@ -2,6 +2,7 @@
 
 import { Scene } from "@/components/scroll/scene";
 import { useReveal } from "@/components/scroll/hooks/use-reveal";
+import { useCountUp } from "@/components/scroll/hooks/use-count-up";
 import { HrKanban } from "@/components/mockups/hr-kanban";
 import { TeamleadSetup } from "@/components/mockups/teamlead-setup";
 import { CandidateIde } from "@/components/mockups/candidate-ide";
@@ -21,6 +22,11 @@ export function Scene07WhoFills() {
     stagger: 0.12,
     y: 28,
   });
+
+  // Health metrics — opera leading indicators land harder if they count up.
+  const completedRef = useCountUp({ to: 73, suffix: "%", duration: 1.4 });
+  const npsRef = useCountUp({ to: 58, prefix: "+", duration: 1.4 });
+  const returnedRef = useCountUp({ to: 34, suffix: "%", duration: 1.4 });
 
   return (
     <Scene id="who-fills" ariaLabel="Кто что заполняет: две аудитории">
@@ -92,9 +98,21 @@ export function Scene07WhoFills() {
                 className="grid grid-cols-3 gap-2 rounded-2xl border border-line-strong bg-fog p-5 text-center text-meta"
                 aria-label="Опережающие индикаторы здоровья платформы"
               >
-                <Metric value="73%" label="завершили" />
-                <Metric value="+58" label="NPS" />
-                <Metric value="34%" label="вернулись" />
+                <Metric
+                  valueRef={completedRef as React.RefObject<HTMLParagraphElement>}
+                  initial="0%"
+                  label="завершили"
+                />
+                <Metric
+                  valueRef={npsRef as React.RefObject<HTMLParagraphElement>}
+                  initial="+0"
+                  label="NPS"
+                />
+                <Metric
+                  valueRef={returnedRef as React.RefObject<HTMLParagraphElement>}
+                  initial="0%"
+                  label="вернулись"
+                />
               </div>
               <p className="text-meta text-mute">
                 После сессии — портативный артефакт-портфолио, который кандидат
@@ -181,14 +199,23 @@ function Tag({
   );
 }
 
-function Metric({ value, label }: { value: string; label: string }) {
+function Metric({
+  valueRef,
+  initial,
+  label,
+}: {
+  valueRef: React.RefObject<HTMLParagraphElement>;
+  initial: string;
+  label: string;
+}) {
   return (
     <div>
       <p
+        ref={valueRef}
         className="font-display tabular-nums text-paper"
         style={{ fontSize: "var(--text-h2)", lineHeight: 1.05 }}
       >
-        {value}
+        {initial}
       </p>
       <p className="text-[10px] uppercase tracking-widest text-dim">{label}</p>
     </div>

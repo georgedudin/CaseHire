@@ -24,9 +24,6 @@ export function Scene06DataTrap() {
     () => {
       const stage = stageRef.current;
       if (!stage) return;
-      const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
 
       const panels = stage.querySelectorAll<HTMLElement>("[data-panel]");
       const safeMsg = stage.querySelector<HTMLElement>("[data-msg='safe']");
@@ -35,6 +32,7 @@ export function Scene06DataTrap() {
       const matrix = stage.querySelector<HTMLElement>("[data-matrix]");
       const quote = stage.querySelector<HTMLElement>("[data-quote]");
 
+      // Shared initial state — every path starts here.
       gsap.set(panels, { opacity: 0, y: 36 });
       gsap.set(safeMsg, { opacity: 1 });
       gsap.set(leakMsg, { opacity: 0 });
@@ -42,46 +40,98 @@ export function Scene06DataTrap() {
       gsap.set(matrix, { opacity: 0, y: 28 });
       gsap.set(quote, { opacity: 0, y: 12 });
 
-      if (reduceMotion) {
+      const mm = gsap.matchMedia();
+
+      // Reduced-motion — snap everything to its end state.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set([...panels, leakMsg, flag, matrix, quote], {
           opacity: 1,
           y: 0,
         });
         gsap.set(safeMsg, { opacity: 0 });
-        return;
-      }
+      });
 
-      // Phase A — entry reveal of panels + matrix.
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: stage,
-            start: "top 75%",
-            toggleActions: "play none none reverse",
-          },
-        })
-        .to(panels, {
-          opacity: 1,
-          y: 0,
-          stagger: 0.16,
-          duration: 0.8,
-          ease: "expo.out",
-        })
-        .to(matrix, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, "-=0.3");
+      // lg+ — pinned scrubbed timeline. Phase A then a held breath then
+      // the leak. Lets the reader absorb the boundary before it's broken.
+      mm.add(
+        "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: stage,
+                start: "top top",
+                end: "+=140%",
+                pin: true,
+                pinSpacing: true,
+                anticipatePin: 1,
+                scrub: 0.8,
+                invalidateOnRefresh: true,
+              },
+            })
+            .to(panels, {
+              opacity: 1,
+              y: 0,
+              stagger: 0.18,
+              duration: 0.6,
+              ease: "expo.out",
+            })
+            .to(
+              matrix,
+              { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" },
+              "-=0.3"
+            )
+            .to({}, { duration: 0.4 }) // hold — reader absorbs panels
+            .to(safeMsg, { opacity: 0, duration: 0.2 })
+            .to(leakMsg, { opacity: 1, duration: 0.3 }, "-=0.05")
+            .to(flag, { opacity: 1, y: 0, duration: 0.25 }, "-=0.1")
+            .to(quote, { opacity: 1, y: 0, duration: 0.4 }, "-=0.1");
+        }
+      );
 
-      // Phase B — the leak. Fires when the panels are clearly in view.
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: stage,
-            start: "top 35%",
-            toggleActions: "play none none reverse",
-          },
-        })
-        .to(safeMsg, { opacity: 0, duration: 0.25 })
-        .to(leakMsg, { opacity: 1, duration: 0.35 }, "-=0.1")
-        .to(flag, { opacity: 1, y: 0, duration: 0.3 }, "-=0.1")
-        .to(quote, { opacity: 1, y: 0, duration: 0.45 }, "-=0.05");
+      // <lg (phone, tablet zone) — flow with two on-enter timelines.
+      // No pin, no scrub: the screen is too small for the cinematic feel
+      // and pinning would trap the user on a tiny canvas.
+      mm.add(
+        "(max-width: 1023px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: stage,
+                start: "top 75%",
+                toggleActions: "play none none reverse",
+              },
+            })
+            .to(panels, {
+              opacity: 1,
+              y: 0,
+              stagger: 0.16,
+              duration: 0.8,
+              ease: "expo.out",
+            })
+            .to(
+              matrix,
+              { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" },
+              "-=0.3"
+            );
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: stage,
+                start: "top 35%",
+                toggleActions: "play none none reverse",
+              },
+            })
+            .to(safeMsg, { opacity: 0, duration: 0.25 })
+            .to(leakMsg, { opacity: 1, duration: 0.35 }, "-=0.1")
+            .to(flag, { opacity: 1, y: 0, duration: 0.3 }, "-=0.1")
+            .to(quote, { opacity: 1, y: 0, duration: 0.45 }, "-=0.05");
+        }
+      );
+
+      return () => mm.revert();
     },
     { scope: stageRef }
   );

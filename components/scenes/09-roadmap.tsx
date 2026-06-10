@@ -159,7 +159,7 @@ export function Scene09Roadmap() {
               <SessionLabel tone="human">
                 Сессия #4173 · Анна П. · junior backend
               </SessionLabel>
-              <CandidateIde />
+              <CandidateIde compact />
               <ProcessMatrix
                 title="Матрица процесса"
                 subtitle="итог сессии"
@@ -169,7 +169,7 @@ export function Scene09Roadmap() {
               <SessionLabel tone="agent">
                 Сессия #4174 · Claude Code · агент
               </SessionLabel>
-              <CandidateIde leak />
+              <CandidateIde leak compact />
               <ProcessMatrix
                 title="Матрица процесса"
                 subtitle="итог сессии"

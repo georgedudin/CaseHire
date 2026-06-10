@@ -2,6 +2,7 @@
 
 import { Scene } from "@/components/scroll/scene";
 import { useReveal } from "@/components/scroll/hooks/use-reveal";
+import { useCountUp } from "@/components/scroll/hooks/use-count-up";
 import { cn } from "@/lib/cn";
 
 type Card = {
@@ -39,6 +40,13 @@ export function Scene03Interviews() {
     y: 32,
   });
 
+  // Count the fraction numerators on enter — lands the pitch beat
+  // "восемь из восьми. восемь из восьми."
+  const ref0 = useCountUp({ to: CARDS[0].numerator, duration: 1.2 });
+  const ref1 = useCountUp({ to: CARDS[1].numerator, duration: 1.2 });
+  const ref2 = useCountUp({ to: CARDS[2].numerator, duration: 1.2 });
+  const numRefs = [ref0, ref1, ref2];
+
   return (
     <Scene id="interviews" ariaLabel="16 глубинных интервью">
       <div ref={revealRef} className="scene-content">
@@ -72,7 +80,7 @@ export function Scene03Interviews() {
               key={`${card.who}-${idx}`}
               data-stagger
               className={cn(
-                "flex flex-col gap-6 rounded-2xl border border-line-strong bg-fog p-6 sm:p-7 lg:p-8",
+                "flex min-h-[16rem] flex-col gap-6 rounded-2xl border border-line-strong bg-fog p-6 sm:p-7 md:min-h-[18rem] lg:p-8",
                 card.numerator === card.denominator &&
                   "border-flame/40 ring-1 ring-flame/20"
               )}
@@ -100,13 +108,14 @@ export function Scene03Interviews() {
                 aria-label={`${card.numerator} из ${card.denominator}`}
               >
                 <span
+                  ref={numRefs[idx] as React.RefObject<HTMLSpanElement>}
                   className={
                     card.numerator === card.denominator
                       ? "text-flame"
                       : "text-paper"
                   }
                 >
-                  {card.numerator}
+                  0
                 </span>
                 <span className="text-dim">/{card.denominator}</span>
               </p>
