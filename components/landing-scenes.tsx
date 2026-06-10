@@ -2,6 +2,7 @@
 
 import { LenisProvider } from "@/components/scroll/lenis-provider";
 import { KeyboardNav } from "@/components/scroll/keyboard-nav";
+import { ScrollSnap } from "@/components/scroll/scroll-snap";
 import { Scene01Hero } from "@/components/scenes/01-hero";
 import { Scene02Pain } from "@/components/scenes/02-pain";
 import { Scene03Interviews } from "@/components/scenes/03-interviews";
@@ -20,6 +21,7 @@ export function LandingScenes() {
   return (
     <LenisProvider>
       <KeyboardNav />
+      <ScrollSnap />
       <Scene01Hero />
       <Scene02Pain />
       <Scene03Interviews />
