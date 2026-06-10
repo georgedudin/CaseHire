@@ -78,6 +78,35 @@ export const Scene = forwardRef<HTMLElement, SceneProps>(function Scene(
     { scope: localRef, dependencies: [mode, pinLength] }
   );
 
+  // Cross-scene exit fade — flow scenes soften their hand-off to the next.
+  // Section opacity scrubs from 1 → 0.55 as its bottom edge approaches the
+  // viewport top. Combined with the next scene's useReveal/timeline entry,
+  // the boundary stops feeling like a hard cut.
+  useGSAP(
+    () => {
+      if (mode !== "flow") return;
+      const section = localRef.current;
+      if (!section) return;
+
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to(section, {
+          opacity: 0.55,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "bottom 60%",
+            end: "bottom 10%",
+            scrub: 0.8,
+          },
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: localRef, dependencies: [mode] }
+  );
+
   return (
     <section
       ref={setRefs}

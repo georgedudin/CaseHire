@@ -13,7 +13,9 @@ type RevealOptions = {
   y?: number;
   /** Tween duration in seconds. */
   duration?: number;
-  /** When `true`, animation plays once. When `false`, plays both directions. */
+  /** When `true`, animation plays once. When `false`, plays both directions.
+   *  Default is `false` so scenes reverse on scroll-back — the page feels like
+   *  it has memory rather than abruptly snapping. */
   once?: boolean;
   /** Trigger position in `ScrollTrigger.start` syntax. */
   start?: string;
@@ -29,7 +31,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>({
   stagger = 0.08,
   y = 24,
   duration = 0.9,
-  once = true,
+  once = false,
   start = "top 80%",
 }: RevealOptions): RefObject<T | null> {
   const ref = useRef<T>(null);

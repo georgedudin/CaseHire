@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { Scene } from "@/components/scroll/scene";
-import { gsap } from "@/lib/gsap-setup";
+import { gsap, ScrollTrigger } from "@/lib/gsap-setup";
 
 /**
  * Slide 1 — Заголовок.
@@ -21,13 +21,19 @@ export function Scene01Hero() {
         "(prefers-reduced-motion: reduce)"
       ).matches;
 
+      const lines = stage.querySelectorAll("[data-line]");
+      const spot = stage.querySelector("[data-spotlight]");
+
       if (reduceMotion) {
-        gsap.set(stage.querySelectorAll("[data-line]"), { opacity: 1, y: 0 });
+        gsap.set(lines, { opacity: 1, y: 0 });
         return;
       }
 
+      // Entry — scroll-triggered so it survives reload / scroll-restoration.
+      // Hero starts above the fold, so "top 90%" fires effectively on mount,
+      // but with the small delay we get the dramatic staged entrance.
       gsap.fromTo(
-        stage.querySelectorAll("[data-line]"),
+        lines,
         { opacity: 0, y: 32 },
         {
           opacity: 1,
@@ -36,17 +42,28 @@ export function Scene01Hero() {
           ease: "expo.out",
           stagger: 0.18,
           delay: 0.35,
+          scrollTrigger: { trigger: stage, start: "top 90%", once: true },
         }
       );
 
-      const spot = stage.querySelector("[data-spotlight]");
+      // Spotlight pulse — bounded to this scene's viewport.
+      // We pause the tween when the hero leaves the viewport so it doesn't
+      // bleed into scene 02, and resume it when we scroll back.
       if (spot) {
-        gsap.to(spot, {
+        const pulse = gsap.to(spot, {
           opacity: 0.85,
           duration: 3.2,
           ease: "sine.inOut",
           yoyo: true,
           repeat: -1,
+          paused: false,
+        });
+        ScrollTrigger.create({
+          trigger: stage,
+          start: "top top",
+          end: "bottom top",
+          onLeave: () => pulse.pause(),
+          onEnterBack: () => pulse.resume(),
         });
       }
     },
