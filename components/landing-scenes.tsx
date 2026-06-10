@@ -1,6 +1,7 @@
 "use client";
 
 import { LenisProvider } from "@/components/scroll/lenis-provider";
+import { KeyboardNav } from "@/components/scroll/keyboard-nav";
 import { Scene01Hero } from "@/components/scenes/01-hero";
 import { Scene02Pain } from "@/components/scenes/02-pain";
 import { Scene03Interviews } from "@/components/scenes/03-interviews";
@@ -18,6 +19,7 @@ import { Scene09Roadmap } from "@/components/scenes/09-roadmap";
 export function LandingScenes() {
   return (
     <LenisProvider>
+      <KeyboardNav />
       <Scene01Hero />
       <Scene02Pain />
       <Scene03Interviews />
