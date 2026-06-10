@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/* -----------------------------------------------------------------------------
+ * Design tokens — Apple-grade dark palette for the КейсПодбор pitch landing.
+ * Single source of truth: change here, propagates to every utility.
+ * -------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces */
+  --color-ink: #0a0a0a;          /* primary background */
+  --color-fog: #131316;          /* card / elevated surface */
+  --color-line: #1f1f24;         /* hairline borders, dividers */
+  --color-line-strong: #2a2a31;  /* emphasized borders */
+
+  /* Text */
+  --color-paper: #f5f5f7;        /* primary text (Apple paper) */
+  --color-mute: #a1a1aa;         /* secondary text */
+  --color-dim: #71717a;          /* tertiary, captions */
+
+  /* Brand & accents */
+  --color-flame: #ff5a1f;        /* warm accent — buttons, highlights */
+  --color-ember: #ff8a4c;        /* lighter accent */
+  --color-leak: #ef4444;         /* OPSEC leak red */
+  --color-trust: #22c55e;        /* "buddy" / trusted-channel green */
+  --color-glass: #60a5fa;        /* split-pane left "trust" tint */
+  --color-sterile: #94a3b8;      /* split-pane right "external" tint */
+
+  /* Typography — variables fed by next/font in layout.tsx */
+  --font-display: var(--font-display-src), system-ui, sans-serif;
+  --font-sans: var(--font-sans-src), system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Fluid type scale — Apple-style clamp() recipes */
+  --text-hero: clamp(2.75rem, 8vw, 7.5rem);     /* 44px → 120px */
+  --text-display: clamp(2.25rem, 6vw, 5rem);    /* 36px → 80px */
+  --text-h1: clamp(1.875rem, 4.5vw, 3.5rem);    /* 30px → 56px */
+  --text-h2: clamp(1.5rem, 3.2vw, 2.5rem);      /* 24px → 40px */
+  --text-lede: clamp(1.125rem, 1.6vw, 1.5rem);  /* 18px → 24px */
+  --text-body: clamp(1rem, 1.1vw, 1.125rem);    /* 16px → 18px */
+  --text-meta: 0.875rem;                         /* 14px caption */
+
+  /* Easings */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* -----------------------------------------------------------------------------
+ * Base
+ * -------------------------------------------------------------------------- */
+
+html {
+  /* No native bounce on iOS; Lenis would fight it otherwise. */
+  overscroll-behavior: none;
+  /* When Lenis is active it drives scroll; this is a safe default for
+     reduced-motion users where Lenis is disabled. */
+  scroll-behavior: smooth;
+  background: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.6; /* 1.5+ for comfortable Cyrillic reading */
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Allow horizontal pinch-zoom (we keep no user-scalable=no in viewport meta);
+     pan-y only would block multi-touch a11y. */
+}
+
+/* Display headlines use the second family; tight tracking, taut leading. */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+/* -----------------------------------------------------------------------------
+ * Selection
+ * -------------------------------------------------------------------------- */
+::selection {
+  background: var(--color-flame);
+  color: var(--color-ink);
+}
+
+/* -----------------------------------------------------------------------------
+ * Focus visible — keyboard navigation must remain crisp.
+ * -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--color-flame);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* -----------------------------------------------------------------------------
+ * Skip-to-content link — visually hidden until focused.
+ * -------------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--color-flame);
+  color: var(--color-ink);
+  font-weight: 600;
+  transform: translateY(-100%);
+  transition: transform 150ms var(--ease-out-expo);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: none;
+}
+
+/* -----------------------------------------------------------------------------
+ * GSAP-pinned scene container — `contain: layout paint` keeps CLS green
+ * by isolating the pin from sibling layout recalculation.
+ * -------------------------------------------------------------------------- */
+.scene-shell {
+  contain: layout paint;
+  height: 100svh; /* small viewport height — survives iOS address-bar collapse */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Stage = inner pinned content that the timeline animates against. */
+.scene-stage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
