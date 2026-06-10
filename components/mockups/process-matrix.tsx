@@ -78,6 +78,16 @@ export function ProcessMatrix({
               key={`${axis.label}-${idx}`}
               className="flex items-center gap-3"
             >
+              {/* Tier chip — visible on phone where the bar is hidden, so the
+                  leak still reads as a red signal. */}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "h-2 w-2 shrink-0 rounded-full sm:hidden",
+                  tier,
+                  leak && "animate-pulse"
+                )}
+              />
               <span
                 className={cn(
                   "min-w-0 flex-1 truncate text-meta sm:flex-none sm:basis-44 lg:basis-52",
