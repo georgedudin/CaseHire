@@ -137,7 +137,7 @@ export function Scene08Market() {
         <section
           data-stagger
           aria-label="Тарифные планы"
-          className="mt-14 grid gap-4 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4"
+          className="mt-14 grid gap-4 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
         >
           {TIERS.map((t) => (
             <article
@@ -200,9 +200,11 @@ export function Scene08Market() {
           aria-label="Конкуренты и наша защищаемая ниша"
           className="mt-14 sm:mt-20"
         >
-          {/* Edge-to-edge horizontal scroll so the wide table stays readable
-              on mobile without breaking the page layout. */}
-          <div className="-mx-5 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
+          {/* Edge-to-edge horizontal scroll on phone with gradient masks that
+              show the table is cut by atmosphere, not by the viewport. A small
+              swipe affordance sits below on phone only. */}
+          <div className="relative">
+            <div className="-mx-6 overflow-x-auto px-6 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
             <table className="w-full min-w-[760px] border-separate border-spacing-0 text-meta">
               <thead>
                 <tr className="text-mute">
@@ -261,6 +263,19 @@ export function Scene08Market() {
                 })}
               </tbody>
             </table>
+            </div>
+            {/* Edge fades — phone only; lg has no horizontal scroll so no mask */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-ink to-transparent lg:hidden"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-ink to-transparent lg:hidden"
+            />
+            <span className="mt-3 block text-right text-[10px] uppercase tracking-widest text-dim lg:hidden">
+              свайп →
+            </span>
           </div>
 
           <p data-stagger className="mt-6 max-w-[68ch] text-lede text-mute">

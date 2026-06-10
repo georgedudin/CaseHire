@@ -104,7 +104,7 @@ export function Scene04Reveal() {
             data-brand
             className="font-display block text-paper"
             style={{
-              fontSize: "var(--text-hero)",
+              fontSize: "var(--text-brand)",
               lineHeight: 0.95,
               letterSpacing: "-0.04em",
             }}
@@ -115,7 +115,7 @@ export function Scene04Reveal() {
             data-brand
             className="font-display block text-flame"
             style={{
-              fontSize: "var(--text-hero)",
+              fontSize: "var(--text-brand)",
               lineHeight: 0.95,
               letterSpacing: "-0.04em",
             }}

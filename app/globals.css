@@ -31,6 +31,7 @@
 
   /* Fluid type scale — Apple-style clamp() recipes */
   --text-hero: clamp(2.75rem, 8vw, 7.5rem);     /* 44px → 120px */
+  --text-brand: clamp(2.5rem, 7vw, 5.5rem);     /* 40px → 88px — wordmark cap so КейсПодбор stays inside the gutter */
   --text-display: clamp(2.25rem, 6vw, 5rem);    /* 36px → 80px */
   --text-h1: clamp(1.875rem, 4.5vw, 3.5rem);    /* 30px → 56px */
   --text-h2: clamp(1.5rem, 3.2vw, 2.5rem);      /* 24px → 40px */
@@ -167,7 +168,7 @@ body {
   width: 100%;
   max-width: 80rem; /* 1280px — matches max-w-7xl */
   margin-inline: auto;
-  padding-inline: 1.25rem;       /* 20px gutter on mobile */
+  padding-inline: 1.5rem;        /* 24px gutter on mobile — keeps long Russian lines off the edge */
   padding-block: 5rem;           /* 80px vertical on mobile */
 }
 

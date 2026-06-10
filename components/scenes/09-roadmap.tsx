@@ -182,7 +182,7 @@ export function Scene09Roadmap() {
         {/* Closing line */}
         <div
           ref={closingRef}
-          className="mx-auto mt-20 max-w-[40ch] text-center sm:mt-28"
+          className="mx-auto mt-20 max-w-[48ch] text-center sm:mt-28"
         >
           <p
             data-closing-line
