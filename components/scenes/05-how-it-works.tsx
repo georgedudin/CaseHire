@@ -42,19 +42,11 @@ const STEPS = [
       "Какие тесты прогнал, где остановился перед опасной командой.",
       "Где ИИ наврал — и заметил ли он.",
     ],
-    aside: "Тимлид получает не код. А ранжированную ленту, матрицу процесса и кнопку «посмотреть запись сессии».",
+    aside:
+      "Тимлид получает не код. А ранжированную ленту, матрицу процесса и кнопку «посмотреть запись сессии».",
   },
 ] as const;
 
-/**
- * Slide 5 — Как это работает.
- *
- * Three-step flow (Teamlead → Candidate → Platform) above a preview of
- * the candidate IDE mockup. Copy lifted from ru_pitch.md:189–209.
- *
- * Desktop: 3-column grid + IDE below as a tilted preview.
- * Mobile: vertical stack, IDE in compact mode.
- */
 export function Scene05HowItWorks() {
   const revealRef = useReveal<HTMLDivElement>({
     selector: "[data-stagger]",
@@ -63,11 +55,8 @@ export function Scene05HowItWorks() {
   });
 
   return (
-    <Scene id="how-it-works" ariaLabel="Как это работает: три шага" pin={false}>
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-24 lg:px-12"
-      >
+    <Scene id="how-it-works" ariaLabel="Как это работает: три шага">
+      <div ref={revealRef} className="scene-content">
         <p
           data-stagger
           className="text-meta uppercase tracking-[0.3em] text-dim"
@@ -85,13 +74,13 @@ export function Scene05HowItWorks() {
 
         <ol
           role="list"
-          className="mt-14 grid gap-6 sm:gap-8 lg:mt-20 lg:grid-cols-3"
+          className="mt-12 grid gap-5 sm:mt-16 md:grid-cols-3 md:gap-5 lg:mt-20 lg:gap-6"
         >
           {STEPS.map((step) => (
             <li
               key={step.n}
               data-stagger
-              className="relative flex flex-col gap-5 rounded-2xl border border-line-strong bg-fog p-7 lg:p-8"
+              className="flex flex-col gap-5 rounded-2xl border border-line-strong bg-fog p-6 sm:p-7 lg:p-8"
             >
               <header className="flex items-baseline justify-between">
                 <span
@@ -136,11 +125,11 @@ export function Scene05HowItWorks() {
           ))}
         </ol>
 
-        {/* IDE preview */}
+        {/* IDE preview — desktop only, would crowd mobile flow */}
         <div
           data-stagger
           aria-hidden="true"
-          className="mt-14 hidden lg:block"
+          className="mt-14 hidden lg:mt-20 lg:block"
         >
           <CandidateIde className="mx-auto max-w-5xl" />
         </div>

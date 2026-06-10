@@ -5,13 +5,7 @@ import { useCountUp } from "@/components/scroll/hooks/use-count-up";
 import { useReveal } from "@/components/scroll/hooks/use-reveal";
 
 /**
- * Slide 2 — Боль. Что не так с джунами в 2026.
- *
- * Two giant count-up numbers (−60% / 7%) sourced from IEEE Spectrum and
- * SignalFire 2025. Copy is verbatim from ru_pitch.md:80–106.
- *
- * Layout: two-column grid on desktop, stacked on mobile.
- * Numbers animate on enter via `useCountUp` (Intl.NumberFormat ru-RU).
+ * Slide 2 — Боль. Two giant count-up numbers + closing line.
  */
 export function Scene02Pain() {
   const minus60 = useCountUp({ to: 60, prefix: "−", suffix: "%" });
@@ -23,11 +17,8 @@ export function Scene02Pain() {
   });
 
   return (
-    <Scene id="pain" ariaLabel="Боль: что не так с джунами в 2026" pin={false}>
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-24 lg:px-12"
-      >
+    <Scene id="pain" ariaLabel="Боль: что не так с джунами в 2026">
+      <div ref={revealRef} className="scene-content">
         <p
           data-stagger
           className="text-meta uppercase tracking-[0.3em] text-dim"
@@ -45,19 +36,18 @@ export function Scene02Pain() {
 
         <div
           data-stagger
-          className="mt-16 grid gap-12 sm:gap-16 lg:mt-24 lg:grid-cols-2 lg:gap-24"
+          className="mt-14 grid gap-12 sm:mt-20 sm:gap-16 lg:mt-24 lg:grid-cols-2 lg:gap-20"
         >
-          {/* −60% */}
-          <figure className="border-t border-line-strong pt-8">
+          <figure className="border-t border-line-strong pt-7 sm:pt-8">
             <span
               ref={minus60 as React.RefObject<HTMLSpanElement>}
               className="font-display block text-flame tabular-nums"
-              style={{ fontSize: "var(--text-hero)", lineHeight: "0.95" }}
+              style={{ fontSize: "var(--text-hero)", lineHeight: 0.95 }}
               aria-label="минус 60 процентов"
             >
               −0%
             </span>
-            <figcaption className="mt-6 max-w-[28ch] text-lede text-mute">
+            <figcaption className="mt-5 max-w-[28ch] text-lede text-mute sm:mt-6">
               <span className="text-paper">Вакансий начального уровня</span>{" "}
               с&nbsp;2022 года.
               <span className="mt-2 block text-meta text-dim">
@@ -66,17 +56,16 @@ export function Scene02Pain() {
             </figcaption>
           </figure>
 
-          {/* 7% */}
-          <figure className="border-t border-line-strong pt-8">
+          <figure className="border-t border-line-strong pt-7 sm:pt-8">
             <span
               ref={seven as React.RefObject<HTMLSpanElement>}
               className="font-display block text-paper tabular-nums"
-              style={{ fontSize: "var(--text-hero)", lineHeight: "0.95" }}
+              style={{ fontSize: "var(--text-hero)", lineHeight: 0.95 }}
               aria-label="7 процентов"
             >
               0%
             </span>
-            <figcaption className="mt-6 max-w-[32ch] text-lede text-mute">
+            <figcaption className="mt-5 max-w-[32ch] text-lede text-mute sm:mt-6">
               <span className="text-paper">
                 Доля свежих выпускников в&nbsp;найме крупных технокомпаний.
               </span>{" "}
@@ -90,7 +79,7 @@ export function Scene02Pain() {
 
         <p
           data-stagger
-          className="mt-16 max-w-[42ch] text-lede text-paper lg:mt-24"
+          className="mt-14 max-w-[44ch] text-lede text-paper sm:mt-20 lg:mt-24"
         >
           Джуны больше никому не нужны.{" "}
           <span className="text-mute">

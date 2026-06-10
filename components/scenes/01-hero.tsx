@@ -7,11 +7,8 @@ import { gsap } from "@/lib/gsap-setup";
 
 /**
  * Slide 1 — Заголовок.
- * Чёрный фон. Один свет в центр. Огромная типографика. Один тезис.
- *
- * Choreography:
- *  - Eyebrow → headline → byline appear in sequence on mount.
- *  - Headline is the visual anchor; copy lifted verbatim from ru_pitch.md:62.
+ * Single dramatic moment that fills the first viewport. Flow-mode so
+ * scroll behaves naturally below, but inner flex centers the content.
  */
 export function Scene01Hero() {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -42,7 +39,6 @@ export function Scene01Hero() {
         }
       );
 
-      // Soft pulse on the centered spotlight to suggest the "single light".
       const spot = stage.querySelector("[data-spotlight]");
       if (spot) {
         gsap.to(spot, {
@@ -61,13 +57,11 @@ export function Scene01Hero() {
     <Scene
       id="hero"
       ariaLabel="Заголовок: найм джунов в эпоху, когда результат больше не сигнал"
-      pin={false}
     >
       <div
         ref={stageRef}
-        className="relative flex h-full w-full flex-col items-center justify-center px-6 text-center"
+        className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 py-24 text-center sm:px-8 sm:py-32"
       >
-        {/* Radial spotlight */}
         <div
           data-spotlight
           aria-hidden="true"
@@ -80,14 +74,14 @@ export function Scene01Hero() {
 
         <p
           data-line
-          className="relative mb-10 text-meta uppercase tracking-[0.32em] text-mute font-medium"
+          className="relative mb-8 text-meta uppercase tracking-[0.32em] text-mute font-medium sm:mb-10"
         >
           КейсПодбор · CaseHire
         </p>
 
         <h1
           data-line
-          className="font-display relative max-w-[18ch] text-paper"
+          className="font-display relative mx-auto max-w-[20ch] text-paper"
           style={{ fontSize: "var(--text-hero)" }}
         >
           Найм джунов в эпоху,{" "}
@@ -96,16 +90,15 @@ export function Scene01Hero() {
 
         <p
           data-line
-          className="relative mt-12 text-meta uppercase tracking-[0.2em] text-dim"
+          className="relative mt-10 text-meta uppercase tracking-[0.2em] text-dim sm:mt-14"
         >
           Защита продукта · 2026
         </p>
 
-        {/* Scroll affordance */}
         <div
           data-line
           aria-hidden="true"
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-meta text-dim"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-meta text-dim"
         >
           <span className="block animate-pulse">↓ листайте</span>
         </div>

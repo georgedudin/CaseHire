@@ -46,14 +46,15 @@ const TIERS: Tier[] = [
   },
 ];
 
-const COMPETITORS = [
-  ["HackerRank", true, false, false, true, false, false],
-  ["Codility · Cody", true, false, false, true, false, false],
-  ["CodeSignal · Cosmo", true, false, false, true, false, false],
-  ["CoderPad", true, false, false, false, false, false],
-  ["Karat NextGen", true, false, false, false, false, false],
-  ["КейсПодбор", true, true, true, true, true, true],
-] as const;
+const COMPETITORS: [string, boolean, boolean, boolean, boolean, boolean, boolean][] =
+  [
+    ["HackerRank", true, false, false, true, false, false],
+    ["Codility · Cody", true, false, false, true, false, false],
+    ["CodeSignal · Cosmo", true, false, false, true, false, false],
+    ["CoderPad", true, false, false, false, false, false],
+    ["Karat NextGen", true, false, false, false, false, false],
+    ["КейсПодбор", true, true, true, true, true, true],
+  ];
 
 const COMP_HEADERS = [
   "ИИ в среде",
@@ -64,12 +65,6 @@ const COMP_HEADERS = [
   "Локально в РФ",
 ];
 
-/**
- * Slide 8 — Рынок, монетизация, конкуренты.
- *
- * Three sub-screens scrolled through in sequence (not pinned — too much copy
- * to land in one scrub window). Numbers verbatim from ru_pitch.md:296–362.
- */
 export function Scene08Market() {
   const revealRef = useReveal<HTMLDivElement>({
     selector: "[data-stagger]",
@@ -83,17 +78,17 @@ export function Scene08Market() {
   const planning = useCountUp({ to: 27, suffix: "%" });
 
   return (
-    <Scene id="market" ariaLabel="Рынок, монетизация и конкуренты" pin={false}>
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-20 lg:px-12"
-      >
-        <p data-stagger className="text-meta uppercase tracking-[0.3em] text-dim">
+    <Scene id="market" ariaLabel="Рынок, монетизация и конкуренты">
+      <div ref={revealRef} className="scene-content">
+        <p
+          data-stagger
+          className="text-meta uppercase tracking-[0.3em] text-dim"
+        >
           08 · Рынок · Цена · Конкуренты
         </p>
         <h2
           data-stagger
-          className="font-display mt-6 max-w-[28ch] text-paper"
+          className="font-display mt-6 max-w-[30ch] text-paper"
           style={{ fontSize: "var(--text-display)" }}
         >
           Рынок есть.{" "}
@@ -104,7 +99,7 @@ export function Scene08Market() {
         <section
           data-stagger
           aria-label="Рыночные оценки"
-          className="mt-14 grid gap-6 sm:gap-8 lg:mt-16 lg:grid-cols-4"
+          className="mt-12 grid gap-8 sm:mt-16 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4 lg:gap-6"
         >
           <Stat
             ref={tam as React.RefObject<HTMLSpanElement>}
@@ -134,21 +129,21 @@ export function Scene08Market() {
         </section>
 
         <p data-stagger className="mt-8 text-meta text-mute">
-          <span className="text-paper">SOM 24 мес:</span> 20–35 млн ₽
-          годового дохода · 50–80 платящих компаний в среднем тарифе.
+          <span className="text-paper">SOM 24 мес:</span> 20–35 млн ₽ годового
+          дохода · 50–80 платящих компаний в среднем тарифе.
         </p>
 
         {/* (b) Pricing */}
         <section
           data-stagger
           aria-label="Тарифные планы"
-          className="mt-16 grid gap-3 lg:mt-20 lg:grid-cols-4"
+          className="mt-14 grid gap-4 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4"
         >
           {TIERS.map((t) => (
             <article
               key={t.name}
               className={cn(
-                "flex flex-col gap-3 rounded-2xl border p-5",
+                "flex flex-col gap-3 rounded-2xl border p-5 sm:p-6",
                 t.featured
                   ? "border-flame/50 bg-fog ring-1 ring-flame/30"
                   : "border-line-strong bg-fog"
@@ -185,7 +180,7 @@ export function Scene08Market() {
           ))}
         </section>
 
-        <div data-stagger className="mt-8 grid gap-4 lg:grid-cols-2 lg:gap-6">
+        <div data-stagger className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6">
           <p className="rounded-xl border border-line-strong bg-fog p-4 text-meta text-mute">
             <span className="text-paper">Себестоимость сессии $1–3.</span>{" "}
             Контейнер + токены ИИ-напарника. Оплата только за завершённые
@@ -203,10 +198,12 @@ export function Scene08Market() {
         <section
           data-stagger
           aria-label="Конкуренты и наша защищаемая ниша"
-          className="mt-16 lg:mt-20"
+          className="mt-14 sm:mt-20"
         >
-          <div className="-mx-6 overflow-x-auto px-6 lg:mx-0 lg:px-0">
-            <table className="w-full min-w-[820px] border-separate border-spacing-0 text-meta">
+          {/* Edge-to-edge horizontal scroll so the wide table stays readable
+              on mobile without breaking the page layout. */}
+          <div className="-mx-5 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
+            <table className="w-full min-w-[760px] border-separate border-spacing-0 text-meta">
               <thead>
                 <tr className="text-mute">
                   <th className="sticky left-0 z-10 bg-ink py-3 pr-4 text-left font-normal">
@@ -217,7 +214,7 @@ export function Scene08Market() {
                       key={h}
                       className="border-b border-line px-3 py-3 text-center font-normal"
                     >
-                      <span className="line-clamp-2">{h}</span>
+                      <span className="block max-w-[12ch]">{h}</span>
                     </th>
                   ))}
                 </tr>
@@ -239,7 +236,7 @@ export function Scene08Market() {
                       >
                         {name}
                       </th>
-                      {(cells as readonly boolean[]).map((has, i) => (
+                      {cells.map((has, i) => (
                         <td
                           key={`${name as string}-${i}`}
                           className="border-b border-line px-3 py-3 text-center"
@@ -268,8 +265,8 @@ export function Scene08Market() {
 
           <p data-stagger className="mt-6 max-w-[68ch] text-lede text-mute">
             <span className="text-paper">Защищаемая ниша:</span> ловушка на
-            работу с данными + ориентация на джунов + асинхронность + кейс
-            под позицию + локальное развёртывание в РФ.
+            работу с данными + ориентация на джунов + асинхронность + кейс под
+            позицию + локальное развёртывание в РФ.
             <br className="hidden sm:block" />
             <span className="text-paper">Пять осей.</span> Не пересекаются ни с
             одним крупным игроком.

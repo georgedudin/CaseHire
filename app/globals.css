@@ -121,24 +121,66 @@ body {
 }
 
 /* -----------------------------------------------------------------------------
- * GSAP-pinned scene container — `contain: layout paint` keeps CLS green
- * by isolating the pin from sibling layout recalculation.
+ * Scene shell — two modes:
+ *
+ *  flow (default): content grows naturally, minimum one viewport tall.
+ *                  No overflow:hidden — content above 100svh scrolls
+ *                  through normally. Used for every content-heavy scene.
+ *
+ *  pin: content MUST fit in one viewport. Used only for short cinematic
+ *       beats where we pin and scrub a timeline. height:100svh +
+ *       overflow:hidden so pinned children can't bleed past the stage.
+ *
+ * Both modes apply `contain: layout paint` to isolate CLS.
  * -------------------------------------------------------------------------- */
 .scene-shell {
-  contain: layout paint;
-  height: 100svh; /* small viewport height — survives iOS address-bar collapse */
-  width: 100%;
   position: relative;
+  width: 100%;
+  contain: layout paint;
+}
+
+.scene-shell--flow {
+  min-height: 100svh;
+}
+
+.scene-shell--pin {
+  height: 100svh;
   overflow: hidden;
 }
 
-/* Stage = inner pinned content that the timeline animates against. */
 .scene-stage {
-  height: 100%;
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.scene-shell--pin .scene-stage {
+  height: 100%;
   align-items: center;
   justify-content: center;
-  position: relative;
+}
+
+/* Inner content slot — consistent padding across scenes.
+   Mobile-first; grows on wider viewports. */
+.scene-content {
+  width: 100%;
+  max-width: 80rem; /* 1280px — matches max-w-7xl */
+  margin-inline: auto;
+  padding-inline: 1.25rem;       /* 20px gutter on mobile */
+  padding-block: 5rem;           /* 80px vertical on mobile */
+}
+
+@media (min-width: 640px) {
+  .scene-content {
+    padding-inline: 2rem;        /* 32px */
+    padding-block: 7rem;         /* 112px */
+  }
+}
+
+@media (min-width: 1024px) {
+  .scene-content {
+    padding-inline: 3rem;        /* 48px */
+    padding-block: 9rem;         /* 144px */
+  }
 }

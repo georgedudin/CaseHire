@@ -9,11 +9,11 @@ import { CandidateIde } from "@/components/mockups/candidate-ide";
 /**
  * Slide 7 — Кто что заполняет.
  *
- * The B2B2C scene: two sides of the market shown explicitly side by side.
- * Buyer side = HR (canban) + Teamlead (4-layer setup).
- * Candidate side = Web IDE + two chats.
+ * The B2B2C scene: both sides of the marketplace shown side by side.
+ * Three mockup columns; a visible "buyer ↔ candidate" boundary marker
+ * sits between the buyer (HR + Teamlead) and candidate columns.
  *
- * Copy verbatim from ru_pitch.md:259–288.
+ * Mobile: vertical stack, boundary appears between cols 2 and 3.
  */
 export function Scene07WhoFills() {
   const revealRef = useReveal<HTMLDivElement>({
@@ -23,12 +23,12 @@ export function Scene07WhoFills() {
   });
 
   return (
-    <Scene id="who-fills" ariaLabel="Кто что заполняет: две аудитории" pin={false}>
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-20 lg:px-12"
-      >
-        <p data-stagger className="text-meta uppercase tracking-[0.3em] text-dim">
+    <Scene id="who-fills" ariaLabel="Кто что заполняет: две аудитории">
+      <div ref={revealRef} className="scene-content">
+        <p
+          data-stagger
+          className="text-meta uppercase tracking-[0.3em] text-dim"
+        >
           07 · Кто что заполняет
         </p>
         <h2
@@ -40,77 +40,118 @@ export function Scene07WhoFills() {
           <span className="text-flame">Две аудитории первого класса.</span>
         </h2>
 
-        {/* The 3-mockup row */}
-        <div className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-[1fr_1fr_auto_1.2fr] lg:gap-6">
-          {/* HR */}
-          <div data-stagger className="flex flex-col gap-3">
-            <Tag tone="buyer">HR · кабинет</Tag>
-            <HrKanban />
-            <p className="text-meta text-mute">
-              Канбан позиций. Ранжированная лента кандидатов на каждой.
-              Самая частая поверхность — мы спроектировали её для скорости.
-            </p>
+        {/* Buyer section */}
+        <div data-stagger className="mt-12 sm:mt-16">
+          <SectionLabel tone="buyer">Сторона заказчика</SectionLabel>
+          <div className="mt-5 grid gap-5 md:grid-cols-2 md:gap-5 lg:gap-6">
+            <Column
+              tag="HR · кабинет"
+              tone="buyer"
+              mockup={<HrKanban />}
+              note="Канбан позиций и ранжированная лента кандидатов. Самая частая поверхность — спроектирована под скорость."
+            />
+            <Column
+              tag="Тимлид · настройка"
+              tone="buyer"
+              mockup={<TeamleadSetup />}
+              note={
+                <>
+                  Заполняет четыре слоя{" "}
+                  <span className="text-paper">один раз</span>. Дальше — превью
+                  кейса, одобряет и забывает.
+                </>
+              }
+            />
           </div>
+        </div>
 
-          {/* Teamlead */}
-          <div data-stagger className="flex flex-col gap-3">
-            <Tag tone="buyer">Тимлид · настройка</Tag>
-            <TeamleadSetup />
-            <p className="text-meta text-mute">
-              Заполняет четыре слоя <span className="text-paper">один раз</span>.
-              Дальше — превью кейса, одобряет и забывает.
-            </p>
-          </div>
+        {/* Boundary */}
+        <div
+          data-stagger
+          aria-hidden="true"
+          className="my-10 flex items-center gap-4 sm:my-14"
+        >
+          <span className="h-px flex-1 bg-line-strong" />
+          <span className="rounded-full border border-line-strong bg-ink px-3 py-1 text-[10px] uppercase tracking-widest text-mute">
+            заказчик ↔ кандидат
+          </span>
+          <span className="h-px flex-1 bg-line-strong" />
+        </div>
 
-          {/* Divider — buyer/candidate boundary */}
-          <div
-            data-stagger
-            aria-hidden="true"
-            className="relative hidden flex-col items-center justify-center lg:flex"
-          >
-            <div className="h-full w-px bg-line-strong" />
-            <div className="absolute flex flex-col items-center gap-2 rounded-full border border-line-strong bg-ink px-3 py-2">
-              <span className="text-[9px] uppercase tracking-widest text-mute">
-                заказчик
-              </span>
-              <span className="text-paper">↔</span>
-              <span className="text-[9px] uppercase tracking-widest text-mute">
-                кандидат
-              </span>
+        {/* Candidate section */}
+        <div data-stagger>
+          <SectionLabel tone="candidate">Сторона кандидата</SectionLabel>
+          <div className="mt-5 grid gap-5 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:gap-6 lg:gap-8">
+            <div className="flex flex-col gap-4">
+              <Tag tone="candidate">Кандидат · веб-IDE</Tag>
+              <CandidateIde />
             </div>
-          </div>
-
-          {/* Candidate */}
-          <div data-stagger className="flex flex-col gap-3">
-            <Tag tone="candidate">Кандидат · веб-IDE</Tag>
-            <CandidateIde compact />
-            <p className="text-meta text-mute">
-              Полноценная IDE с двумя чатами. После сессии —{" "}
-              <span className="text-paper">портативный артефакт-портфолио</span>
-              , который он прикрепит к будущим откликам.
-            </p>
-            <div
-              className="mt-2 grid grid-cols-3 gap-2 rounded-xl border border-line-strong bg-fog p-3 text-center text-meta"
-              aria-label="Опережающие индикаторы здоровья платформы"
-            >
-              <Metric value="73%" label="завершили" />
-              <Metric value="+58" label="NPS" />
-              <Metric value="34%" label="вернулись" />
+            <div className="flex flex-col gap-4">
+              <Tag tone="candidate">Здоровье воронки</Tag>
+              <div
+                className="grid grid-cols-3 gap-2 rounded-2xl border border-line-strong bg-fog p-5 text-center text-meta"
+                aria-label="Опережающие индикаторы здоровья платформы"
+              >
+                <Metric value="73%" label="завершили" />
+                <Metric value="+58" label="NPS" />
+                <Metric value="34%" label="вернулись" />
+              </div>
+              <p className="text-meta text-mute">
+                После сессии — портативный артефакт-портфолио, который кандидат
+                прикрепит к будущим откликам.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* B2B2C closing line */}
         <p
           data-stagger
-          className="mx-auto mt-12 max-w-[64ch] text-center text-lede text-mute lg:mt-16"
+          className="mx-auto mt-12 max-w-[64ch] text-center text-lede text-mute sm:mt-16"
         >
-          <span className="text-paper">Доля завершивших и NPS кандидата —</span>{" "}
-          опережающие индикаторы здоровья всей платформы. Если кандидат уходит —
-          воронка иссякает, заказчик уходит за ним.
+          <span className="text-paper">Доля завершивших и NPS кандидата</span>{" "}
+          — опережающие индикаторы здоровья всей платформы. Уходит кандидат —
+          иссякает воронка, уходит заказчик.
         </p>
       </div>
     </Scene>
+  );
+}
+
+function Column({
+  tag,
+  tone,
+  mockup,
+  note,
+}: {
+  tag: string;
+  tone: "buyer" | "candidate";
+  mockup: React.ReactNode;
+  note: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      <Tag tone={tone}>{tag}</Tag>
+      {mockup}
+      <p className="text-meta text-mute">{note}</p>
+    </div>
+  );
+}
+
+function SectionLabel({
+  tone,
+  children,
+}: {
+  tone: "buyer" | "candidate";
+  children: React.ReactNode;
+}) {
+  return (
+    <p
+      className={`text-meta uppercase tracking-[0.25em] ${
+        tone === "buyer" ? "text-glass" : "text-flame"
+      }`}
+    >
+      {children}
+    </p>
   );
 }
 

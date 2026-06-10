@@ -45,16 +45,6 @@ const MILESTONES: Milestone[] = [
   },
 ];
 
-/**
- * Slide 9 — Дорожная карта. Финал.
- *
- * The closing beat that earns the "ready to invest" bonus point:
- * the architecture we just sold for hiring is identically applicable to
- * AI agents. Split-screen — human session ↔ Claude Code session,
- * the SAME process matrix filling for both.
- *
- * Closing line verbatim from ru_pitch.md:382–407.
- */
 export function Scene09Roadmap() {
   const revealRef = useReveal<HTMLDivElement>({
     selector: "[data-stagger]",
@@ -99,12 +89,12 @@ export function Scene09Roadmap() {
   );
 
   return (
-    <Scene id="roadmap" ariaLabel="Дорожная карта и финал" pin={false}>
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-20 lg:px-12"
-      >
-        <p data-stagger className="text-meta uppercase tracking-[0.3em] text-dim">
+    <Scene id="roadmap" ariaLabel="Дорожная карта и финал">
+      <div ref={revealRef} className="scene-content">
+        <p
+          data-stagger
+          className="text-meta uppercase tracking-[0.3em] text-dim"
+        >
           09 · Куда мы идём
         </p>
         <h2
@@ -116,17 +106,17 @@ export function Scene09Roadmap() {
           <span className="text-flame">Это категория.</span>
         </h2>
 
-        {/* Timeline */}
+        {/* Timeline — stacked on mobile, 2x2 on tablet, 4 across on desktop */}
         <ol
           role="list"
-          className="mt-14 grid gap-4 lg:mt-16 lg:grid-cols-4 lg:gap-3"
+          className="mt-12 grid gap-4 sm:mt-16 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4 lg:gap-3"
         >
-          {MILESTONES.map((m, idx) => (
+          {MILESTONES.map((m) => (
             <li
               key={m.when}
               data-stagger
               className={cn(
-                "relative flex flex-col gap-3 rounded-2xl border p-5",
+                "flex flex-col gap-3 rounded-2xl border p-5 sm:p-6",
                 m.highlight
                   ? "border-flame/40 bg-fog ring-1 ring-flame/30"
                   : "border-line-strong bg-fog"
@@ -152,48 +142,38 @@ export function Scene09Roadmap() {
                 {m.title}
               </h3>
               <p className="text-meta text-mute">{m.detail}</p>
-              {idx < MILESTONES.length - 1 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-2 top-1/2 hidden -translate-y-1/2 text-line-strong lg:block"
-                >
-                  ›
-                </span>
-              )}
             </li>
           ))}
         </ol>
 
         {/* Split-scene: human vs agent */}
-        <div className="mt-14 lg:mt-20">
+        <div className="mt-14 sm:mt-20">
           <p
             data-stagger
             className="mb-5 text-center text-meta uppercase tracking-[0.25em] text-mute"
           >
             Одна задача · одна матрица процесса · два испытуемых
           </p>
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div data-stagger className="space-y-4">
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+            <div data-stagger className="flex flex-col gap-4">
               <SessionLabel tone="human">
                 Сессия #4173 · Анна П. · junior backend
               </SessionLabel>
-              <CandidateIde compact />
+              <CandidateIde />
               <ProcessMatrix
                 title="Матрица процесса"
                 subtitle="итог сессии"
-                className="mt-2"
               />
             </div>
-            <div data-stagger className="space-y-4">
+            <div data-stagger className="flex flex-col gap-4">
               <SessionLabel tone="agent">
                 Сессия #4174 · Claude Code · агент
               </SessionLabel>
-              <CandidateIde compact leak />
+              <CandidateIde leak />
               <ProcessMatrix
                 title="Матрица процесса"
                 subtitle="итог сессии"
                 leakLabel="Калибровка ИИ"
-                className="mt-2"
               />
             </div>
           </div>
@@ -202,7 +182,7 @@ export function Scene09Roadmap() {
         {/* Closing line */}
         <div
           ref={closingRef}
-          className="mx-auto mt-20 max-w-[36ch] text-center lg:mt-28"
+          className="mx-auto mt-20 max-w-[40ch] text-center sm:mt-28"
         >
           <p
             data-closing-line

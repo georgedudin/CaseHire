@@ -1,9 +1,9 @@
 import { cn } from "@/lib/cn";
 
 type CandidateIdeProps = {
-  /** Highlight the OPSEC leak — pulse on the chat where the leak happens. */
+  /** Pulse the External LLM bubble red — the OPSEC leak moment. */
   leak?: boolean;
-  /** Compress vertical chats into a single panel for crowded scene layouts. */
+  /** Compress the layout into a single editor column (used in tight grids). */
   compact?: boolean;
   className?: string;
 };
@@ -11,18 +11,13 @@ type CandidateIdeProps = {
 /**
  * Pure-JSX mockup of the candidate's sandboxed web IDE.
  *
- * Layout:
- *   ┌─────────────────────────────────────────────────────────────┐
- *   │ ●●●  ~/payments/process_refund.py                           │
- *   ├──────────┬──────────────────────────┬─────────────────────┤
- *   │ tree     │ code editor              │ AI Buddy            │
- *   │          │                          │ ────────────────── │
- *   │          │                          │ External LLM       │
- *   └──────────┴──────────────────────────┴─────────────────────┘
+ * Layout breakpoints:
+ *   <640px       : editor only (single column)            — tightest mobile
+ *   sm 640+      : editor + stacked chats (2 columns)     — phablet/landscape
+ *   md 768+      : tree + editor + stacked chats (3 cols) — tablet & desktop
  *
- * Reused by scenes 5 (How), 6 (Data Trap), 7 (Who Fills), 9 (Roadmap).
- * The `leak` prop drives a red pulse on the External LLM message — the
- * "moment that lights up the matrix".
+ * `compact` collapses to editor-only at every size — used inside dense
+ * scene grids where the full 3-pane is too noisy.
  */
 export function CandidateIde({
   leak = false,
@@ -40,17 +35,17 @@ export function CandidateIde({
     >
       {/* Title bar */}
       <div className="flex items-center gap-3 border-b border-line bg-ink/40 px-4 py-3">
-        <div className="flex gap-1.5">
+        <div className="flex shrink-0 gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-leak/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-flame/60" />
           <span className="h-2.5 w-2.5 rounded-full bg-trust/60" />
         </div>
-        <div className="flex flex-1 items-center gap-2 font-mono text-[11px] text-dim">
+        <div className="flex min-w-0 flex-1 items-center gap-2 truncate font-mono text-[11px] text-dim">
           <span className="hidden sm:inline">~/payments</span>
           <span className="hidden sm:inline text-line-strong">/</span>
-          <span className="text-mute">process_refund.py</span>
+          <span className="truncate text-mute">process_refund.py</span>
         </div>
-        <span className="hidden text-[10px] uppercase tracking-[0.25em] text-dim md:inline">
+        <span className="hidden shrink-0 text-[10px] uppercase tracking-[0.25em] text-dim md:inline">
           КейсПодбор · сессия
         </span>
       </div>
@@ -59,54 +54,60 @@ export function CandidateIde({
       <div
         className={cn(
           "grid",
-          // Desktop: 3 columns. Mobile: stack editor + chat.
           compact
             ? "grid-cols-1"
-            : "grid-cols-[140px_minmax(0,1fr)] md:grid-cols-[160px_minmax(0,1fr)_minmax(220px,260px)]"
+            : "grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(200px,240px)] md:grid-cols-[150px_minmax(0,1fr)_minmax(220px,260px)]"
         )}
       >
-        {/* File tree */}
+        {/* File tree — only at md+ */}
         {!compact && (
-          <aside className="hidden border-r border-line bg-ink/20 p-3 font-mono text-[11px] text-mute sm:block">
+          <aside className="hidden border-r border-line bg-ink/20 p-3 font-mono text-[11px] text-mute md:block">
             <p className="mb-3 text-[10px] uppercase tracking-widest text-dim">
               payments
             </p>
             <ul className="space-y-1.5">
               <li className="flex items-center gap-1.5">
-                <Folder /> <span>api</span>
+                <Folder />
+                <span>api</span>
               </li>
               <li className="ml-3 flex items-center gap-1.5">
-                <File /> <span>routes.py</span>
-              </li>
-              <li className="ml-3 flex items-center gap-1.5">
-                <File /> <span className="text-paper">process_refund.py</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <Folder /> <span>db</span>
-              </li>
-              <li className="ml-3 flex items-center gap-1.5">
-                <File /> <span>schema.sql</span>
-              </li>
-              <li className="flex items-center gap-1.5">
                 <File />
-                <span className="text-leak">customers.csv</span>
+                <span>routes.py</span>
+              </li>
+              <li className="ml-3 flex items-center gap-1.5">
+                <File />
+                <span className="truncate text-paper">process_refund.py</span>
+              </li>
+              <li className="flex items-center gap-1.5">
+                <Folder />
+                <span>db</span>
+              </li>
+              <li className="ml-3 flex items-center gap-1.5">
+                <File />
+                <span>schema.sql</span>
+              </li>
+              <li className="ml-3 flex items-center gap-1.5">
+                <File />
+                <span className="truncate text-leak">customers.csv</span>
               </li>
               <li className="ml-3 mt-0.5 text-[10px] text-leak/80">
                 ⚠ PII · internal
               </li>
               <li className="mt-3 flex items-center gap-1.5">
-                <File /> <span>README.md</span>
+                <File />
+                <span>README.md</span>
               </li>
               <li className="flex items-center gap-1.5">
-                <File /> <span>.env</span>
+                <File />
+                <span>.env</span>
               </li>
               <li className="ml-3 text-[10px] text-leak/80">⚠ secrets</li>
             </ul>
           </aside>
         )}
 
-        {/* Editor */}
-        <div className="border-r border-line bg-ink/10 p-4 font-mono text-[11.5px] leading-relaxed">
+        {/* Editor — overflow-x-auto so long lines scroll inside the panel */}
+        <div className="min-w-0 border-line bg-ink/10 p-4 font-mono text-[11.5px] leading-relaxed sm:border-r">
           <pre className="overflow-x-auto">
             <code>
               <CodeLine n={1}>
@@ -141,27 +142,27 @@ export function CandidateIde({
           </pre>
         </div>
 
-        {/* Chats — two stacked panels */}
+        {/* Chats — visible at sm+, hidden in compact mode */}
         {!compact && (
-          <aside className="flex flex-col bg-ink/30 md:max-h-none">
+          <aside className="hidden flex-col bg-ink/30 sm:flex">
             {/* Buddy */}
             <div className="flex flex-1 flex-col gap-3 border-b border-line p-3">
               <header className="flex items-center justify-between text-[10px]">
                 <span className="flex items-center gap-1.5 text-trust">
                   <Dot /> ИИ-напарник
                 </span>
-                <span className="text-dim">знает код · доверен</span>
+                <span className="text-dim">знает код</span>
               </header>
               <ChatBubble who="buddy">
-                Этот файл &mdash; обработчик возвратов. Перед изменением запусти
-                тесты в <Code>tests/refund_test.py</Code>.
+                Этот файл &mdash; обработчик возвратов. Перед изменением
+                запусти тесты в <Code>tests/refund_test.py</Code>.
               </ChatBubble>
               <ChatBubble who="me">
                 а что с <Code>customers.csv</Code>?
               </ChatBubble>
             </div>
 
-            {/* External public LLM */}
+            {/* External */}
             <div
               className={cn(
                 "flex flex-1 flex-col gap-3 p-3",
@@ -221,8 +222,8 @@ function CodeLine({
   return (
     <div
       className={cn(
-        "flex gap-3",
-        active && "bg-flame/10 -mx-4 px-4 rounded-sm",
+        "flex gap-3 whitespace-pre",
+        active && "-mx-4 rounded-sm bg-flame/10 px-4",
         dim && "text-dim"
       )}
     >
@@ -297,7 +298,7 @@ const Folder = () => (
     viewBox="0 0 16 16"
     fill="currentColor"
     aria-hidden="true"
-    className="text-dim"
+    className="shrink-0 text-dim"
   >
     <path d="M1 4a1 1 0 0 1 1-1h4l1.5 1.5H14a1 1 0 0 1 1 1V13a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4Z" />
   </svg>
@@ -310,7 +311,7 @@ const File = () => (
     viewBox="0 0 16 16"
     fill="currentColor"
     aria-hidden="true"
-    className="text-dim"
+    className="shrink-0 text-dim"
   >
     <path d="M3 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6L10 2H3Z" />
   </svg>

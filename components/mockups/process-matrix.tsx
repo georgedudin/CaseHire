@@ -4,15 +4,8 @@ export type ProcessAxis = {
   label: string;
   /** 0..100 — fill percentage. */
   score: number;
-  /** Pulse the bar (e.g. OPSEC leak detected). */
-  pulse?: boolean;
 };
 
-/**
- * Canonical 10-axis process matrix used to score candidates' WAY of working.
- * Order matches `project_casehire_studio.md` memory and ru_product.md §
- * "Candidate card".
- */
 export const DEFAULT_AXES: ProcessAxis[] = [
   { label: "Контекст-литеральность", score: 78 },
   { label: "Планирование", score: 64 },
@@ -30,7 +23,7 @@ type ProcessMatrixProps = {
   title?: string;
   subtitle?: string;
   axes?: ProcessAxis[];
-  /** Highlight specific axis label (e.g. "Цифровая гигиена" → red pulse). */
+  /** Label of the axis to mark as leak — clamps score & turns it red. */
   leakLabel?: string;
   className?: string;
 };
@@ -42,6 +35,10 @@ export function ProcessMatrix({
   leakLabel,
   className,
 }: ProcessMatrixProps) {
+  const averaged = Math.round(
+    axes.reduce((a, b) => a + b.score, 0) / axes.length
+  );
+
   return (
     <div
       role="img"
@@ -51,8 +48,8 @@ export function ProcessMatrix({
         className
       )}
     >
-      <header className="mb-5 flex items-baseline justify-between">
-        <div>
+      <header className="mb-5 flex items-start justify-between gap-4">
+        <div className="min-w-0">
           <p className="text-meta uppercase tracking-[0.25em] text-dim">
             КейсПодбор · оценка
           </p>
@@ -66,11 +63,8 @@ export function ProcessMatrix({
             <p className="mt-1 text-meta text-mute">{subtitle}</p>
           )}
         </div>
-        <span className="text-meta tabular-nums text-mute">
-          {Math.round(
-            axes.reduce((a, b) => a + b.score, 0) / axes.length
-          )}{" "}
-          / 100
+        <span className="shrink-0 text-meta tabular-nums text-mute">
+          {averaged} / 100
         </span>
       </header>
 
@@ -80,32 +74,33 @@ export function ProcessMatrix({
           const finalScore = leak ? Math.min(axis.score, 18) : axis.score;
           const tier = colorFor(finalScore);
           return (
-            <li key={`${axis.label}-${idx}`} className="grid grid-cols-[1fr_auto] items-center gap-3">
-              <div className="grid grid-cols-[minmax(120px,180px)_minmax(0,1fr)] items-center gap-3">
-                <span
-                  className={cn(
-                    "text-meta",
-                    leak ? "text-leak" : "text-mute"
-                  )}
-                >
-                  {axis.label}
-                  {leak && (
-                    <span className="ml-1.5 text-[10px] uppercase tracking-widest">
-                      утечка
-                    </span>
-                  )}
-                </span>
+            <li
+              key={`${axis.label}-${idx}`}
+              className="flex items-center gap-3"
+            >
+              <span
+                className={cn(
+                  "min-w-0 flex-1 truncate text-meta sm:flex-none sm:basis-44 lg:basis-52",
+                  leak ? "text-leak" : "text-mute"
+                )}
+              >
+                {axis.label}
+                {leak && (
+                  <span className="ml-1.5 text-[10px] uppercase tracking-widest">
+                    утечка
+                  </span>
+                )}
+              </span>
+              <div
+                className={cn(
+                  "relative hidden h-2 flex-1 overflow-hidden rounded-full bg-line sm:block",
+                  leak && "animate-pulse"
+                )}
+              >
                 <div
-                  className={cn(
-                    "relative h-2 overflow-hidden rounded-full bg-line",
-                    leak && "animate-pulse"
-                  )}
-                >
-                  <div
-                    className={cn("h-full rounded-full transition-all", tier)}
-                    style={{ width: `${finalScore}%` }}
-                  />
-                </div>
+                  className={cn("h-full rounded-full transition-all", tier)}
+                  style={{ width: `${finalScore}%` }}
+                />
               </div>
               <span
                 className={cn(

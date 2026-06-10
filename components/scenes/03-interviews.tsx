@@ -32,12 +32,6 @@ const CARDS: Card[] = [
   },
 ];
 
-/**
- * Slide 3 — Глубинные интервью. «Крики души».
- *
- * Three cards stagger in on enter; copy verbatim from ru_pitch.md:110–149.
- * Mobile: vertical stack, desktop: 3-column grid.
- */
 export function Scene03Interviews() {
   const revealRef = useReveal<HTMLDivElement>({
     selector: "[data-stagger]",
@@ -46,15 +40,8 @@ export function Scene03Interviews() {
   });
 
   return (
-    <Scene
-      id="interviews"
-      ariaLabel="16 глубинных интервью с HR и кандидатами"
-      pin={false}
-    >
-      <div
-        ref={revealRef}
-        className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 py-24 lg:px-12"
-      >
+    <Scene id="interviews" ariaLabel="16 глубинных интервью">
+      <div ref={revealRef} className="scene-content">
         <p
           data-stagger
           className="text-meta uppercase tracking-[0.3em] text-dim"
@@ -78,16 +65,16 @@ export function Scene03Interviews() {
         <ul
           data-stagger
           role="list"
-          className="mt-16 grid gap-6 sm:gap-8 lg:mt-20 lg:grid-cols-3"
+          className="mt-12 grid gap-5 sm:mt-16 sm:gap-6 md:grid-cols-3 md:gap-5 lg:mt-20 lg:gap-6"
         >
           {CARDS.map((card, idx) => (
             <li
               key={`${card.who}-${idx}`}
               data-stagger
               className={cn(
-                "group relative flex flex-col gap-8 rounded-2xl border border-line-strong bg-fog p-8 lg:p-10",
+                "flex flex-col gap-6 rounded-2xl border border-line-strong bg-fog p-6 sm:p-7 lg:p-8",
                 card.numerator === card.denominator &&
-                  "border-flame/40 bg-fog ring-1 ring-flame/20"
+                  "border-flame/40 ring-1 ring-flame/20"
               )}
             >
               <header className="flex items-center justify-between">
@@ -108,7 +95,7 @@ export function Scene03Interviews() {
               </header>
 
               <p
-                className="font-display tabular-nums leading-none text-paper"
+                className="font-display tabular-nums leading-none"
                 style={{ fontSize: "var(--text-display)" }}
                 aria-label={`${card.numerator} из ${card.denominator}`}
               >
@@ -133,7 +120,7 @@ export function Scene03Interviews() {
 
         <dl
           data-stagger
-          className="mt-12 grid gap-4 text-meta text-mute lg:mt-16 lg:grid-cols-2 lg:gap-12"
+          className="mt-10 grid gap-4 text-meta text-mute sm:mt-14 md:grid-cols-2 md:gap-10"
         >
           <div className="flex gap-3">
             <span aria-hidden="true" className="text-flame">
