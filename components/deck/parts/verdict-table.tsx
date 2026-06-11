@@ -2,14 +2,18 @@
  * <VerdictTable> — slide 12: «Вердикт-таблица» (landing_v2.md §4 slide 12
  * + Director's cut).
  *
- * P2 STATIC SKELETON — renders the FROZEN POST-AUTO-CHAIN state:
- *   competitor rows dimmed to 45%, КейсПодбор row lit (flame/8 bg).
- * P3 animates: row cascade, ✗/✓ stamp slams on [data-stamp-cell],
- * the flame-row sweep + five ✓ locks; the 45% dim lands with the
- * auto-chained quote beat.
+ * Motion targets (driven by 12-competitors.tsx):
+ *   [data-row="competitor"] ×5 — cascade x−16, later dimmed to 45%
+ *   [data-stamp-cell][data-glyph="cross"] — ✗ stamps 1.6→1 / −8°→0 (22, the
+ *     sanctioned stamp wall) · [data-glyph="check"] — quiet ✓ fades
+ *   [data-col] — column index for the lock "press" dips
+ *   [data-row="us"] + [data-us-sweep] — flame/8 bg sweep (scaleX origin
+ *     left; an absolute overlay because a <tr> background can't transform;
+ *     wrapper is `isolate` so the −z overlay paints above bg-fog, below text)
+ *   [data-lock-ring] — ring span fired by each flame ✓ lock (scale 1→1.6)
  *
  * RED RULE: ✗ are dim gray (text-dim), NEVER red — flame is the only
- * accent here (§2.4).
+ * accent here (§2.4). Row border idle is STATIC (Director's cut binding).
  *
  * Mobile (Director's cut): short axis forms in a vertical-rl 80px header
  * band; the full six axes live in the sr-only <caption> legend. Karat's
@@ -49,25 +53,50 @@ const US: VerdictRow = {
 
 type GlyphTone = "mute" | "flame" | "trust";
 
-function GlyphCell({ value, tone = "mute" }: { value: boolean; tone?: GlyphTone }) {
+function GlyphCell({
+  value,
+  col,
+  tone = "mute",
+}: {
+  value: boolean;
+  col: number;
+  tone?: GlyphTone;
+}) {
+  const glyph = (
+    <span
+      data-stamp-cell
+      data-glyph={value ? "check" : "cross"}
+      data-col={col}
+      className={cn(
+        "inline-block text-[15px] lg:text-[17px]",
+        value
+          ? tone === "flame"
+            ? "font-semibold text-flame"
+            : tone === "trust"
+              ? "font-semibold text-trust"
+              : "text-mute"
+          : "text-dim", // ✗ — dim gray, not red (§2.4)
+      )}
+      aria-hidden="true"
+    >
+      {value ? "✓" : "✗"}
+    </span>
+  );
   return (
     <td className="text-center">
-      <span
-        data-stamp-cell
-        className={cn(
-          "inline-block text-[15px] lg:text-[17px]",
-          value
-            ? tone === "flame"
-              ? "font-semibold text-flame"
-              : tone === "trust"
-                ? "font-semibold text-trust"
-                : "text-mute"
-            : "text-dim", // ✗ — dim gray, not red (§2.4)
-        )}
-        aria-hidden="true"
-      >
-        {value ? "✓" : "✗"}
-      </span>
+      {tone === "flame" ? (
+        <span className="relative inline-block">
+          {glyph}
+          {/* Lock ring — fired by the flame ✓ lock (scale 1→1.6 fade). */}
+          <span
+            data-lock-ring
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-1 rounded-full border border-ember opacity-0"
+          />
+        </span>
+      ) : (
+        glyph
+      )}
       <span className="sr-only">{value ? "да" : "нет"}</span>
     </td>
   );
@@ -76,11 +105,19 @@ function GlyphCell({ value, tone = "mute" }: { value: boolean; tone?: GlyphTone 
 export function VerdictTable({ className }: { className?: string }) {
   return (
     <div
+      data-table
       className={cn(
-        "overflow-hidden rounded-2xl border border-line bg-fog",
+        "relative isolate overflow-hidden rounded-2xl border border-line bg-fog",
         className,
       )}
     >
+      {/* Flame/8 sweep under the КейсПодбор row — positioned by the slide's
+          create() from the live row geometry; scaleX 0→1 origin-left. */}
+      <div
+        data-us-sweep
+        aria-hidden="true"
+        className="absolute inset-x-0 -z-10 origin-left bg-flame/8"
+      />
       <table className="w-full table-fixed border-collapse">
         {/* sr-only legend with the FULL axes (mobile shows short forms). */}
         <caption className="sr-only">
@@ -117,7 +154,8 @@ export function VerdictTable({ className }: { className?: string }) {
         </thead>
         <tbody>
           {COMPETITORS.map((row) => (
-            // Frozen post-auto-chain state: rivals dimmed to 45% (P3 animates).
+            // Frozen post-auto-chain state: rivals dimmed to 45% (SSR frame;
+            // gsap owns the value at runtime).
             <tr
               key={row.name}
               data-row="competitor"
@@ -135,13 +173,13 @@ export function VerdictTable({ className }: { className?: string }) {
                 ) : null}
               </th>
               {row.cells.map((v, i) => (
-                <GlyphCell key={AXES[i].full} value={v} />
+                <GlyphCell key={AXES[i].full} value={v} col={i} />
               ))}
             </tr>
           ))}
           <tr
             data-row="us"
-            className="h-10 border-t border-line-strong bg-flame/8 lg:h-12"
+            className="h-10 border-t border-line-strong lg:h-12"
           >
             <th
               scope="row"
@@ -151,7 +189,12 @@ export function VerdictTable({ className }: { className?: string }) {
             </th>
             {US.cells.map((v, i) => (
               // First ✓ (shared axis «ИИ в среде») in trust, five moat ✓ in flame.
-              <GlyphCell key={AXES[i].full} value={v} tone={i === 0 ? "trust" : "flame"} />
+              <GlyphCell
+                key={AXES[i].full}
+                value={v}
+                col={i}
+                tone={i === 0 ? "trust" : "flame"}
+              />
             ))}
           </tr>
         </tbody>

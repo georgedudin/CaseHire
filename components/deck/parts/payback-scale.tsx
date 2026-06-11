@@ -2,12 +2,15 @@
  * <PaybackScale> — slide 11 zone D: «Весы окупаемости» (landing_v2.md §4
  * slide 11 + Director's cut).
  *
- * P2 STATIC SKELETON — renders the FROZEN POST-BUILD state:
- *   beam tipped −7° around the flame fulcrum, pans counter-rotated +7° so
- *   their text stays level, stamp «…на 2,5 года» + SHRM source visible.
- * P3 animates: [data-beam] rotation 0→−7° (quart.inOut, 1° overshoot),
- * [data-pan-left]/[data-pan-right] counter-rotation, «1,5 млн ₽» count-up,
- * stamp notary-slam (scale 1.4→1 + 2px jolt), post-build ±0.4° micro-sway.
+ * JSX renders the FROZEN POST-BUILD state (beam tipped −7°, pans
+ * counter-rotated +7°, stamp + SHRM visible) — the SSR/noscript frame.
+ * At runtime the slide's gsap hooks own every state:
+ *   DORMANT  — zone hidden, beam level, stamp/SHRM hidden.
+ *   SETTLED  — zone at 40% opacity, beam LEVEL (±0.3° waiting sway idle),
+ *              numbers dim, no stamp (Director's cut readability staging).
+ *   BUILT    — «1,5 млн ₽» counted up, beam −7° (1° overshoot settle),
+ *              pans counter-rotated (text stays level), stamp slammed
+ *              (sanctioned, §2.3), SHRM line visible; ±0.4° micro-sway.
  *
  * Geometry: rotate(-7deg) drops the LEFT end (CSS positive = clockwise),
  * i.e. the heavier «замена плохого найма» pan sinks — real-scale physics.
@@ -16,7 +19,7 @@ import { cn } from "@/lib/cn";
 
 export function PaybackScale({ className }: { className?: string }) {
   return (
-    <div className={cn("text-center", className)}>
+    <div data-zone-d className={cn("text-center", className)}>
       {/* Stamp zone floats above the fulcrum (spec zone D). */}
       <p
         data-stamp
@@ -53,8 +56,14 @@ export function PaybackScale({ className }: { className?: string }) {
           >
             <div className="mx-auto h-3 w-px bg-line-strong" />
             <div className="rounded-xl border border-sterile/40 bg-fog px-2 py-1.5">
-              <p className="text-[10px] leading-snug text-mute lg:text-[12px]">
-                <span className="font-display whitespace-nowrap font-semibold tabular-nums text-sterile">
+              <p
+                data-pan-label
+                className="text-[10px] leading-snug text-mute lg:text-[12px]"
+              >
+                <span
+                  data-pan-num
+                  className="font-display whitespace-nowrap font-semibold tabular-nums text-sterile"
+                >
                   1,5 млн ₽
                 </span>{" "}
                 — замена плохого найма
