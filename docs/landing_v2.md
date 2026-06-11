@@ -745,3 +745,21 @@ Per slide × {375×620, 375×660, 1366×768, 1920×1080}:
 4. **Motion pass B:** slides 2, 3, 4 (evidence arc), then 6, 7 (product arc), then 9, 10, 11, 12 (business arc).
 5. **Critic re-run:** rehearsal recording at 1366×768 against §7; mobile pass; reduced-motion pass.
 
+
+---
+
+## §7 Verification record — 2026-06-11 (P5, production build)
+
+All gates run against `next build` + `next start`, headless Chromium (Playwright):
+1. **Viewport fit:** 13 slides × {375×620, 375×660, 1366×768, 1920×1080} — 0 overflow (audit `audit-p5.mjs`, ISSUES (0)).
+2. **Travel stillness:** frozen `gsap.set` on leave verified by mid-travel sampling (slide 8 stable) + frame-stepped P3/P4 integrated runs.
+3. **Budgets:** every entrance ≤4.0s readable (worst: 06 at 3.9s), builds ≤3.2s — per-slide agent verification.
+4. **Back-walk 13→1:** all frozen states instant, zero replays (twice: P3 + P4 integrated).
+5. **Build-slide spam (6/8/10/11/13):** held at midpoint with build consumed, never skipped-with-unbuilt-state (incl. zero-gap key bursts).
+6. **Reduced motion:** instant post-build finals, collapsed build wrappers, native jumps, no flash ever (P1 gates + reduced-mode audits).
+7. **Red audit:** zero #ef4444 rendered before slide 8's flare across all states (computed-style scan; slide 8 pre-leak verified separately).
+8. **ru-RU numerals:** thin-space thousands, comma decimals, U+2212 minus glyph-identical between counters and SSR finals.
+9. **Keyboard:** full →-only drive (17 gestures to built finale), Home/End frozen jumps, rail-dot click → frozen state; deck ends in stillness.
+10. **Web vitals (production):** LCP 652ms (≤2000), CLS 0.0000, no page errors. INP: gesture handlers are synchronous scroll dispatches; no long tasks observed during the walk.
+
+Deviations from the original spec are recorded inline (§1.4 dormancy amendment; per-slide Director's-cut compliance noted in P3/P4 commit messages).
