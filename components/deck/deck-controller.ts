@@ -351,7 +351,7 @@ export class DeckController {
     } else {
       // Midpoint fixation: finish entrance if needed, then the build one-shot.
       if (rec.status === "entering" && rec.hooks.entrance.progress() < 1) {
-        rec.hooks.entrance.progress(1); // fires onComplete → settled
+        this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
       }
       this.playBuild(rec);
     }
@@ -365,8 +365,12 @@ export class DeckController {
     rec.autoChainCall = null;
     if (!rec.hooks) return;
     if (rec.status === "dormant") return; // flung past unvisited: stays dormant
-    if (rec.status === "entering") rec.hooks.entrance.progress(1);
-    if (rec.status === "building") rec.hooks.build?.progress(1);
+    if (rec.status === "entering") {
+      this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
+    }
+    if (rec.status === "building") {
+      this.finishTimeline(rec.hooks.build, () => this.onBuildComplete(rec));
+    }
     // Bypassed build: visited slide whose midpoint was crossed without fixing.
     if (
       rec.hasBuild &&
@@ -389,7 +393,21 @@ export class DeckController {
   private playEntrance(rec: SlideRecord) {
     if (!rec.hooks || rec.status !== "dormant") return;
     rec.status = "entering";
+    // Zero-duration timelines (static-skeleton slides) never fire
+    // onComplete and progress(1) no-ops — complete them by hand or the
+    // slide is stuck "entering" and gestures are swallowed forever.
+    if (rec.hooks.entrance.duration() === 0) {
+      this.onEntranceComplete(rec);
+      return;
+    }
     rec.hooks.entrance.play(0);
+  }
+
+  /** progress(1) is a no-op on zero-duration timelines; finish by hand. */
+  private finishTimeline(tl: gsap.core.Timeline | undefined, fallback: () => void) {
+    if (!tl) return;
+    if (tl.duration() === 0) fallback();
+    else tl.progress(1);
   }
 
   private onEntranceComplete(rec: SlideRecord) {
@@ -400,9 +418,15 @@ export class DeckController {
 
   private playBuild(rec: SlideRecord) {
     if (!rec.hooks?.build || rec.buildConsumed || rec.status === "building") return;
-    if (rec.status === "entering") rec.hooks.entrance.progress(1);
+    if (rec.status === "entering") {
+      this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
+    }
     this.killIdles(rec);
     rec.status = "building";
+    if (rec.hooks.build.duration() === 0) {
+      this.onBuildComplete(rec);
+      return;
+    }
     rec.hooks.build.play(0);
   }
 
@@ -472,7 +496,8 @@ export class DeckController {
     const rec = this.slides[this.currentIndex];
     if (!rec || this.travelLock || rec.status === "building") return;
     if (rec.status === "entering" && rec.hooks) {
-      rec.hooks.entrance.progress(1); // gesture consumed by finishing the entrance
+      // gesture consumed by finishing the entrance
+      this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
       return;
     }
     // "Build pending" requires an actual build timeline — a hasBuild slide

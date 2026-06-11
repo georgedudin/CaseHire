@@ -119,7 +119,7 @@ body {
   background: var(--color-flame);
   color: var(--color-ink);
   font-weight: 600;
-  transform: translateY(-100%);
+  transform: translateY(-101%); /* -100% leaves a 1px flame sliver over slide 5's true black */
   transition: transform 150ms var(--ease-out-expo);
 }
 .skip-link:focus-visible {
