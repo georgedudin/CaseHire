@@ -5,6 +5,12 @@ type CandidateIdeProps = {
   leak?: boolean;
   /** Compress the layout into a single editor column (used in tight grids). */
   compact?: boolean;
+  /**
+   * Slide-9 motion hook: renders a flame caret span ([data-ide-caret]) at the
+   * end of the last editor line so the "code typing itself" reveal can blink.
+   * Default off — other call sites keep the stock static editor.
+   */
+  caret?: boolean;
   className?: string;
 };
 
@@ -26,6 +32,7 @@ type CandidateIdeProps = {
 export function CandidateIde({
   leak = false,
   compact = false,
+  caret = false,
   className,
 }: CandidateIdeProps) {
   return (
@@ -124,6 +131,7 @@ export function CandidateIde({
               {compact && (
                 <div
                   aria-hidden="true"
+                  data-ide-line
                   className="flex gap-3 whitespace-pre text-dim sm:hidden"
                 >
                   <span className="w-4 select-none text-right">2</span>
@@ -155,6 +163,13 @@ export function CandidateIde({
               </CodeLine>
               <CodeLine n={9} indent={4}>
                 )
+                {caret ? (
+                  <span
+                    aria-hidden="true"
+                    data-ide-caret
+                    className="ml-1 inline-block h-3 w-[2px] translate-y-0.5 bg-flame"
+                  />
+                ) : null}
               </CodeLine>
             </code>
           </pre>
@@ -214,7 +229,7 @@ export function CandidateIde({
       <div className="flex items-center justify-between border-t border-line bg-ink/40 px-3 py-1 font-mono text-[10px] text-dim sm:px-4 sm:py-1.5">
         <span>python · 3.13 · venv</span>
         <span className="flex items-center gap-3">
-          <span>tests: 12 ✓</span>
+          <span data-ide-tests>tests: 12 ✓</span>
           <span className="hidden sm:inline">main</span>
         </span>
       </div>
@@ -239,6 +254,7 @@ function CodeLine({
 }) {
   return (
     <div
+      data-ide-line
       className={cn(
         "flex gap-3 whitespace-pre",
         active && "-mx-4 rounded-sm bg-flame/10 px-4",

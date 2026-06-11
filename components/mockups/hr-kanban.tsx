@@ -95,6 +95,7 @@ export function HrKanban({ className }: { className?: string }) {
             {col.positions.map((p) => (
               <article
                 key={p.title}
+                data-kanban-card={p.pulse ? "" : undefined}
                 className={cn(
                   "rounded-lg border border-line bg-fog p-1.5 sm:p-2.5",
                   p.mobileHidden && "hidden sm:block"

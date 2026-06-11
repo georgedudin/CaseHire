@@ -60,13 +60,14 @@ export function TeamleadSetup({
         <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-dim">
           Тимлид
         </span>
-        <span className="min-w-0 truncate text-[12px] text-paper">
+        <span data-team-head className="min-w-0 truncate text-[12px] text-paper">
           4 слоя контекста
         </span>
         <span aria-hidden="true" className="flex shrink-0 items-center gap-1">
           {LAYERS.map((layer) => (
             <span
               key={layer.n}
+              data-layer-dot={layer.n}
               className={cn(
                 "h-1.5 w-1.5 rounded-full",
                 layer.progress === 100 ? "bg-trust" : "bg-flame"
@@ -102,6 +103,7 @@ export function TeamleadSetup({
             Тимлид
           </p>
           <h3
+            data-team-head
             className={cn("font-display mt-0.5 text-paper", dense && "text-lg")}
             style={
               dense ? undefined : { fontSize: "var(--text-h2)", lineHeight: 1.1 }
@@ -125,6 +127,7 @@ export function TeamleadSetup({
             )}
           >
             <span
+              data-layer-badge={layer.n}
               className={cn(
                 "flex items-center justify-center rounded-full border text-meta tabular-nums",
                 dense ? "h-6 w-6 text-[11px]" : "h-7 w-7",
@@ -140,6 +143,7 @@ export function TeamleadSetup({
               {!dense && <p className="text-[10px] text-dim">{layer.note}</p>}
             </div>
             <span
+              data-layer-status={layer.n}
               className={cn(
                 "text-[10px] tabular-nums",
                 layer.progress === 100 ? "text-trust" : "text-flame"
