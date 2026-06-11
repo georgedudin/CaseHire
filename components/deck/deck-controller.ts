@@ -222,9 +222,18 @@ export class DeckController {
     this.points.sort((a, b) => a.y - b.y);
   }
 
-  /** Public for the useDeckSlide resize rebuild. */
+  private remeasureQueued = false;
+
+  /** Public for the useDeckSlide resize rebuild. Microtask-coalesced:
+   * 13 slides rebuilding in one resize burst trigger ONE registry measure
+   * (offsetTop reads force layout — don't thrash 13×). */
   remeasure() {
-    if (this.started) this.measure();
+    if (!this.started || this.remeasureQueued) return;
+    this.remeasureQueued = true;
+    queueMicrotask(() => {
+      this.remeasureQueued = false;
+      if (this.started) this.measure();
+    });
   }
 
   /** Current stage for re-applying after a resize rebuild. */

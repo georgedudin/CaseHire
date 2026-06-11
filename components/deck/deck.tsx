@@ -40,7 +40,10 @@ export function Deck({
     };
     const safety = setTimeout(unveil, 2000);
     document.fonts.ready.then(() => requestAnimationFrame(unveil));
-    return () => clearTimeout(safety);
+    return () => {
+      done = true; // unmount guard: never setState after teardown
+      clearTimeout(safety);
+    };
   }, []);
 
   return (
