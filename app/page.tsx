@@ -1,14 +1,21 @@
+import { Deck, type DeckSlideDef } from "@/components/deck/deck";
+import { StubA, StubB, StubC } from "@/components/deck/slides/stubs";
+
+// P1 verification manifest — replaced by the 13-slide manifest in P2.
+const SLIDES: DeckSlideDef[] = [
+  { id: "stub-a", title: "Стаб A — обычный слайд" },
+  { id: "stub-b", title: "Стаб B — слайд со встроенным шагом" },
+  { id: "stub-c", title: "Стаб C — SplitText на кириллице" },
+];
+
 export default function HomePage() {
   return (
     <main id="main" className="relative">
-      {/* P1 mounts <Deck /> here */}
-      <section className="slide-wrap">
-        <div className="slide">
-          <div className="slide-content">
-            <p className="font-display text-mute">КейсПодбор · v2 scaffold</p>
-          </div>
-        </div>
-      </section>
+      <Deck slides={SLIDES}>
+        <StubA />
+        <StubB />
+        <StubC />
+      </Deck>
     </main>
   );
 }
