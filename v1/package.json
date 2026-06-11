@@ -1,13 +1,11 @@
 {
   "name": "casehire",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint:deck": "node scripts/check-deck-contract.mjs",
-    "prebuild": "node scripts/check-deck-contract.mjs"
+    "start": "next start"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

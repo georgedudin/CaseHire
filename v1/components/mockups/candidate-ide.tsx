@@ -5,12 +5,6 @@ type CandidateIdeProps = {
   leak?: boolean;
   /** Compress the layout into a single editor column (used in tight grids). */
   compact?: boolean;
-  /**
-   * Slide-9 motion hook: renders a flame caret span ([data-ide-caret]) at the
-   * end of the last editor line so the "code typing itself" reveal can blink.
-   * Default off — other call sites keep the stock static editor.
-   */
-  caret?: boolean;
   className?: string;
 };
 
@@ -24,15 +18,10 @@ type CandidateIdeProps = {
  *
  * `compact` collapses to editor-only at every size — used inside dense
  * scene grids where the full 3-pane is too noisy.
- *
- * v2 note: the file-tree PII/secrets tags are AMBER and Russian
- * («⚠ персональные данные» / «⚠ секреты») — §2.4 color grammar: amber =
- * предупреждение; red's first pixel on screen is slide 8's flare.
  */
 export function CandidateIde({
   leak = false,
   compact = false,
-  caret = false,
   className,
 }: CandidateIdeProps) {
   return (
@@ -45,10 +34,9 @@ export function CandidateIde({
       role="img"
     >
       {/* Title bar */}
-      <div className="flex items-center gap-3 border-b border-line bg-ink/40 px-3 py-2 sm:px-4 sm:py-3">
+      <div className="flex items-center gap-3 border-b border-line bg-ink/40 px-4 py-3">
         <div className="flex shrink-0 gap-1.5">
-          {/* neutral traffic light — red is reserved for slide 8 (§2.4) */}
-          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="h-2.5 w-2.5 rounded-full bg-leak/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-flame/60" />
           <span className="h-2.5 w-2.5 rounded-full bg-trust/60" />
         </div>
@@ -100,10 +88,10 @@ export function CandidateIde({
               </li>
               <li className="ml-3 flex items-center gap-1.5">
                 <File />
-                <span className="truncate text-amber-400/90">customers.csv</span>
+                <span className="truncate text-leak">customers.csv</span>
               </li>
-              <li className="ml-3 mt-0.5 text-[10px] text-amber-400/80">
-                ⚠ персональные данные
+              <li className="ml-3 mt-0.5 text-[10px] text-leak/80">
+                ⚠ PII · internal
               </li>
               <li className="mt-3 flex items-center gap-1.5">
                 <File />
@@ -113,48 +101,34 @@ export function CandidateIde({
                 <File />
                 <span>.env</span>
               </li>
-              <li className="ml-3 text-[10px] text-amber-400/80">⚠ секреты</li>
+              <li className="ml-3 text-[10px] text-leak/80">⚠ secrets</li>
             </ul>
           </aside>
         )}
 
         {/* Editor — overflow-x-auto so long lines scroll inside the panel */}
-        <div className="min-w-0 border-line bg-ink/10 p-2 font-mono text-[10px] leading-[1.45] sm:border-r sm:p-4 sm:text-[11.5px] sm:leading-relaxed">
+        <div className="min-w-0 border-line bg-ink/10 p-4 font-mono text-[11.5px] leading-relaxed sm:border-r">
           <pre className="overflow-x-auto">
             <code>
               <CodeLine n={1}>
                 <Kw>def</Kw> <Fn>process_refund</Fn>
                 <Pn>(customer_id, amount):</Pn>
               </CodeLine>
-              {/* Phone budget (compact call sites, slide 9): lines 2–6 fold
-                  away like an IDE code fold — the def + active return stay. */}
-              {compact && (
-                <div
-                  aria-hidden="true"
-                  data-ide-line
-                  className="flex gap-3 whitespace-pre text-dim sm:hidden"
-                >
-                  <span className="w-4 select-none text-right">2</span>
-                  <span style={{ paddingLeft: "1.6em" }}>⋯</span>
-                </div>
-              )}
-              <div className={cn(compact && "hidden sm:contents")}>
-                <CodeLine n={2} indent={4} dim>
-                  <St>{`"""Refund a charge — see /docs/refund-policy.md."""`}</St>
-                </CodeLine>
-                <CodeLine n={3} indent={4}>
-                  customer = db.get_customer(customer_id)
-                </CodeLine>
-                <CodeLine n={4} indent={4}>
-                  <Kw>if not</Kw> customer.is_active:
-                </CodeLine>
-                <CodeLine n={5} indent={8}>
-                  <Kw>raise</Kw> InactiveCustomer(customer_id)
-                </CodeLine>
-                <CodeLine n={6} indent={4}>
-                  charge = stripe.Charge.retrieve(customer.last_charge_id)
-                </CodeLine>
-              </div>
+              <CodeLine n={2} indent={4} dim>
+                <St>{`"""Refund a charge — see /docs/refund-policy.md."""`}</St>
+              </CodeLine>
+              <CodeLine n={3} indent={4}>
+                customer = db.get_customer(customer_id)
+              </CodeLine>
+              <CodeLine n={4} indent={4}>
+                <Kw>if not</Kw> customer.is_active:
+              </CodeLine>
+              <CodeLine n={5} indent={8}>
+                <Kw>raise</Kw> InactiveCustomer(customer_id)
+              </CodeLine>
+              <CodeLine n={6} indent={4}>
+                charge = stripe.Charge.retrieve(customer.last_charge_id)
+              </CodeLine>
               <CodeLine n={7} indent={4} active>
                 <Kw>return</Kw> stripe.Refund.<Fn>create</Fn>(
               </CodeLine>
@@ -163,13 +137,6 @@ export function CandidateIde({
               </CodeLine>
               <CodeLine n={9} indent={4}>
                 )
-                {caret ? (
-                  <span
-                    aria-hidden="true"
-                    data-ide-caret
-                    className="ml-1 inline-block h-3 w-[2px] translate-y-0.5 bg-flame"
-                  />
-                ) : null}
               </CodeLine>
             </code>
           </pre>
@@ -226,10 +193,10 @@ export function CandidateIde({
       </div>
 
       {/* Status bar */}
-      <div className="flex items-center justify-between border-t border-line bg-ink/40 px-3 py-1 font-mono text-[10px] text-dim sm:px-4 sm:py-1.5">
+      <div className="flex items-center justify-between border-t border-line bg-ink/40 px-4 py-1.5 font-mono text-[10px] text-dim">
         <span>python · 3.13 · venv</span>
         <span className="flex items-center gap-3">
-          <span data-ide-tests>tests: 12 ✓</span>
+          <span>tests: 12 ✓</span>
           <span className="hidden sm:inline">main</span>
         </span>
       </div>
@@ -254,7 +221,6 @@ function CodeLine({
 }) {
   return (
     <div
-      data-ide-line
       className={cn(
         "flex gap-3 whitespace-pre",
         active && "-mx-4 rounded-sm bg-flame/10 px-4",

@@ -14,9 +14,10 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
-parts/
+# anchored to root: a bare "parts/" (zc.buildout template) was gitignoring
+# components/deck/parts/, so Tailwind's gitignore-aware source scan skipped it
+/parts/
 sdist/
 var/
 wheels/
@@ -222,7 +223,7 @@ __marimo__/
 # -----------------------------------------------------------------------------
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -232,9 +233,8 @@ __marimo__/
 !.yarn/versions
 
 # next.js build output
-/.next/
-/out/
-/build
+.next/
+out/
 
 # misc
 .DS_Store
