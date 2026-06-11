@@ -50,6 +50,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
+        <noscript>
+          <style>{`.deck-veil .slide-content { visibility: visible !important; }`}</style>
+        </noscript>
         <a href="#main" className="skip-link">
           Перейти к основному содержимому
         </a>

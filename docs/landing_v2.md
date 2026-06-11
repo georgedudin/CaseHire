@@ -53,8 +53,8 @@ During the 5-minute Q&A the speaker WILL navigate backwards. The global rule:
 
 - Entrance timelines play **once per visit**. After settle (or after build, if consumed) the slide's end state is its **frozen state**.
 - Re-entry from either direction shows the frozen state **instantly** (no replay of entrance) and restarts idle loops only.
-- A slide fully scrolled past (≥1 full viewport away for ≥2s) resets to dormant and will replay its entrance on the next fixation — so walking the deck forward in rehearsal always looks right, and quick back-forth in Q&A never replays 4s of choreography in the judges' faces.
-- Frozen states per slide are listed in §3's registry; builds, once consumed, stay consumed until the full-reset condition above.
+- There is **no time-based dormancy reset** (amended during P1 verification, 2026-06-11 — the 2s reset would have made every Q&A back-jump replay entrances, since real back-jumps happen minutes later): a consumed slide stays frozen for the session's lifetime; rehearsal replays via page reload. Slides flung past without ever fixing stay dormant and play their entrance on first fixation.
+- Frozen states per slide are listed in §3's registry; builds, once consumed, stay consumed for the session.
 
 ### 1.5 Layers & persistent chrome
 

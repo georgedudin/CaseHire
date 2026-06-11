@@ -158,6 +158,12 @@ body {
   align-items: center;
 }
 
+/* SSR veil — slides hidden until every scene's dormant state is applied
+   (removed client-side by <Deck>; <noscript> in layout.tsx overrides). */
+.deck-veil .slide-content {
+  visibility: hidden;
+}
+
 /* Inner content slot — deck padding, NOT the v1 144px ladder (§1.1).
    Per-slide vertical density via py-* utility overrides. */
 .slide-content {

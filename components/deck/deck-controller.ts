@@ -71,8 +71,6 @@ const FIX_TOLERANCE_PX = 2;
 const FIX_VELOCITY = 0.05;
 const FIX_HOLD_MS = 100;
 const LEAVE_FRACTION = 0.15;
-const DORMANCY_DISTANCE_VH = 1;
-const DORMANCY_MS = 2000;
 const SNAP_DELAY_MS = 160;
 const SNAP_TOLERANCE_VH = 0.4;
 const SNAP_DEAD_ZONE_PX = 2;
@@ -289,9 +287,11 @@ export class DeckController {
       if (!candidate) this.lastFixed = null;
     }
 
-    // --- leave detector + dormancy sweep
+    // --- leave detector. NOTE: no time-based dormancy reset — a consumed
+    // slide stays frozen forever (Q&A back-jumps must NEVER replay 4s of
+    // choreography in the judges' faces; rehearsal replays via reload).
+    // Never-visited slides remain dormant and play on their first fixation.
     const vh = window.innerHeight;
-    const now = performance.now();
     for (const rec of this.slides) {
       const lastAnchor = rec.mid ?? rec.top;
       const onSlide =
@@ -301,14 +301,6 @@ export class DeckController {
         this.onLeave(rec);
       } else if (onSlide && rec.leftAt !== null) {
         rec.leftAt = null; // back on the slide
-      }
-      if (
-        rec.leftAt !== null &&
-        rec.status !== "dormant" &&
-        Math.abs(this.y - rec.top) >= vh * DORMANCY_DISTANCE_VH &&
-        now - rec.leftAt >= DORMANCY_MS
-      ) {
-        this.makeDormant(rec);
       }
     }
 
@@ -379,20 +371,6 @@ export class DeckController {
     }
     const stage: SlideStage = rec.buildConsumed ? "built" : "settled";
     rec.hooks.setFrozen(stage);
-  }
-
-  private makeDormant(rec: SlideRecord) {
-    this.killIdles(rec);
-    rec.hooks?.entrance.pause(0);
-    rec.hooks?.build?.pause(0);
-    rec.status = "dormant";
-    rec.entranceConsumed = false;
-    rec.buildConsumed = false;
-    rec.leftAt = null;
-    rec.hooks?.setDormant();
-    if (this.lastFixed && this.slides[this.lastFixed.slideIndex] === rec) {
-      this.lastFixed = null;
-    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -488,8 +466,15 @@ export class DeckController {
       rec.hooks.entrance.progress(1); // gesture consumed by finishing the entrance
       return;
     }
-    if (rec.hasBuild && rec.mid !== null && !rec.buildConsumed && this.y < rec.mid) {
-      this.scrollToY(rec.mid); // build plays on midpoint fixation
+    if (rec.hasBuild && rec.mid !== null && !rec.buildConsumed) {
+      if (this.y < rec.mid - FIX_TOLERANCE_PX) {
+        this.scrollToY(rec.mid); // build plays on midpoint fixation
+      } else {
+        // Already AT the midpoint but fixation hasn't fired yet (the ≤100ms
+        // hysteresis window): play directly — otherwise the gesture falls
+        // through to "advance" and the build is silently bypass-consumed.
+        this.playBuild(rec);
+      }
       return;
     }
     const next = this.slides[rec.index + 1];
