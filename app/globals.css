@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Explicit source: Tailwind's automatic detection is gitignore-aware, and the
+ * Python-template gitignore once shadowed components/deck/parts/ (bare
+ * "parts/" rule, now anchored). Keep the explicit registration so deck part
+ * components can never silently drop out of the scan again. */
+@source "../components/deck/parts";
+
 /* -----------------------------------------------------------------------------
  * Design tokens — Apple-grade dark palette for the КейсПодбор pitch deck.
  * Single source of truth: change here, propagates to every utility.
@@ -165,13 +171,17 @@ body {
 }
 
 /* Inner content slot — deck padding, NOT the v1 144px ladder (§1.1).
-   Per-slide vertical density via py-* utility overrides. */
+   VERTICAL padding is NOT set here: an unlayered padding-block would beat
+   Tailwind's layered utilities and silently kill every per-slide py-*
+   override (and Tailwind v4 unwraps user @layer blocks, so layering this
+   file is not an option). The py-8 default lives on <Slide> via cn(), so
+   per-slide py-* merges naturally. Horizontal gutters stay here (no slide
+   overrides them). */
 .slide-content {
   width: 100%;
   max-width: 80rem; /* 1280px */
   margin-inline: auto;
   padding-inline: 1.25rem;       /* 20px gutter on mobile */
-  padding-block: 2rem;
 }
 
 @media (min-width: 640px) {

@@ -15,7 +15,9 @@ downloads/
 eggs/
 .eggs/
 lib64/
-parts/
+# anchored to root: a bare "parts/" (zc.buildout template) was gitignoring
+# components/deck/parts/, so Tailwind's gitignore-aware source scan skipped it
+/parts/
 sdist/
 var/
 wheels/

@@ -45,7 +45,9 @@ export const Slide = forwardRef<HTMLElement, SlideProps>(function Slide(
           {title}
         </h2>
         {srSummary ? <p className="sr-only">{srSummary}</p> : null}
-        <div className={cn("slide-content", className)}>{children}</div>
+        {/* py-8 = the deck default; per-slide py-* overrides replace it via
+            tailwind-merge (a CSS default would out-cascade the utilities). */}
+        <div className={cn("slide-content py-8", className)}>{children}</div>
       </div>
     </section>
   );
