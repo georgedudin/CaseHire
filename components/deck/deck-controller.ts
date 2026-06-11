@@ -335,19 +335,11 @@ export class DeckController {
         // Re-entry on a consumed slide: frozen state is already set; idles only.
         this.startIdles(rec);
       }
-      // <lg auto-chain: build slides play their build on a timer after fixation.
-      if (
-        rec.hasBuild &&
-        rec.mid === null &&
-        !rec.buildConsumed &&
-        rec.hooks.build &&
-        !rec.autoChainCall
-      ) {
-        rec.autoChainCall = gsap.delayedCall(rec.autoChainMs / 1000, () => {
-          rec.autoChainCall = null;
-          this.playBuild(rec);
-        });
-      }
+      // <lg auto-chain on RE-ENTRY of a settled-but-unbuilt slide (the
+      // first-visit arming happens in onEntranceComplete — autoChainMs
+      // means "after the entrance settles", per spec §1.3, not "after
+      // fixation", which would jump-cut long entrances on phones).
+      if (rec.entranceConsumed) this.armAutoChain(rec);
     } else {
       // Midpoint fixation: finish entrance if needed, then the build one-shot.
       if (rec.status === "entering" && rec.hooks.entrance.progress() < 1) {
@@ -413,7 +405,27 @@ export class DeckController {
   private onEntranceComplete(rec: SlideRecord) {
     rec.status = rec.buildConsumed ? "built" : "settled";
     rec.entranceConsumed = true;
-    if (this.isFixedOn(rec)) this.startIdles(rec);
+    if (this.isFixedOn(rec)) {
+      this.startIdles(rec);
+      this.armAutoChain(rec);
+    }
+  }
+
+  /** <lg build slides: chain the build autoChainMs after the entrance settles. */
+  private armAutoChain(rec: SlideRecord) {
+    if (
+      !rec.hasBuild ||
+      rec.mid !== null || // lg+ pinned slides build on gesture, never on timer
+      rec.buildConsumed ||
+      !rec.hooks?.build ||
+      rec.autoChainCall
+    ) {
+      return;
+    }
+    rec.autoChainCall = gsap.delayedCall(rec.autoChainMs / 1000, () => {
+      rec.autoChainCall = null;
+      this.playBuild(rec);
+    });
   }
 
   private playBuild(rec: SlideRecord) {
