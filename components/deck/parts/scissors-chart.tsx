@@ -7,6 +7,7 @@
  * it. Micro-tags annotate the bar tips (Director's cut: self-annotating bars).
  *
  * Motion hooks (P3): data-axis · data-bar-ghost · data-bar-flame ·
+ * data-bar-flame-glow (idle ember pulse overlay, opacity 0 at rest) ·
  * data-bracket · data-stat="metr" · data-tag-ghost · data-tag-flame.
  * Bars scale on `scaleX` from the axis; the bracket is DrawSVG-able.
  */
@@ -74,6 +75,20 @@ export function ScissorsChart({ className }: { className?: string }) {
             height="28"
             rx="3"
             fill="url(#scissors-flame-grad)"
+            style={{ transformOrigin: "266px 148px" }}
+          />
+
+          {/* Ember glow overlay over the flame bar — idle pulse only (P3),
+              opacity 0 at rest and in every frozen frame. */}
+          <rect
+            data-bar-flame-glow
+            x="130"
+            y="134"
+            width="136"
+            height="28"
+            rx="3"
+            fill="var(--color-ember)"
+            opacity="0"
             style={{ transformOrigin: "266px 148px" }}
           />
 

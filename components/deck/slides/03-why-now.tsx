@@ -4,38 +4,299 @@
  * Slide 03 — Почему сейчас: ИИ выровнял всех · «Перцепционные ножницы»
  * (landing_v2.md §4, slide 03 + Director's cut).
  *
- * P2 static skeleton: final AUTO-CHAINED state — per the Director's cut there
- * is NO build step. The antithesis line is part of the final frozen state:
- * an absolutely-positioned centered overlay (zero flow height); the three
- * cards sit at 60% under it on desktop only (mobile cards do NOT dim).
- * Shopify/Coinbase chips carry their permanent rotations PRE-SET (−2°/+1.5°)
- * — no stamp grammar (reserved, §2.3).
+ * P3 motion. NO build step (cut) — the antithesis AUTO-CHAINS as beats
+ * appended INTO the entrance timeline after a 4s gap (chosen over a
+ * makeIdles delayedCall: a gesture mid-gap hits the controller's
+ * finish-entrance path and jumps dim + line to their end — exactly the
+ * frozen state, so impatient presses can never strand the slide).
  *
- * Motion hooks: data-headline · data-cards · data-card · data-antithesis ·
- * data-underline · data-chip · plus the parts' hooks (data-axis, data-bar-
- * ghost, data-bar-flame, data-bracket, data-dial-arc, data-needle, data-stat).
+ * Entrance (paused master tl, played on fixation):
+ *   0.0   headline SplitText WORDS rise (y 24→0, stagger 0.05)
+ *   0.2   scissors card fades · 0.3 zero-axis DrawSVG
+ *   0.7   merged bar born at zero — both rects overlapped at axis mid-y,
+ *         grown to a short neutral length (scaleX from the axis)
+ *   1.2   THE SHEAR — ghost scaleX→1 right, flame scaleX→1 left, vertical
+ *         separation y ±42→0, 0.9s power3.inOut; bracket DrawSVG follows
+ *         (1.5); «−19%» counts DOWN −0→−19 (addCountUp, ru minus) while its
+ *         color tweens paper→ember; bar-tip micro-tags fade (2.0)
+ *   1.85  trust card fades · 2.1 dial arc DrawSVG to 43% sweep + needle
+ *         −90°→−9° overshoot →−12.6° fallback (the "stuck" read) + 43% count
+ *   2.75  mandate card fades · 2.9/3.05 Shopify/Coinbase chips FADE in with
+ *         permanent rotations PRE-SET (NO slam/jolt — stamp grammar is
+ *         reserved, §2.3) · 3.35 «увольняют» flame underline scaleX + color
+ *   ≈3.8  STABLE READ — the slide is fully legible here.
+ *   7.8   ANTITHESIS (settle + 4s, all form factors): desktop only — cards
+ *         dim to 60% / scale .965 / y −8 (0.5s quart.inOut ≡ power3.inOut);
+ *         both — «Требование — есть.» word-rises first, 0.6s held pause,
+ *         then the rest, «нет.» landing soft in flame (scale 1.15→1
+ *         power3.out — NOT the reserved notary slam). Mobile cards do NOT
+ *         dim (binding). Timeline fully settles at ≈9.9s.
+ *
+ * Idles (killed on leave): needle tries to climb +2.5° and falls back
+ * (bounce ≤3°) every ~3.5s; flame-bar ember glow pulse (overlay opacity
+ * 0↔0.15, 4s sine); ghost bar dashed outline drift (dashoffset, seamless
+ * period). Idles start after the full chain — by then the slide is frozen
+ * scenery under the antithesis.
+ *
+ * Frozen = antithesis over (desktop-only) dimmed cards — the static render.
+ * Reduced motion: hooks are no-ops; the SSR markup (incl. lg:opacity-60 on
+ * the card grid) IS the final frame.
  *
  * Vertical budget:
- *   375×620 : py-6 (48) + headline ~56 (h2 floor 24px ×2) + 12 + scissors
- *             card ~190 + 8 + dial card ~150 + 8 + mandate ~110 ≈ 574 → fits.
- *             Antithesis overlay adds zero flow height.
- *   1366×768: py-10 (80) + headline ~80 + 24 + grid row ~400 (scissors ~380
- *             vs dial ~210 + mandate ~150 + gap) ≈ 584 → fits.
+ *   375×620 : py-6 (48) + headline ~56 + 12 + scissors card ~190 + 8 + dial
+ *             card ~150 + 8 + mandate ~110 ≈ 574 → fits. Antithesis overlay
+ *             adds zero flow height.
+ *   1366×768: py-10 (80) + headline ~80 + 24 + grid row ~400 ≈ 584 → fits.
  */
-import { gsap } from "@/lib/gsap-setup";
+import { gsap, SplitText } from "@/lib/gsap-setup";
+import { addCountUp, countUpText } from "@/lib/motion/count-up";
+import { breathe } from "@/lib/motion/idle";
 import { Slide } from "@/components/deck/slide";
 import { useDeckSlide } from "@/components/deck/deck-context";
 import { ScissorsChart } from "@/components/deck/parts/scissors-chart";
 import { TrustDial } from "@/components/deck/parts/trust-dial";
 
+const PAPER = "#f5f5f7";
+const MUTE = "#a1a1aa";
+const EMBER = "#ff8a4c";
+
+/** Merged-bar geometry: a short neutral stub each side of the axis. */
+const GHOST_MERGED = 80 / 344;
+const FLAME_MERGED = 80 / 136;
+
+const SETTLE_T = 3.8;
+const ANTI_T = SETTLE_T + 4; // binding: 4s after entrance settles
+
 export function Slide03WhyNow() {
   const { ref } = useDeckSlide({
     id: "03-why-now",
-    create: () => ({
-      entrance: gsap.timeline({ paused: true }),
-      setFrozen: () => {},
-      setDormant: () => {},
-    }),
+    create: ({ root, reduced }) => {
+      if (reduced) {
+        // Static deck: SSR markup IS the final frame (antithesis visible,
+        // desktop cards dimmed via lg:opacity-60). Hooks are no-ops.
+        return {
+          entrance: gsap.timeline({ paused: true }),
+          setFrozen: () => {},
+          setDormant: () => {},
+        };
+      }
+
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+
+      const headline = root.querySelector<HTMLElement>("[data-headline]")!;
+      const cardsWrap = root.querySelector<HTMLElement>("[data-cards]")!;
+      const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-card]"));
+      const axis = root.querySelector<SVGLineElement>("[data-axis]")!;
+      const ghost = root.querySelector<SVGRectElement>("[data-bar-ghost]")!;
+      const flame = root.querySelector<SVGRectElement>("[data-bar-flame]")!;
+      const glow = root.querySelector<SVGRectElement>("[data-bar-flame-glow]")!;
+      const bracket = root.querySelector<SVGPathElement>("[data-bracket]")!;
+      const statMetr = root.querySelector<HTMLElement>('[data-stat="metr"]')!;
+      const tagGhost = root.querySelector<HTMLElement>("[data-tag-ghost]")!;
+      const tagFlame = root.querySelector<HTMLElement>("[data-tag-flame]")!;
+      const dialArc = root.querySelector<SVGPathElement>("[data-dial-arc]")!;
+      const needle = root.querySelector<SVGLineElement>("[data-needle]")!;
+      const statTrust = root.querySelector<HTMLElement>('[data-stat="trust"]')!;
+      const chips = Array.from(root.querySelectorAll<HTMLElement>("[data-chip]"));
+      const underline = root.querySelector<HTMLElement>("[data-underline]")!;
+      const fireWord = root.querySelector<HTMLElement>("[data-fire-word]")!;
+      const antiLine = root.querySelector<HTMLElement>("[data-antithesis] p")!;
+
+      // GSAP owns the needle's transform from here (svgOrigin); drop the
+      // static attribute so the parses can never stack origins.
+      needle.removeAttribute("transform");
+
+      // Splits (fonts are gated by useDeckSlide; context-tracked → resize
+      // rebuild reverts them). Both are entrance-only → reverted post-use.
+      const headSplit = SplitText.create(headline, { type: "words" });
+      const antiSplit = SplitText.create(antiLine, { type: "words" });
+      const hWords = headSplit.words;
+      const aWords = antiSplit.words;
+      // «Требование — есть.» | «Инструмента, который его проверяет, —» | «нет.»
+      const iEst = aWords.findIndex((w) =>
+        (w.textContent ?? "").trim().startsWith("есть"),
+      );
+      const wordsA = aWords.slice(0, iEst + 1);
+      const wordsB = aWords.slice(iEst + 1, aWords.length - 1);
+      const wordNo = aWords[aWords.length - 1];
+
+      let headAlive = true;
+      const revertHead = () => {
+        if (!headAlive) return;
+        headAlive = false;
+        headSplit.revert();
+      };
+      let antiAlive = true;
+      const revertAnti = () => {
+        if (!antiAlive) return;
+        antiAlive = false;
+        antiSplit.revert();
+      };
+
+      const setDormant = () => {
+        gsap.set(hWords, { autoAlpha: 0, y: 24 });
+        // Motion owns the wrapper's opacity (overrides lg:opacity-60): cards
+        // play their entrance undimmed; the antithesis dims them later.
+        gsap.set(cardsWrap, { opacity: 1, scale: 1, y: 0 });
+        gsap.set(cards, { autoAlpha: 0, y: 16 });
+        gsap.set(axis, { drawSVG: "0%" });
+        gsap.set(ghost, {
+          autoAlpha: 0,
+          scaleX: 0.02,
+          y: 42,
+          svgOrigin: "266 64",
+          strokeDashoffset: 0,
+        });
+        gsap.set(flame, { autoAlpha: 0, scaleX: 0.02, y: -42, svgOrigin: "266 148" });
+        gsap.set(glow, { opacity: 0 });
+        gsap.set(bracket, { drawSVG: "0%" });
+        gsap.set(statMetr, { autoAlpha: 0, color: PAPER });
+        statMetr.textContent = countUpText(-0, { suffix: "%" });
+        gsap.set([tagGhost, tagFlame], { autoAlpha: 0, y: 8 });
+        gsap.set(dialArc, { drawSVG: "0%" });
+        gsap.set(needle, { svgOrigin: "100 100", rotation: -90 });
+        statTrust.textContent = countUpText(0, { suffix: "%" });
+        gsap.set(chips, { autoAlpha: 0, y: 8 }); // rotations stay PRE-SET
+        gsap.set(underline, { scaleX: 0 });
+        gsap.set(fireWord, { color: MUTE });
+        gsap.set([...wordsA, ...wordsB], { autoAlpha: 0, y: 14 });
+        gsap.set(wordNo, { autoAlpha: 0, scale: 1.15, transformOrigin: "50% 80%" });
+      };
+
+      const setFrozen = () => {
+        revertHead();
+        revertAnti();
+        gsap.killTweensOf([needle, ghost, glow]);
+        gsap.set(headline, { autoAlpha: 1 });
+        gsap.set(cards, { autoAlpha: 1, y: 0 });
+        gsap.set(
+          cardsWrap,
+          isDesktop
+            ? { opacity: 0.6, scale: 0.965, y: -8 }
+            : { opacity: 1, scale: 1, y: 0 },
+        );
+        gsap.set(axis, { drawSVG: "100%" });
+        gsap.set(ghost, {
+          autoAlpha: 1,
+          scaleX: 1,
+          y: 0,
+          svgOrigin: "266 64",
+          strokeDashoffset: 0,
+        });
+        gsap.set(flame, { autoAlpha: 1, scaleX: 1, y: 0, svgOrigin: "266 148" });
+        gsap.set(glow, { opacity: 0 });
+        gsap.set(bracket, { drawSVG: "100%" });
+        gsap.set(statMetr, { autoAlpha: 1, clearProps: "color" });
+        statMetr.textContent = countUpText(-19, { suffix: "%" });
+        gsap.set([tagGhost, tagFlame], { autoAlpha: 1, y: 0 });
+        gsap.set(dialArc, { drawSVG: "100%" });
+        gsap.set(needle, { svgOrigin: "100 100", rotation: -12.6 });
+        statTrust.textContent = countUpText(43, { suffix: "%" });
+        gsap.set(chips, { autoAlpha: 1, y: 0 });
+        gsap.set(underline, { scaleX: 1 });
+        gsap.set(fireWord, { clearProps: "color" });
+        // Antithesis: splits reverted above → the intact line is visible.
+      };
+
+      /* ----------------------------------------------------------------
+       * Entrance + auto-chained antithesis (single timeline)
+       * ---------------------------------------------------------------- */
+      const entrance = gsap.timeline({ paused: true });
+      entrance
+        .to(hWords, { autoAlpha: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.05 }, 0)
+        .to(cards[0], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.2)
+        .to(axis, { drawSVG: "100%", duration: 0.4, ease: "power2.inOut" }, 0.3)
+        // merged bar born at zero
+        .to([ghost, flame], { autoAlpha: 1, duration: 0.25, ease: "power2.out" }, 0.7)
+        .to(ghost, { scaleX: GHOST_MERGED, duration: 0.45, ease: "power2.out" }, 0.7)
+        .to(flame, { scaleX: FLAME_MERGED, duration: 0.45, ease: "power2.out" }, 0.7)
+        // THE SHEAR
+        .to(ghost, { scaleX: 1, y: 0, duration: 0.9, ease: "power3.inOut" }, 1.2)
+        .to(flame, { scaleX: 1, y: 0, duration: 0.9, ease: "power3.inOut" }, 1.2)
+        .to(statMetr, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 1.2)
+        .to(statMetr, { color: EMBER, duration: 0.9, ease: "power2.inOut" }, 1.2)
+        .to(bracket, { drawSVG: "100%", duration: 0.5, ease: "power2.inOut" }, 1.5)
+        .to(
+          [tagGhost, tagFlame],
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.1 },
+          2.0,
+        );
+      addCountUp(entrance, 1.2, statMetr, {
+        to: -19,
+        from: -0,
+        duration: 0.9,
+        ease: "power3.inOut",
+        suffix: "%",
+      });
+      entrance
+        .to(cards[1], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 1.85)
+        .to(dialArc, { drawSVG: "100%", duration: 0.8, ease: "power2.out" }, 2.1)
+        // needle: overshoot to −9°, fall back to −12.6° — the stuck read
+        .to(needle, { rotation: -9, duration: 0.55, ease: "power2.out" }, 2.1)
+        .to(needle, { rotation: -12.6, duration: 0.35, ease: "power2.inOut" }, 2.65);
+      addCountUp(entrance, 2.1, statTrust, {
+        to: 43,
+        duration: 0.8,
+        ease: "power2.out",
+        suffix: "%",
+      });
+      entrance
+        .to(cards[2], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 2.75)
+        .to(chips[0], { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.9)
+        .to(chips[1], { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 3.05)
+        .to(fireWord, { color: PAPER, duration: 0.4, ease: "power1.out" }, 3.35)
+        .to(underline, { scaleX: 1, duration: 0.45, ease: "power2.out" }, 3.35)
+        .call(revertHead, [], SETTLE_T + 0.05);
+
+      // ANTITHESIS — 4s after settle, all form factors (Director's cut).
+      if (isDesktop) {
+        entrance.to(
+          cardsWrap,
+          { opacity: 0.6, scale: 0.965, y: -8, duration: 0.5, ease: "power3.inOut" },
+          ANTI_T,
+        );
+      }
+      entrance
+        // «Требование — есть.» — last word lands ≈ ANTI_T+0.61
+        .to(
+          wordsA,
+          { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out", stagger: 0.08 },
+          ANTI_T,
+        )
+        // 0.6s held pause, then the rest of the line
+        .to(
+          wordsB,
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 },
+          ANTI_T + 1.21,
+        )
+        // «нет.» — soft flame landing (scale 1.15→1; NOT the reserved slam)
+        .to(
+          wordNo,
+          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power3.out" },
+          ANTI_T + 1.76,
+        )
+        .call(revertAnti, [], ANTI_T + 2.15);
+
+      /* ----------------------------------------------------------------
+       * Idles
+       * ---------------------------------------------------------------- */
+      const makeIdles = () => {
+        const climb = gsap.timeline({ delay: 1.2, repeat: -1, repeatDelay: 3.1 }); // deck-contract: idle
+        climb
+          .to(needle, { rotation: -10.1, duration: 0.4, ease: "power1.out" })
+          .to(needle, { rotation: -12.6, duration: 0.7, ease: "bounce.out" });
+        // Ghost outline drift: dasharray period is 10 → offset −20 loops seamlessly.
+        const drift = gsap.to(ghost, {
+          strokeDashoffset: -20,
+          duration: 6,
+          ease: "none",
+          repeat: -1,
+        });
+        return [climb, drift, breathe(glow, 0, 0.15, 4)];
+      };
+
+      return { entrance, makeIdles, setFrozen, setDormant };
+    },
   });
 
   return (
@@ -119,7 +380,7 @@ export function Slide03WhyNow() {
             </div>
             <p className="mt-2 text-[length:var(--text-meta)] leading-snug text-mute lg:mt-3 lg:text-[length:var(--text-body)]">
               ИИ-компетенция — критерий аттестации; инженеров без неё{" "}
-              <span className="relative inline-block text-paper">
+              <span data-fire-word className="relative inline-block text-paper">
                 увольняют
                 <span
                   data-underline

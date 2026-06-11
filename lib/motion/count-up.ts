@@ -19,9 +19,16 @@ export type CountUpOpts = {
   suffix?: string;
 };
 
-export function countUpText(value: number, opts: CountUpOpts): string {
+export function countUpText(
+  value: number,
+  opts: Partial<CountUpOpts> = {},
+): string {
   const { decimals = 0, prefix = "", suffix = "" } = opts;
-  return `${prefix}${ruNumber(decimals).format(value)}${suffix}`;
+  // CLDR ru uses ASCII hyphen-minus; the deck's static copy uses the
+  // typographic U+2212 «−» — normalize so counters land glyph-identical
+  // to their SSR'd finals.
+  const formatted = ruNumber(decimals).format(value).replace(/-/g, "−");
+  return `${prefix}${formatted}${suffix}`;
 }
 
 export function addCountUp(
