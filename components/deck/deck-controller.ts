@@ -475,7 +475,10 @@ export class DeckController {
       rec.hooks.entrance.progress(1); // gesture consumed by finishing the entrance
       return;
     }
-    if (rec.hasBuild && rec.mid !== null && !rec.buildConsumed) {
+    // "Build pending" requires an actual build timeline — a hasBuild slide
+    // whose hooks carry no build (e.g. static-skeleton phase) advances
+    // straight to the next slide instead of stranding the user at the mid.
+    if (rec.hasBuild && rec.mid !== null && !rec.buildConsumed && rec.hooks?.build) {
       if (this.y < rec.mid - FIX_TOLERANCE_PX) {
         this.scrollToY(rec.mid); // build plays on midpoint fixation
       } else {
