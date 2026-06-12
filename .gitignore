@@ -261,3 +261,6 @@ next-env.d.ts
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# Allow .env.example (gitignore has .env*)
+!.env.example
