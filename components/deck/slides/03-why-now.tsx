@@ -10,15 +10,16 @@
  *
  * Entrance (paused master tl, played on fixation, ends ≈3.85s):
  *   0.0   headline SplitText WORDS rise (y 24→0, stagger 0.05)
- *   0.2   perception card fades · 0.3 left baseline DrawSVG
- *   0.65  «ощущение» row label fades
- *   0.7   ghost bar grows from the baseline (scaleX 0.02→1, power3.out)
- *         while «+20%» counts up at its tip (sterile)
- *   1.45  «замер» row label fades
- *   1.5   THE HIT — flame bar grows (power3.inOut) while «−19%» counts
- *         DOWN −0→−19 (addCountUp, ru minus) and its color tweens
- *         paper→ember; bars land at proportional lengths (440 vs 418 —
- *         almost equal, which IS the paradox)
+ *   0.2   perception card fades · 0.3 ZERO line DrawSVG + «0» tick
+ *   0.65  «ощущение» label fades (mirror quadrant, below the line)
+ *   0.7   ghost column RISES from the zero line (scaleY 0.02→1,
+ *         power3.out) while «+20%» counts up above its tip (sterile)
+ *   1.45  «замер» label fades (above the line)
+ *   1.5   THE DROP — flame column FALLS below the line (scaleY,
+ *         power3.inOut) while «−19%» counts DOWN −0→−19 (addCountUp, ru
+ *         minus) and its color tweens paper→ember; columns land at
+ *         proportional heights (66 vs 62.7 — almost equal, opposite
+ *         sides of zero: the paradox is the picture)
  *   1.85  trust card fades · 2.1 dial arc DrawSVG to 43% sweep + needle
  *         −90°→−9° overshoot →−12.6° fallback (the "stuck" read) + 43% count
  *   2.75  mandate card fades · 2.9/3.05 Shopify/Coinbase chips FADE in with
@@ -52,7 +53,7 @@ import { addCountUp, countUpText } from "@/lib/motion/count-up";
 import { breathe } from "@/lib/motion/idle";
 import { Slide } from "@/components/deck/slide";
 import { useDeckSlide } from "@/components/deck/deck-context";
-import { PerceptionRowsChart } from "@/components/deck/parts/perception-rows-chart";
+import { PerceptionGapChart } from "@/components/deck/parts/perception-gap-chart";
 import { TrustDial } from "@/components/deck/parts/trust-dial";
 
 const PAPER = "#f5f5f7";
@@ -72,6 +73,7 @@ export function Slide03WhyNow() {
       const cardsWrap = root.querySelector<HTMLElement>("[data-cards]")!;
       const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-card]"));
       const baseline = root.querySelector<SVGLineElement>("[data-baseline]")!;
+      const zeroTick = root.querySelector<SVGTextElement>("[data-zero]")!;
       const ghost = root.querySelector<SVGRectElement>("[data-bar-ghost]")!;
       const flame = root.querySelector<SVGRectElement>("[data-bar-flame]")!;
       const glow = root.querySelector<SVGRectElement>("[data-bar-flame-glow]")!;
@@ -138,13 +140,14 @@ export function Slide03WhyNow() {
         gsap.set(cardsWrap, { opacity: 1, scale: 1, y: 0 });
         gsap.set(cards, { autoAlpha: 0, y: 16 });
         gsap.set(baseline, { drawSVG: "0%" });
+        gsap.set(zeroTick, { autoAlpha: 0 });
         gsap.set(ghost, {
           autoAlpha: 0,
-          scaleX: 0.02,
-          svgOrigin: "24 69",
+          scaleY: 0.02,
+          svgOrigin: "165 140",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 0, scaleX: 0.02, svgOrigin: "24 151" });
+        gsap.set(flame, { autoAlpha: 0, scaleY: 0.02, svgOrigin: "385 140" });
         gsap.set(glow, { opacity: 0 });
         gsap.set(statGhost, { autoAlpha: 0 });
         statGhost.textContent = countUpText(0, { prefix: "+", suffix: "%" });
@@ -174,13 +177,14 @@ export function Slide03WhyNow() {
             : { opacity: 1, scale: 1, y: 0 },
         );
         gsap.set(baseline, { drawSVG: "100%" });
+        gsap.set(zeroTick, { autoAlpha: 1 });
         gsap.set(ghost, {
           autoAlpha: 1,
-          scaleX: 1,
-          svgOrigin: "24 69",
+          scaleY: 1,
+          svgOrigin: "165 140",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 1, scaleX: 1, svgOrigin: "24 151" });
+        gsap.set(flame, { autoAlpha: 1, scaleY: 1, svgOrigin: "385 140" });
         gsap.set(glow, { opacity: 0 });
         gsap.set(statGhost, { autoAlpha: 1 });
         statGhost.textContent = countUpText(20, { prefix: "+", suffix: "%" });
@@ -218,10 +222,11 @@ export function Slide03WhyNow() {
         .to(hWords, { autoAlpha: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.05 }, 0)
         .to(cards[0], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.2)
         .to(baseline, { drawSVG: "100%", duration: 0.4, ease: "power2.inOut" }, 0.3)
-        // the perception row — what it felt like
+        .to(zeroTick, { autoAlpha: 1, duration: 0.3, ease: "power1.out" }, 0.4)
+        // «ощущение» — confidence RISES above the zero line
         .to(tagGhost, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.65)
         .to(ghost, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, 0.7)
-        .to(ghost, { scaleX: 1, duration: 0.7, ease: "power3.out" }, 0.7)
+        .to(ghost, { scaleY: 1, duration: 0.7, ease: "power3.out" }, 0.7)
         .to(statGhost, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 0.7);
       addCountUp(entrance, 0.7, statGhost, {
         to: 20,
@@ -231,10 +236,10 @@ export function Slide03WhyNow() {
         suffix: "%",
       });
       entrance
-        // the measured row — THE HIT
+        // «замер» — THE DROP: reality falls below the zero line
         .to(tagFlame, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1.45)
         .to(flame, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, 1.5)
-        .to(flame, { scaleX: 1, duration: 0.8, ease: "power3.inOut" }, 1.5)
+        .to(flame, { scaleY: 1, duration: 0.8, ease: "power3.inOut" }, 1.5)
         .to(statMetr, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 1.5)
         .to(statMetr, { color: EMBER, duration: 0.8, ease: "power2.inOut" }, 1.5);
       addCountUp(entrance, 1.5, statMetr, {
@@ -347,13 +352,13 @@ export function Slide03WhyNow() {
         data-cards
         className="mt-3 grid gap-2 lg:mt-6 lg:grid-cols-12 lg:gap-6"
       >
-        {/* Perception-rows card — content vertically centered: the card
+        {/* Perception-gap card — content vertically centered: the card
             stretches to the right column's height at lg+. */}
         <div
           data-card="metr"
           className="flex flex-col justify-center rounded-2xl border border-line bg-fog p-3 lg:col-span-7 lg:p-6"
         >
-          <PerceptionRowsChart />
+          <PerceptionGapChart />
           <p className="mt-2 text-[length:var(--text-meta)] leading-snug text-mute lg:mt-3">
             опытные разработчики с ИИ работали медленнее — и были уверены, что
             быстрее
