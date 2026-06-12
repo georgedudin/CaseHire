@@ -37,14 +37,14 @@ Padding: the deck does NOT use the v1 `.scene-content` 144px block-padding ladde
 
 ### 1.3 Build steps — one shared controller
 
-Exactly **five slides carry an internal build step: 6, 8, 10, 11, 13.** (Slides 3 and 12 auto-chain their second beat on a timer instead — see their Director's cuts. Build-step inflation was the #1 on-stage risk flagged in review: the presenter must never have to remember more than "product slides, money slides, and the finale take two gestures".)
+Exactly **six slides carry an internal build step: 3, 6, 8, 10, 11, 13** *(amended 2026-06-12: slide 3's antithesis was promoted from a 4s auto-chain timer back to a gesture-gated build — user decision; the presenter wants the dim on a keypress/scroll, never on a clock)*. Slide 12 still auto-chains its second beat on a timer — see its Director's cut. (Build-step inflation was the #1 on-stage risk flagged in review; the mnemonic absorbs the sixth: "парадокс, продукт, деньги и финал".)
 
 All five consume ONE shared `usePinnedBuild()` controller — never bespoke pin code per scene:
 
 - Pin span `+=100%` with a single internal snap point at progress 0.5; Lenis snap includes it.
 - **Gesture contract:** gesture 1 → if entrance timeline unfinished, jump it to end, then play the build (one-shot, never scrubbed); gesture 2 → exit the slide. → key maps identically. ← inside a pinned scene exits to the previous slide's frozen state — it never rewinds a build.
 - Double-gesture debounce: input is swallowed until the build timeline completes.
-- Below `lg` (no pin): the build auto-chains N seconds after entrance settles (N per slide spec), and the chained timeline is **killed in `onLeave`** — a fast scroller never gets builds firing off-screen.
+- Below `lg` (no pin): the build auto-chains N seconds after entrance settles (N per slide spec), and the chained timeline is **killed in `onLeave`** — a fast scroller never gets builds firing off-screen. *Amended 2026-06-12:* a **tap on the current build slide is now a first-class <lg gesture** (finishes the entrance, else plays the pending build; taps never navigate). Slides **3 and 13 set `autoChainMs: 0`** — their builds fire ONLY on gesture/tap, never on a timer; 6/8/10/11 keep their timers (a tap simply beats the clock).
 - `prefers-reduced-motion`: no pin, no auto-chain — the slide renders instantly in its final post-build state.
 
 ### 1.4 Frozen state & reverse traversal (binding)
@@ -122,7 +122,7 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 |---|---|---|---|
 | 1→2 | hero → боль | Headline, «результат» at 0.85, spotlight pre-dimmed via onLeave set | Char-dust of «результат» → tile-ash of the market: same ember language, escalated word→world |
 | 2→3 | боль → почему сейчас | Scorched field: 40 lit tiles / 60 husks, counters at −60/7/+30 | Columnar tile rhythm primes bar-chart grammar; same ink, «next exhibit» |
-| 3→4 | почему → интервью | Cards + auto-chained antithesis line, «нет.» in flame, static | «Инструмента нет» → «мы спросили 16 человек»: dots answer the missing instrument (verbal handoff, no cross-fade) |
+| 3→4 | почему → интервью | Dimmed cards + gesture-built antithesis line, «нет.» in flame, static | «Инструмента нет» → «мы спросили 16 человек»: dots answer the missing instrument (verbal handoff, no cross-fade) |
 | 4→5 | интервью → раскрытие | Flame-ringed 8/8 card + ember «Две стороны.» | Hard luminance drop to true black; retinal afterglow of the embers primes the flash |
 | 5→6 | раскрытие → генератор | Wordmark + breathing ember glow | Chromatic only: ember glow → flame caret of the generator's input line |
 | 6→7 | генератор → карточка | Built world, trace ticker frozen mid-tick | Recording → evidence: 7 boots bottom-up; its first beat reuses the trace-chip mono vocabulary |
@@ -134,9 +134,9 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 | 12→13 | конкуренты → финал | Full table, dimmed rivals, lit pentagon + verdict (auto-chained) | Closed pentagon → line forward: 13's entrance draws the timeline; flame travels verdict → «+12 мес» ring |
 | 13 | финал | Near-black, three refrain lines, static ember | Deck ends in stillness; further gestures no-op |
 
-**Gesture map (presenter contract):** slides 1–5, 7, 9, 12 → one gesture each. Slides **6, 8, 10, 11, 13** → two gestures (build, then exit). Mnemonic for the speaker: *«продукт, деньги и финал — по два нажатия»* (6/8 product demo, 10/11 money, 13 finale). → always does the safe thing (finish entrance → play build → advance). Home/End jump to frozen states.
+**Gesture map (presenter contract, amended 2026-06-12):** slides 1, 2, 4, 5, 7, 9, 12 → one gesture each. Slides **3, 6, 8, 10, 11, 13** → two gestures (build, then exit) — **18 gestures** to the built finale. Mnemonic for the speaker: *«парадокс, продукт, деньги и финал — по два нажатия»* (3 paradox, 6/8 product demo, 10/11 money, 13 finale). → always does the safe thing (finish entrance → play build → advance). Home/End jump to frozen states.
 
-**Frozen-state registry:** 1 headline+ghost word · 2 scorched field · 3 antithesis over dimmed cards · 4 verdict wall, ring breathing · 5 wordmark+glow · 6 built world+ticker · 7 ranked feed (re-rank consumed) · 8 post-leak wounded-cool · 9 circulating boundary · 10 dived клин view · 11 tipped scale+stamp · 12 table+quote+pentagon · 13 refrain epitaph.
+**Frozen-state registry:** 1 headline+ghost word · 2 scorched field · 3 built: antithesis over dimmed cards / settled: undimmed evidence (build pending) · 4 verdict wall, ring breathing · 5 wordmark+glow · 6 built world+ticker · 7 ranked feed (re-rank consumed) · 8 post-leak wounded-cool · 9 circulating boundary · 10 dived клин view · 11 tipped scale+stamp · 12 table+quote+pentagon · 13 refrain epitaph.
 
 ---
 
@@ -224,28 +224,30 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 ---
 
-### Slide 03 — Почему сейчас: ИИ выровнял всех · «Перцепционные ножницы»
+### Slide 03 — Почему сейчас: ИИ выровнял всех · «Ощущение vs замер»
 
-**Intent & copy.** The slide stages the METR paradox as a physical event: perception and reality start as one line, then shear apart like scissors. Everything else (trust dial, corporate stamps) is consequence. On-screen strings, verbatim: headline «ИИ выровнял всех. Но не сделал равными.»; fact 1: **−19%** + «опытные разработчики с ИИ работали медленнее — и были уверены, что быстрее» + source «METR, строгий эксперимент, 2025»; fact 2: **43%** + «только столько разработчиков доверяют точности ответов ИИ» + «Stack Overflow 2024»; fact 3: **Shopify · Coinbase** + «ИИ-компетенция — критерий аттестации; инженеров без неё увольняют». Build-step line (verbatim from the speech in the same doc section): «Требование — есть. Инструмента, который его проверяет, — нет.» Bar labels reuse caption fragments only: «были уверены, что быстрее» / «работали медленнее».
+*(Chart redesigned 2026-06-12 — user decision: the diverging "scissors" read as two unexplained bars. Now a survey-style two-row chart; the build step is restored, gesture-gated. Original "Перцепционные ножницы" text kept below where still accurate, amended inline.)*
 
-**Layout — desktop (1366/1920).** `<Scene id="why-now" mode="pin">` (pin needed for the build). Compact block padding (`py-16 lg:py-20`, not the 9rem ladder — see Risks). Headline top-left, `--text-h1` clamp, max 2 lines. Below: 12-col grid, gap 24px. **Cols 1–7, the Scissors card** (fog, rounded-2xl, ~380px tall): an SVG race track — a vertical zero-axis at ~38% width, two horizontal bars 28 units tall, 84 units apart (viewBox 700×240; widened 2026-06-12 from 56 — the old gap couldn't hold the numeral). Top bar (sterile `#94a3b8`, 40% opacity fill + dashed outline = it's imaginary) extends RIGHT, labeled «были уверены, что быстрее». Bottom bar (flame gradient flame→ember) extends LEFT past zero, labeled «работали медленнее». A bracket at the chart's left edge spans the vertical shear gap; the hero numeral **−19%** fills the gap between bracket and axis (Manrope, tabular, `clamp(2rem, 9.5cqw, 4.25rem)` — container-scaled ≈62px at 1366/1920, so it can never cross the axis; amended 2026-06-12 from the unachievable "~96px at 1366": at that size the numeral physically cannot fit the bracket→axis slot it is specced to sit in). Caption + source `--text-meta` in `dim` below. **Cols 8–12, stacked:** the **Trust dial card** (~200px): 180° SVG gauge, radius ~80px, track in `line-strong`, filled arc in `glass #60a5fa`, needle stuck at 43% of sweep; **43%** (~64px) right of the dial, caption + source under. Below it the **Mandate card** (~150px): two stamp chips «Shopify» / «Coinbase» (uppercase, 1px `line-strong` border, slight permanent rotation −2°/+1.5°), caption line with «увольняют» wrapped in a span for the flame highlight.
+**Intent & copy.** The slide stages the METR paradox as two survey rows that refuse to agree: what developers FELT (+20% faster) vs what the experiment MEASURED (−19% slower) — almost equal bar lengths, opposite meanings. Everything else (trust dial, corporate stamps) is consequence. On-screen strings, verbatim: headline «ИИ выровнял всех. Но не сделал равными.»; fact 1: **−19%** + **+20%** (both citable, product.md §2: "19% slower, while developers still believed they'd been 20% faster") + row labels «ощущение» / «замер» + caption fragments «были уверены, что быстрее» / «работали медленнее» + caption «опытные разработчики с ИИ работали медленнее — и были уверены, что быстрее» + source «METR, строгий эксперимент, 2025»; fact 2: **43%** + «только столько разработчиков доверяют точности ответов ИИ» + «Stack Overflow 2024»; fact 3: **Shopify · Coinbase** + «ИИ-компетенция — критерий аттестации; инженеров без неё увольняют». Build-step line (verbatim from the speech in the same doc section): «Требование — есть. Инструмента, который его проверяет, — нет.»
 
-**Layout — mobile (375×~660svh).** Single column, 12px gaps. Headline `--text-h2`. Scissors card compressed (same 700×240 viewBox, proportional): −19% at the 2rem clamp floor (~32px), caption 12px/2 lines, source 10px — card ≈190px. Dial shrinks to radius 44px inline-left of a 44px «43%», one row ≈96px. Mandate card: stamps 11px chips side by side, caption 12px — ≈90px. Total ≈620px: fits 660svh with zero scroll. Build line: no pin on mobile (Scene pin gate is lg+); the antithesis renders as the final block that fades in 4s after settle, replacing nothing — the three cards dim to 5% under it via the same timeline, triggered by time instead of gesture (amended 2026-06-12, see Director's cut).
+**Layout — desktop (1366/1920), redesign 2026-06-12.** Headline top-left, `--text-h1` clamp, max 2 lines. Below: 12-col grid, gap 24px. **Cols 1–7, the Perception-rows card** (fog, rounded-2xl): an SVG (viewBox 700×200) with ONE vertical baseline at the left (x=24), both bars growing RIGHT from it, lengths PROPORTIONAL to their values (k=22): row 1 — sterile `#94a3b8`, 40% fill + dashed outline (= it's imaginary), length 440 (+20); row 2 — flame gradient flame→ember, length 418 (−19). Above each bar a single-line label: dim uppercase category («ощущение» / «замер») + the caption fragment in the bar's tint («были уверены, что быстрее» / «работали медленнее»). At each bar's tip its number: **+20%** sterile secondary (`clamp(0.875rem, 3.2cqw, 1.5rem)`), **−19%** ember HERO (Manrope, tabular, `clamp(2rem, 9.5cqw, 4.25rem)` ≈62px at 1366/1920) — every bar self-explains: length = value, dashed = belief, flame = measurement. Numbers/labels are HTML overlays sized in cqw (wrapper is a `@container`) so they scale with the CARD and can't drift off the SVG. Caption + source `--text-meta` in `dim` below. **Cols 8–12, stacked:** the **Trust dial card** (~200px): 180° SVG gauge, radius ~80px, track in `line-strong`, filled arc in `glass #60a5fa`, needle stuck at 43% of sweep; **43%** (~64px) right of the dial, caption + source under. Below it the **Mandate card** (~150px): two stamp chips «Shopify» / «Coinbase» (uppercase, 1px `line-strong` border, slight permanent rotation −2°/+1.5°), caption line with «увольняют» wrapped in a span for the flame highlight.
 
-**Signature wow-moment.** The shear: both bars are born as ONE neutral bar at zero, then split — the sterile ghost slides right while the flame bar drags left, the bracket stretches between them and −19% counts DOWN (0 → −19) inside the widening gap. Judges watch confidence and reality physically tear apart.
+**Layout — mobile (375×~660svh).** Single column, 12px gaps. Headline `--text-h2`. Perception-rows card compressed (same 700×200 viewBox, proportional — chart ≈90px tall at 315px width): −19% at the 2rem clamp floor (~32px), +20% at its 0.875rem floor, labels 10/11px, caption 12px/2 lines, source 10px — card ≈180px. Dial shrinks to radius 44px inline-left of a 44px «43%», one row ≈96px. Mandate card: stamps 11px chips side by side, caption 12px — ≈90px. Total ≈610px: fits 660svh with zero scroll. The antithesis is the BUILD: on <lg it plays on **tap** (no timer — `autoChainMs: 0`), dimming the three cards to 5% under the centered overlay line.
+
+**Signature wow-moment.** The asymmetry of agreement: the «ощущение» row grows first — a long, confident, dashed +20%. Then the «замер» row grows to ALMOST the same length while its number counts DOWN to −19% in ember — two near-identical bars saying opposite things. Judges read the paradox in one glance: same magnitude, inverted sign.
 
 **Animation timeline.** (fires on snap-complete only)
 1. t=0.00, 0.6s, `expo.out` — headline SplitText by words, y:24→0, opacity 0→1, stagger 0.05. «Но не сделал равными.» lands in `mute`.
-2. t=0.30, 0.4s — zero-axis + track baselines DrawSVG 0→100%.
-3. t=0.70, 0.5s, `power2.out` — the single merged bar fades in at zero width→scaleX:1 (transform-origin: the zero axis).
-4. t=1.20, 0.9s, `power3.inOut` — THE SHEAR: top bar `scaleX` to full right extent (origin left edge at axis); bottom bar `scaleX` to −19 extent (origin right edge at axis); they also separate vertically `y:±56` (widened with the gap, 2026-06-12). Bracket DrawSVG follows (0.5s, t=1.5). −19% counts 0→−19 over the same 0.9s (`useCountUp`, ru-RU minus sign), color tweens `paper→ember`.
+2. t=0.30, 0.4s — left baseline DrawSVG 0→100%. *(redesign 2026-06-12: beats 2–4 replaced — no merged bar, no shear, no bracket)*
+3. t=0.65–1.3 — «ощущение» row: label fades (0.65), ghost bar grows from the baseline (`scaleX` 0.02→1, 0.7s `power3.out`, origin left edge) while «+20%» counts 0→+20 at its tip (sterile).
+4. t=1.45–2.3 — «замер» row, THE HIT: label fades (1.45), flame bar grows (0.8s `power3.inOut`) while «−19%» counts −0→−19 at its tip (`addCountUp`, ru-RU minus) and its color tweens `paper→ember`.
 5. t=2.10, 0.8s, `back.out(1.4)` — dial arc DrawSVG to 43% sweep; needle rotates −90°→−12.6° with one overshoot to −9° and fallback (the "stuck" read); 43% counts up in sync.
 6. t=2.90, 0.25s + 0.25s — Shopify then Coinbase stamps: scale 1.6→1, rotate −8°→−2° / 6°→1.5°, opacity 0→1, `back.out(2)`; each lands with a 1-frame y-jolt (y:2→0) on the card.
 7. t=3.40, 0.45s — «увольняют» highlight: a flame underline scaleX 0→1 (origin left) + text color `mute→paper`. Stable, fully readable at **t≈3.9s**.
 
 **Idle state.** Every ~3.5s the needle tries to climb: rotate +2.5° over 0.4s `power1.out`, falls back over 0.7s `bounce.out` — trust visibly *stuck* at 43. Bottom flame bar carries a slow ember glow pulse (opacity of an overlay span, 4s sine). Sterile bar's dashed outline drifts (`stroke-dashoffset` loop, barely perceptible). All transform/opacity/stroke.
 
-**Build steps.** ONE internal snap (lg+ pin). On the speaker's «Требование — есть…» beat, next gesture: all three cards tween opacity→0.25, scale→0.965, y→−8 (0.5s `quart.inOut`); the line «Требование — есть. Инструмента, который его проверяет, — нет.» enters at `--text-display`, centered, SplitText by words — «есть» lands first, 0.6s hold (the spoken pause), then «нет.» slams in flame with scale 1.3→1. Next gesture leaves the slide.
+**Build steps (restored 2026-06-12, gesture-gated — `autoChainMs: 0`).** ONE internal snap (lg+ 200svh sticky wrapper; tap on <lg). On the speaker's «Требование — есть…» beat, next gesture: all three cards tween opacity→**0.05**, scale→0.965, y→−8 (0.5s `power3.inOut` — slide 13's epitaph dim grammar); the line «Требование — есть. Инструмента, который его проверяет, — нет.» enters at `--text-display`, centered, SplitText by words — «есть» lands first, 0.6s hold (the spoken pause), then «нет.» lands soft in flame (scale 1.15→1 `power3.out` — the notary slam stays reserved, §2.3). Next gesture leaves the slide. Frozen: built = dimmed cards + intact line; settled = undimmed evidence, build still pending on re-entry.
 
 **Product-UX elements.** None of the 4.10 mockups — this is the evidence slide; the product first appears at slide 5/6. The dial and scissors are bespoke SVG, but they pre-teach the matrix-bar visual grammar (score bars, threshold colors) that `process-matrix` uses later.
 
@@ -253,7 +255,7 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 **Transition out.** The build line's «нет.» in flame is the last thing on screen; it fades as slide 4's 16-dot respondent grid populates — "no instrument exists, so we went and asked 16 people." Hand-off is a simple opacity exit; slide 4 owns its own entrance.
 
-**Reduced motion.** Instant final composition: bars fully sheared, bracket drawn, −19% / 43% printed, stamps placed, «увольняют» underlined, AND the antithesis line already visible below the (undimmed) grid in a smaller `--text-lede` size; no pin, no loops, no needle judder.
+**Reduced motion.** Instant POST-BUILD composition (the hook applies `setFrozen("built")`): both rows at full length, +20% / −19% / 43% printed, stamps placed, «увольняют» underlined, cards dimmed to 5% with the intact antithesis line centered over them; no loops, no needle judder. *(amended 2026-06-12 with the build restore — matches slide 13's reduced behavior.)*
 
 **Implementation notes.** `scenes/03-why-now.tsx` + `components/why-now/scissors-chart.tsx`, `trust-dial.tsx`, `mandate-stamps.tsx`. Plugins: ScrollTrigger (pin + single snap point at 0.5 progress), SplitText (headline, build line), DrawSVG (axis, bracket, dial arc). Counters via existing `useCountUp` with `Intl.NumberFormat('ru-RU')` for the proper minus. Needle: `<line>` with `transformOrigin` set via GSAP, never CSS rotate on the group. Bars are `<rect>`s scaled — set `will-change: transform` only during the timeline, clear after. Whole SVG ≤ ~700×420 viewBox, two of them — trivially 60fps.
 
@@ -261,10 +263,10 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 
 **Director's cut (binding).**
-- **Build step CUT** (build budget = 6/8/10/11/13 only). The antithesis line auto-chains **4s after entrance settles on ALL form factors** — promote the mobile behavior to desktop. Cards dim to **5% on ALL form factors** — slide 13's epitaph dim grammar (scale .965, y −8 kept). *Amended 2026-06-12: the original 60%-desktop/undimmed-mobile read as a see-through collision between the overlay line and the cards' bright stats; the centered overlay makes an undimmed mobile state strictly worse, so the mobile carve-out is dead.* The line renders as an absolutely-positioned centered overlay (zero flow height — fixes the 375 budget ambiguity). Scene is unpinned; one gesture.
+- ~~**Build step CUT** (build budget = 6/8/10/11/13 only). The antithesis line auto-chains 4s after entrance settles on ALL form factors.~~ **SUPERSEDED 2026-06-12 (user decision): the build is RESTORED, gesture-gated** — `hasBuild: true, autoChainMs: 0`; key/wheel at lg+, tap on <lg; the antithesis NEVER fires on a timer. Cards dim to **5% on ALL form factors** — slide 13's epitaph dim grammar (scale .965, y −8 kept; the earlier 60%-desktop/undimmed-mobile read as a see-through collision). The line renders as an absolutely-positioned centered overlay (zero flow height). Build budget is now 3/6/8/10/11/13 — see §1.3.
 - **No stamp grammar** (reserved, §2.3): Shopify/Coinbase chips fade/slide in with their permanent −2°/+1.5° rotation PRE-SET — no slam, no jolt. The slide's motion identity is the stuck needle.
-- **Self-annotating bars:** caption fragments move to the bar tips as micro-tags — «были уверены, что быстрее» at the ghost bar's tip, «работали медленнее» at the flame bar's tip.
-- Auto-chain timeline killed in `onLeave` (shared controller).
+- **Self-annotating bars** (redesigned 2026-06-12): each row carries its label ABOVE the bar (category + caption fragment) and its number AT the tip — «+20%» on the ghost row, «−19%» hero on the flame row.
+- Idles (needle climb, dash drift, glow pulse) run during the settled wait and stop after the build (built = stillness).
 
 ---
 
@@ -708,8 +710,8 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 ## 5 · Mobile deck rules
 
-- Snap magnetism stays on; touch swipe scrolls naturally and magnetizes. No keyboard.
-- Build-step slides auto-chain their build (per-slide delay, §4), with mandatory `onLeave` kill via the shared controller. Slide 10 mobile plays a reduced ×3 zoom (not static) — same auto-chain pattern.
+- Snap magnetism stays on; touch swipe scrolls naturally and magnetizes. No keyboard. *Amended 2026-06-12:* **tap on the current build slide = forward gesture** (finish entrance → play pending build; never navigates).
+- Build-step slides auto-chain their build (per-slide delay, §4), with mandatory `onLeave` kill via the shared controller — **except slides 3 and 13 (`autoChainMs: 0`): their builds wait for a tap, never a timer** (amended 2026-06-12). Slide 10 mobile plays a reduced ×3 zoom (not static) — same auto-chain pattern.
 - Every slide's mobile budget is computed in its spec; the global floor is **375×620** (small-phone svh), not just 660.
 - Bars-on-mobile: `ProcessMatrix` gains an opt-in `barsOnMobile` (default false to protect other call sites); slides 7, 8, 13 set it — the leak crash and the dual-fill are the money shots and must be visible on phones.
 - Particle counts halve on mobile (slide 2: 1 mote/tile; slide 5: dot ring radius ~120px; slide 8: same flare, cheaper glow).
@@ -763,3 +765,14 @@ All gates run against `next build` + `next start`, headless Chromium (Playwright
 10. **Web vitals (production):** LCP 652ms (≤2000), CLS 0.0000, no page errors. INP: gesture handlers are synchronous scroll dispatches; no long tasks observed during the walk.
 
 Deviations from the original spec are recorded inline (§1.4 dormancy amendment; per-slide Director's-cut compliance noted in P3/P4 commit messages).
+
+### §7 Addendum — 2026-06-12 (ui-fixes round: slide 03 build + tap gesture + chart redesign)
+
+Gates run against `npm run dev`, headless Chromium (`/tmp/deck-verify/ui-fix-03b.mjs` + targeted re-checks):
+1. **Slide 03 build conversion (1366/1920):** settled = undimmed cards + hidden antithesis; NO auto-dim 6.5s after settle (timer dead); gesture → build (cards 0.05 + line); second gesture → slide 4; back-walk restores frozen built instantly. Registry shows 19 points (new mid for slide 3).
+2. **Gesture walk:** full →-only drive now = **18 gestures** to built finale (was 17; slide 3 takes two).
+3. **Tap-as-gesture (375×620):** slide 3 — no auto-build 6s after settle; tap plays the build; tap never navigates; extra taps no-op. Slide 13 — no auto-epitaph 5s after settle; tap plays the epitaph (build✓ at ~8.2s incl. glow tail). Tap mid-entrance finishes the entrance (keyboard semantics).
+4. **Timer regression:** slide 8 still auto-chains on mobile (~1.5s after settle); `playBuild` kills a pending timer so tap-before-timer can't double-play.
+5. **Perception-rows chart (375/1366/1920 + reduced):** bars share the left baseline; widths ∝ +20/−19 (ratio 1.053); numbers at tips inside the card; labels clear of bars and numbers — 9 geometry assertions × 4 contexts green.
+6. **Reduced motion:** slide 3 renders the built frame (dim 0.05 + intact line + final chart) via the hook's `setFrozen("built")`.
+7. Zero page errors in all contexts; `npm run build` + `lint:deck` clean.

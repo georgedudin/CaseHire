@@ -37,7 +37,9 @@ export type SlideRegistration = {
   id: string;
   el: HTMLElement; // the .slide-wrap section
   hasBuild?: boolean;
-  /** <lg / no-pin contexts: build auto-chains this many ms after fixation. */
+  /** <lg / no-pin contexts: build auto-chains this many ms after the
+   *  entrance settles. Explicit 0 = NEVER auto-chain — the build waits for
+   *  a gesture (tap on mobile, key/wheel at lg+). */
   autoChainMs?: number;
 };
 
@@ -108,6 +110,7 @@ export class DeckController {
 
   private tick = (time: number, deltaMs: number) => this.onFrame(deltaMs);
   private onKeyDown = (e: KeyboardEvent) => this.handleKey(e);
+  private onTap = (e: MouseEvent) => this.handleTap(e);
   private onVisibility = () => this.handleVisibility();
   private onLenisScroll = () => this.handleScrollEvent();
 
@@ -178,6 +181,7 @@ export class DeckController {
       return;
     }
     document.addEventListener("visibilitychange", this.onVisibility);
+    document.addEventListener("click", this.onTap);
     this.measure();
     gsap.ticker.add(this.tick);
     // Slide 1 load case (hooks may already be set, or arrive via setHooks).
@@ -191,6 +195,7 @@ export class DeckController {
   destroy() {
     window.removeEventListener("keydown", this.onKeyDown);
     document.removeEventListener("visibilitychange", this.onVisibility);
+    document.removeEventListener("click", this.onTap);
     gsap.ticker.remove(this.tick);
     this.lenis?.off("scroll", this.onLenisScroll);
     if (this.snapTimeout) clearTimeout(this.snapTimeout);
@@ -415,6 +420,7 @@ export class DeckController {
   private armAutoChain(rec: SlideRecord) {
     if (
       !rec.hasBuild ||
+      rec.autoChainMs === 0 || // explicit 0: gesture/tap only, never a timer
       rec.mid !== null || // lg+ pinned slides build on gesture, never on timer
       rec.buildConsumed ||
       !rec.hooks?.build ||
@@ -430,6 +436,10 @@ export class DeckController {
 
   private playBuild(rec: SlideRecord) {
     if (!rec.hooks?.build || rec.buildConsumed || rec.status === "building") return;
+    // A tap/gesture may beat a pending <lg auto-chain timer — cancel it so
+    // the delayedCall can't fire into a consumed build.
+    rec.autoChainCall?.kill();
+    rec.autoChainCall = null;
     if (rec.status === "entering") {
       this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
     }
@@ -501,6 +511,32 @@ export class DeckController {
     if (isNext) this.gestureNext();
     else if (isPrev) this.gesturePrev();
     else this.jumpTo(isHome ? 0 : this.slides.length - 1);
+  }
+
+  /** Mobile (<lg: no mid point, no keyboard) — a tap on the CURRENT fixed
+   *  build slide is the forward gesture: finish the entrance, else play the
+   *  pending build. Taps NEVER navigate; non-build slides, lg+ (mid exists),
+   *  consumed builds and real controls all fall through untouched. */
+  private handleTap(e: MouseEvent) {
+    if (this.reduced || this.travelLock) return;
+    const target = e.target instanceof Element ? e.target : null;
+    if (!target) return;
+    // Real controls keep their semantics (rail dots, links, skip-link).
+    if (
+      target.closest(
+        'a, button, input, textarea, select, [role="button"], [contenteditable="true"]',
+      )
+    ) {
+      return;
+    }
+    const rec = this.slides[this.currentIndex];
+    if (!rec?.hooks || !rec.hasBuild || rec.mid !== null || rec.buildConsumed) return;
+    if (!rec.el.contains(target)) return;
+    if (rec.status === "entering") {
+      this.finishTimeline(rec.hooks.entrance, () => this.onEntranceComplete(rec));
+      return;
+    }
+    if (rec.status === "settled" && rec.hooks.build) this.playBuild(rec);
   }
 
   /** → : finish entrance → play build → advance. Always the safe thing. */

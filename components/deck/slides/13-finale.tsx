@@ -128,8 +128,9 @@ export function Slide13Finale() {
   const { ref } = useDeckSlide({
     id: "13-finale",
     hasBuild: true,
-    // <lg: Act II auto-chains after the dual-matrix fill settles (~3.8s).
-    autoChainMs: 3000, // after entrance settles — breathing room before the epitaph
+    // No timer anywhere (amended 2026-06-12): the epitaph waits for a
+    // gesture — key/wheel at lg+, tap on <lg (controller's handleTap).
+    autoChainMs: 0,
     create: ({ root, reduced }) => {
       const lg = window.matchMedia("(min-width: 1024px)").matches;
       const all = <T extends Element = HTMLElement>(sel: string) =>
