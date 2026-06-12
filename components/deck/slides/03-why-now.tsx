@@ -16,7 +16,7 @@
  *   0.7   merged bar born at zero — both rects overlapped at axis mid-y,
  *         grown to a short neutral length (scaleX from the axis)
  *   1.2   THE SHEAR — ghost scaleX→1 right, flame scaleX→1 left, vertical
- *         separation y ±42→0, 0.9s power3.inOut; bracket DrawSVG follows
+ *         separation y ±56→0, 0.9s power3.inOut; bracket DrawSVG follows
  *         (1.5); «−19%» counts DOWN −0→−19 (addCountUp, ru minus) while its
  *         color tweens paper→ember; bar-tip micro-tags fade (2.0)
  *   1.85  trust card fades · 2.1 dial arc DrawSVG to 43% sweep + needle
@@ -25,12 +25,13 @@
  *         permanent rotations PRE-SET (NO slam/jolt — stamp grammar is
  *         reserved, §2.3) · 3.35 «увольняют» flame underline scaleX + color
  *   ≈3.8  STABLE READ — the slide is fully legible here.
- *   7.8   ANTITHESIS (settle + 4s, all form factors): desktop only — cards
- *         dim to 60% / scale .965 / y −8 (0.5s quart.inOut ≡ power3.inOut);
- *         both — «Требование — есть.» word-rises first, 0.6s held pause,
- *         then the rest, «нет.» landing soft in flame (scale 1.15→1
- *         power3.out — NOT the reserved notary slam). Mobile cards do NOT
- *         dim (binding). Timeline fully settles at ≈9.9s.
+ *   7.8   ANTITHESIS (settle + 4s, all form factors): cards dim to 5% /
+ *         scale .965 / y −8 (0.5s quart.inOut ≡ power3.inOut) — slide 13's
+ *         epitaph dim grammar, on ALL form factors (amended 2026-06-12: the
+ *         old 60% desktop / undimmed mobile read as see-through collision);
+ *         «Требование — есть.» word-rises first, 0.6s held pause, then the
+ *         rest, «нет.» landing soft in flame (scale 1.15→1 power3.out — NOT
+ *         the reserved notary slam). Timeline fully settles at ≈9.9s.
  *
  * Idles (killed on leave): needle tries to climb +2.5° and falls back
  * (bounce ≤3°) every ~3.5s; flame-bar ember glow pulse (overlay opacity
@@ -38,9 +39,9 @@
  * period). Idles start after the full chain — by then the slide is frozen
  * scenery under the antithesis.
  *
- * Frozen = antithesis over (desktop-only) dimmed cards — the static render.
- * Reduced motion: hooks are no-ops; the SSR markup (incl. lg:opacity-60 on
- * the card grid) IS the final frame.
+ * Frozen = antithesis over dimmed cards — the static render.
+ * Reduced motion: hooks are no-ops; the SSR markup (incl. opacity-5 on the
+ * card grid) IS the final frame.
  *
  * Vertical budget:
  *   375×620 : py-6 (48) + headline ~56 + 12 + scissors card ~190 + 8 + dial
@@ -73,15 +74,13 @@ export function Slide03WhyNow() {
     create: ({ root, reduced }) => {
       if (reduced) {
         // Static deck: SSR markup IS the final frame (antithesis visible,
-        // desktop cards dimmed via lg:opacity-60). Hooks are no-ops.
+        // cards dimmed via opacity-5). Hooks are no-ops.
         return {
           entrance: gsap.timeline({ paused: true }),
           setFrozen: () => {},
           setDormant: () => {},
         };
       }
-
-      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 
       const headline = root.querySelector<HTMLElement>("[data-headline]")!;
       const cardsWrap = root.querySelector<HTMLElement>("[data-cards]")!;
@@ -135,19 +134,19 @@ export function Slide03WhyNow() {
 
       const setDormant = () => {
         gsap.set(hWords, { autoAlpha: 0, y: 24 });
-        // Motion owns the wrapper's opacity (overrides lg:opacity-60): cards
-        // play their entrance undimmed; the antithesis dims them later.
+        // Motion owns the wrapper's opacity (overrides the static opacity-5):
+        // cards play their entrance undimmed; the antithesis dims them later.
         gsap.set(cardsWrap, { opacity: 1, scale: 1, y: 0 });
         gsap.set(cards, { autoAlpha: 0, y: 16 });
         gsap.set(axis, { drawSVG: "0%" });
         gsap.set(ghost, {
           autoAlpha: 0,
           scaleX: 0.02,
-          y: 42,
-          svgOrigin: "266 64",
+          y: 56,
+          svgOrigin: "266 52",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 0, scaleX: 0.02, y: -42, svgOrigin: "266 148" });
+        gsap.set(flame, { autoAlpha: 0, scaleX: 0.02, y: -56, svgOrigin: "266 164" });
         gsap.set(glow, { opacity: 0 });
         gsap.set(bracket, { drawSVG: "0%" });
         gsap.set(statMetr, { autoAlpha: 0, color: PAPER });
@@ -169,21 +168,16 @@ export function Slide03WhyNow() {
         gsap.killTweensOf([needle, ghost, glow]);
         gsap.set(headline, { autoAlpha: 1 });
         gsap.set(cards, { autoAlpha: 1, y: 0 });
-        gsap.set(
-          cardsWrap,
-          isDesktop
-            ? { opacity: 0.6, scale: 0.965, y: -8 }
-            : { opacity: 1, scale: 1, y: 0 },
-        );
+        gsap.set(cardsWrap, { opacity: 0.05, scale: 0.965, y: -8 });
         gsap.set(axis, { drawSVG: "100%" });
         gsap.set(ghost, {
           autoAlpha: 1,
           scaleX: 1,
           y: 0,
-          svgOrigin: "266 64",
+          svgOrigin: "266 52",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 1, scaleX: 1, y: 0, svgOrigin: "266 148" });
+        gsap.set(flame, { autoAlpha: 1, scaleX: 1, y: 0, svgOrigin: "266 164" });
         gsap.set(glow, { opacity: 0 });
         gsap.set(bracket, { drawSVG: "100%" });
         gsap.set(statMetr, { autoAlpha: 1, clearProps: "color" });
@@ -249,13 +243,12 @@ export function Slide03WhyNow() {
         .call(revertHead, [], SETTLE_T + 0.05);
 
       // ANTITHESIS — 4s after settle, all form factors (Director's cut).
-      if (isDesktop) {
-        entrance.to(
-          cardsWrap,
-          { opacity: 0.6, scale: 0.965, y: -8, duration: 0.5, ease: "power3.inOut" },
-          ANTI_T,
-        );
-      }
+      // Cards drop to 5% (slide 13's epitaph dim) so the line owns the frame.
+      entrance.to(
+        cardsWrap,
+        { opacity: 0.05, scale: 0.965, y: -8, duration: 0.5, ease: "power3.inOut" },
+        ANTI_T,
+      );
       entrance
         // «Требование — есть.» — last word lands ≈ ANTI_T+0.61
         .to(
@@ -314,10 +307,11 @@ export function Slide03WhyNow() {
         ИИ выровнял всех. <span className="text-mute">Но не сделал равными.</span>
       </h3>
 
-      {/* Cards — dimmed to 60% under the antithesis overlay on desktop only. */}
+      {/* Cards — dimmed to 5% under the antithesis overlay (the class is the
+          reduced-motion/SSR final frame; gsap owns it in the motion path). */}
       <div
         data-cards
-        className="mt-3 grid gap-2 lg:mt-6 lg:grid-cols-12 lg:gap-6 lg:opacity-60"
+        className="mt-3 grid gap-2 opacity-5 lg:mt-6 lg:grid-cols-12 lg:gap-6"
       >
         {/* Scissors card */}
         <div
