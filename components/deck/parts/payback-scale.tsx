@@ -83,10 +83,10 @@ export function PaybackScale({ className }: { className?: string }) {
             }}
           />
           <span className="font-display relative whitespace-nowrap text-[17px] font-semibold tabular-nums text-flame lg:text-[22px]">
-            588 тыс ₽
+            ~1 000
           </span>
           <p className="mt-0.5 text-[10px] leading-snug text-mute lg:text-[12px]">
-            год „Команды“
+            кандидатов
           </p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export function PaybackScale({ className }: { className?: string }) {
         data-verdict
         className="mx-auto mt-3 max-w-[42ch] text-[13px] leading-snug text-paper lg:mt-4 lg:text-[16px]"
       >
-        один предотвращённый найм = 2,5 года „Команды“
+        один предотвращённый найм = оценка ~1 000 кандидатов
       </p>
       <p data-shrm className="mt-1 text-[11px] text-dim lg:text-meta">
         SHRM: замена = 100% годовой зарплаты

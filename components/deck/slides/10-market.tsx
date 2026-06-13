@@ -18,8 +18,8 @@
  *     overwrites stroke-dasharray, so drawing the dashed ring directly
  *     would destroy the dash pattern); SOM relaxes to flame/20 fill + ring;
  *     goal label FADES up (no stamp — grammar reserved, §2.3); left column
- *     crossfades stage-A stats ↔ клин figures with numeric rolls; kicker
- *     closes. All HTML labels live OUTSIDE the scaled group.
+ *     crossfades stage-A stats ↔ клин figures with numeric rolls. All HTML
+ *     labels live OUTSIDE the scaled group.
  *
  * Zoom clamp (Director's cut, binding):
  *   maxScale = (0.73 × viewportH) / клинRingDiameterPx, additionally capped
@@ -37,7 +37,7 @@
  *   40% + SOM ember ignites scale 0→1 back.out(2) 2.4 → settle ≈2.95s.
  * Build (≤3.2s): camera dive 0→1.2 · TAM/SAM → 0.15 · stage-A column out
  *   0.05 · клин redraw 0.85→1.6 · клин figures crossfade + rolls 1.0 ·
- *   SOM fill+ring & goal label fade-up 2.0 · kicker 2.6 → done ≈3.05s.
+ *   SOM fill+ring & goal label fade-up 2.0 → done ≈2.55s.
  * Idles: SETTLED — ember breathe scale 1→1.18 + halo 0.25↔0.5 (2.4s) +
  *   клин ring 360°/60s linear; BUILT — same ember breathe at dived size.
  *
@@ -107,7 +107,6 @@ export function Slide10Market() {
       const tamNum = one("[data-count-tam]");
       const samNum = one("[data-count-sam]");
       const rolls = all("[data-roll]");
-      const kicker = one("[data-kicker]")!;
 
       /* ---- zoom clamp (measured against the live field) ----------------- */
       const rect = svgEl.getBoundingClientRect();
@@ -153,7 +152,6 @@ export function Slide10Market() {
         gsap.set(layerB, { autoAlpha: 0, y: 8 });
         for (const el of rolls) el.textContent = "0";
         gsap.set(goal, { autoAlpha: 0, y: 12 });
-        gsap.set(kicker, { autoAlpha: 0, y: 10 });
       };
 
       const setFrozen = (s: SlideStage) => {
@@ -187,7 +185,6 @@ export function Slide10Market() {
           gsap.set(layerA, { autoAlpha: 0, y: -8 });
           gsap.set(layerB, { autoAlpha: 1, y: 0 });
           gsap.set(goal, { autoAlpha: 1, y: 0 });
-          gsap.set(kicker, { autoAlpha: 1, y: 0 });
         } else {
           gsap.set(camera, { scale: 1, x: 0, y: 0, svgOrigin: EMBER_ORIGIN });
           gsap.set([tam, sam], { opacity: 1 });
@@ -198,7 +195,6 @@ export function Slide10Market() {
           gsap.set(rowsA, { autoAlpha: 1 });
           gsap.set(layerB, { autoAlpha: 0, y: 8 });
           gsap.set(goal, { autoAlpha: 0, y: 12 });
-          gsap.set(kicker, { autoAlpha: 0, y: 10 });
         }
       };
 
@@ -269,8 +265,6 @@ export function Slide10Market() {
         .to(som, { fillOpacity: 0.2, strokeOpacity: 1, duration: 0.4 }, 2.0)
         .to(halo, { opacity: 0.35, duration: 0.4 }, 2.0)
         .to(goal, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 2.05)
-        // (d) kicker.
-        .to(kicker, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.6)
         .call(() => {
           stage = "built";
         });
@@ -328,7 +322,7 @@ export function Slide10Market() {
           компаний уже используют ИИ в HR, 27% тестируют для 2026 (Известия).
           Клин: 400–800 компаний, нанимающих 10–50 джунов в год; средний чек
           400–900 тыс ₽/год; потолок клина 160–720 млн ₽. Цель на 24 мес:
-          20–35 млн ₽, 50–80 платящих. Не фантазия — арифметика.
+          20–35 млн ₽, 50–80 платящих.
         </>
       }
       className="py-6 lg:py-8"
@@ -558,14 +552,6 @@ export function Slide10Market() {
               (Известия)
             </span>
           </div>
-
-          {/* Kicker — fades up at the end of the build. */}
-          <p
-            data-kicker
-            className="font-display invisible mt-3 text-[15px] font-semibold text-paper opacity-0 lg:mt-5 lg:text-[length:var(--text-lede)]"
-          >
-            Не фантазия — арифметика.
-          </p>
         </div>
       </div>
     </Slide>

@@ -23,7 +23,7 @@ export const DEFAULT_DUAL_AXES: DualProcessAxis[] = [
   { label: "проверка", human: 66, agent: 91 },
   { label: "восстановление", human: 69, agent: 64 },
   { label: "артикуляция", human: 84, agent: 62 },
-  { label: "цифровая гигиена", human: 82, agent: 90 },
+  { label: "безопасность данных", human: 82, agent: 90 },
 ];
 
 const nf = new Intl.NumberFormat("ru-RU");

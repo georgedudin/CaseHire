@@ -214,27 +214,39 @@ When the dominant incumbent reframes its own product around evaluating AI collab
 ## 11. Unit economics
 
 ### Per-session cost
-A live session = container (codebase + DB + mocks) + LLM tokens for the AI Buddy + tokens for the auto-scoring evaluator pass.
+A live session = container (codebase + DB + mocks) + LLM tokens for the AI Buddy AND the auto-scoring evaluator — both on a **large context** (the synthetic codebase plus the full session history), which is the dominant cost driver — + manual review/calibration + buffer. Budgeted conservatively.
 
-- Container compute (30 min, snapshot-restored DB): ~$0.15
-- AI Buddy LLM (~30 min, mid-tier model): $0.50-2.00
-- External LLM channel (used or not, ~30 min, low-tier model): $0.20-0.50
-- Scoring / replay generation: $0.10-0.30
-- **All-in per completed session: ~$1-3.**
+- AI Buddy LLM — large context (synthetic codebase + session history): $1.40
+- Final scoring pass — strong model, large context: $1.20
+- Safety / leakage layer (Haiku): $0.10
+- Container / IDE: $0.20
+- Logs / replay / storage: $0.20
+- Backend / DB / network: $0.25
+- Email / auth: $0.05
+- Manual review (calibration / disputed sessions): $0.40
+- Buffer (+30%, token spikes / retries): $0.70
+- **All-in per completed session: ~$4.5.** Conservative reserve; the target with token-price drops and context caching is ~$2–3.
 
-### Pricing tiers (refresh of prior deck, scaled to per-session reality)
+### Pricing — per-candidate consumption
 
-| Tier | Target | Price | Cap | Implied unit margin |
-|---|---|---|---|---|
-| **Pilot** | First touch, 1 position | 15,000₽ | 100 candidates | ~$1.50/session @ 100 sessions ≈ 70% gross |
-| **Team** | 5 positions/mo | 49,000₽/mo | 1,000 candidates/mo | ~$0.50/session paid; need to optimize compute → ~50-60% gross at high utilization |
-| **Growth** | 20 positions/mo + analytics | 149,000₽/mo | 4,000 candidates/mo | ~$0.40/session paid; same compute optimization required |
-| **Enterprise** | Custom, on-prem available | from 400,000₽/yr | Custom | Standard enterprise gross 75-85% |
+We meter per *evaluated candidate*, not per seat — variable compute makes per-seat SaaS break. Three offerings:
 
-**Critical:** Per-completed-session metering with rate limits is non-negotiable. Per-seat SaaS pricing breaks against the variable compute cost. Tier caps protect downside.
+| Offering | Target | Price |
+|---|---|---|
+| **Pilot** | First touch | free — first 20 candidates |
+| **Candidate** | Core tier, pay-as-you-go | 1,500₽ per evaluated candidate · billed on completion |
+| **Enterprise** | Custom, on-prem available | on request + local deployment |
+
+**Value anchor:** 2-3× cheaper than an hour of a live technical interviewer ($35-60/hr).
+
+**Gross margin: ~72%** (a single honest number, not a per-tier spread). At the 1,500₽ (~$20) candidate price against a conservative ~$4.5 COGS, the per-candidate margin holds across volume and widens toward ~80% as compute costs fall.
+
+*Internal break-even (for Q&A):* ≈ 3,050 completed sessions/month at the $20 (~1,500₽) price covers fixed costs of ~3.2M₽/month.
+
+**Critical:** Per-evaluated-candidate metering is non-negotiable. Per-seat SaaS pricing breaks against the variable compute cost.
 
 ### Comparison value
-Cost of one bad junior hire at SHRM's 100% replacement floor on a 1.5M₽ junior salary = **1.5M₽**. CaseHire Team tier for a year = **588,000₽**. **One avoided bad hire pays for the platform for >2 years.**
+Cost of one bad junior hire at SHRM's 100% replacement floor on a 1.5M₽ junior salary = **1.5M₽**. At 1,500₽ per evaluated candidate, that one avoided bad hire pays for **~1,000 candidate evaluations**.
 
 ---
 
@@ -255,11 +267,11 @@ Cost of one bad junior hire at SHRM's 100% replacement floor on a 1.5M₽ junior
 
 The same infrastructure that grades human juniors grades AI agents. **The substrate is identical.**
 
-| Beat | Horizon | What it says |
+| Beat | Scope | What it says |
 |---|---|---|
 | **Now (v1)** | Pilot, 10 companies, one template (B2B SaaS backend or data analyst), one industry overlay | We're focused. We're shipping. |
-| **+6 months** | More roles, more industries, Tier-2 generative shape match for buyers wanting deeper company-specificity | Wedge widens within hiring. |
-| **+12 months** | Agent evaluation mode — same env, same rubric, agent in the chair | We've stopped being an HR tool. |
+| **Next** | More roles, more industries, Tier-2 generative shape match for buyers wanting deeper company-specificity | Wedge widens within hiring. |
+| **Agents** | Agent evaluation mode — same env, same rubric, agent in the chair | We've stopped being an HR tool. |
 | **Long-term** | The substrate for evaluating intelligence at work, whoever's doing it | We're a category. |
 
 The agent-eval expansion isn't a stretch — it's a structural consequence of how we built v1. **Goldman Sachs is deploying "hundreds, going into thousands of Devins"** alongside its 12,000 human developers, per CTO Marco Argenti ([CNBC, Jul 2025](https://www.cnbc.com/2025/07/11/goldman-sachs-autonomous-coder-pilot-marks-major-ai-milestone.html)). **Cursor reports 64% Fortune 500 adoption, 100M+ lines of enterprise code per day** ([cursor.com/enterprise](https://cursor.com/enterprise)). Procurement teams have no apples-to-apples way to evaluate which agent handles their actual work — that gap exists *right now* and grows faster than HR Tech.
