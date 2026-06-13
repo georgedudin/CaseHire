@@ -591,25 +591,39 @@ export function Slide13Finale() {
                         )}
                       />
                       {m.flame ? (
-                        // SVG ring: DrawSVG stroke-in + breathe idle (the
-                        // sanctioned slide-4 ring callback).
-                        <svg
+                        // Ring: DrawSVG stroke-in (circle) + scale-pulse /
+                        // breathe idle (the sanctioned slide-4 ring callback).
+                        // The scale/opacity tweens target this SPAN, never the
+                        // <svg>: a CSS transform on an outer <svg> carries
+                        // transform-box:view-box, which real Safari renders
+                        // with a positional offset even at identity — that
+                        // floated the flame ring off the spine (Chromium and
+                        // headless WebKit don't reproduce it). A span scales
+                        // around its border-box centre identically in every
+                        // engine, and sizing the box via a non-replaced span
+                        // (not a bare inset-sized <svg>) also kills Safari's
+                        // replaced-element intrinsic-size ambiguity.
+                        <span
                           data-node-ring-svg
                           aria-hidden="true"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          className="absolute -inset-1 overflow-visible"
+                          className="absolute -inset-1 block overflow-visible [transform-box:border-box]"
                         >
-                          <circle
-                            data-node-ring
-                            cx="10"
-                            cy="10"
-                            r="9"
-                            stroke="var(--color-flame)"
-                            strokeWidth="1.5"
-                            transform="rotate(-90 10 10)"
-                          />
-                        </svg>
+                          <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className="h-full w-full overflow-visible"
+                          >
+                            <circle
+                              data-node-ring
+                              cx="10"
+                              cy="10"
+                              r="9"
+                              stroke="var(--color-flame)"
+                              strokeWidth="1.5"
+                              transform="rotate(-90 10 10)"
+                            />
+                          </svg>
+                        </span>
                       ) : null}
                     </span>
                     <p
