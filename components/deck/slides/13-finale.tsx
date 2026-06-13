@@ -582,7 +582,7 @@ export function Slide13Finale() {
                   <li key={m.label} data-node={m.label}>
                     <span
                       data-node-dot
-                      className="relative inline-block h-3 w-3 align-top"
+                      className="relative block h-3 w-3"
                     >
                       <span
                         className={cn(
@@ -614,7 +614,7 @@ export function Slide13Finale() {
                     </span>
                     <p
                       className={cn(
-                        "font-display mt-1.5 text-[13px] font-semibold lg:text-[15px]",
+                        "font-display mt-5 text-[13px] font-semibold lg:text-[15px]",
                         m.flame ? "text-flame" : "text-paper",
                       )}
                     >

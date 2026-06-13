@@ -107,6 +107,13 @@ body {
   border-radius: 2px;
 }
 
+/* Slide-rail dots are round (8px); the global rule above forces border-radius
+ * 2px, rendering the keyboard-focus cue as a square. Keep it round (the flame
+ * outline still indicates focus — a11y intact, just not boxed). */
+nav[aria-label="Слайды"] button:focus-visible {
+  border-radius: 9999px;
+}
+
 /* -----------------------------------------------------------------------------
  * Skip-to-content link — visually hidden until focused.
  * -------------------------------------------------------------------------- */
