@@ -97,6 +97,16 @@ export function Slide12Competitors() {
       );
 
       /* ---- SplitText (reverted post-chain / in setFrozen, §6) ----------- */
+      // Pin the verdict's shrink-to-fit width to its natural (un-split) value
+      // FIRST: it sits in an `auto` grid column, so an inline-block word split
+      // otherwise narrows the column, which widens the 1fr quote column and
+      // reflows BOTH on revert — the visible "jump". Pinned, the column (and
+      // the quote beside it) stay put through the whole reveal. gsap.set is
+      // ctx-tracked, so the resize rebuild clears + re-measures it.
+      if (!reduced)
+        gsap.set(verdictText, {
+          width: Math.ceil(verdictText.getBoundingClientRect().width),
+        });
       let headlineSplit: SplitText | null = reduced
         ? null
         : SplitText.create(headlineEl, { type: "words" });

@@ -179,7 +179,7 @@ export function Slide13Finale() {
       // Self-heal guard: revert a previous split if a rebuild ever races
       // the ctx revert (double-splitting nests spans and breaks metrics).
       type Splittable = HTMLElement & { _chSplit?: SplitText };
-      const split = (el: HTMLElement, type: "words" | "chars") => {
+      const split = (el: HTMLElement, type: "words" | "chars" | "words, chars") => {
         const rec = el as Splittable;
         rec._chSplit?.revert();
         const s = new SplitText(el, { type });
@@ -188,9 +188,15 @@ export function Slide13Finale() {
       };
       let headlineSplit: SplitText | null =
         !reduced && headline ? split(headline, "words") : null;
+      // Refrain lines char-rise, but split as "words, chars" — the word
+      // wrappers keep glyphs from breaking mid-word and keep the comma
+      // («единственное,») attached, so the animating split wraps identically
+      // to the reverted native text. Bare "chars" let the browser break
+      // between any glyphs (orphaned comma, ragged wrap) and then snap on
+      // revert@3.2 — the visible "jump".
       let lineSplits: SplitText[] = reduced
         ? []
-        : refrainLines.slice(0, 2).map((l) => split(l, "chars"));
+        : refrainLines.slice(0, 2).map((l) => split(l, "words, chars"));
       const revertHeadlineSplit = () => {
         headlineSplit?.revert();
         headlineSplit = null;
