@@ -94,11 +94,11 @@ One signature mechanic per slide; nobody borrows:
 | Full-bleed red flare + shake | 8 | — |
 | MotionPath orb crossing a boundary | 9 | 8's chip travel is an arc, different register (violation vs circulation) |
 | Camera zoom (SVG group scale) | 10 | — |
-| Physical beam/scale rotation | 11 | — |
-| Stamp wall (✗/✓ slams) | 12 | slam grammar otherwise reserved to: 8 leak flag, 11 verdict, 13 epitaph |
+| ~~Physical beam/scale rotation~~ → **Casino lock-in flicker** | 11 | SUPERSEDED 2026-06-13: the payback beam/pans were replaced by a two-card lock-in (a slowing roulette of instant `.set` highlight-swaps that locks on the cheaper year). No physical rotation mechanic remains on 11. |
+| Stamp wall (✗/✓ slams) | 12 | slam grammar otherwise reserved to: 8 leak flag, 13 epitaph (SUPERSEDED 2026-06-13: 11's «2,5 года» verdict no longer slams — it RISES; see §2.3) |
 | Dual-fill matrix + epitaph overlay | 13 | — |
 
-**Stamp grammar reservation:** notary-slam (scale 1.4–1.6→1 + rotation settle + jolt) appears ONLY at: slide 8 leak flag, slide 11 «2,5 года» verdict, slide 12 ✗/✓ wall, slide 13 epitaph lines. Slide 3's Shopify/Coinbase chips fade in with rotation PRE-SET; slide 10's SOM goal fades up.
+**Stamp grammar reservation:** notary-slam (scale 1.4–1.6→1 + rotation settle + jolt) appears ONLY at: slide 8 leak flag, slide 12 ✗/✓ wall, slide 13 epitaph lines. Slide 3's Shopify/Coinbase chips fade in with rotation PRE-SET; slide 10's SOM goal fades up. ~~slide 11 «2,5 года» verdict~~ — SUPERSEDED 2026-06-13: slide 11's verdict now RISES (autoAlpha + y, no slam) under the casino lock-in redesign; it has left the notary list.
 
 ### 2.4 Color escalation grammar (binding)
 
@@ -130,13 +130,13 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 | 8→9 | ловушка → аудитории | Post-leak, boundary already cooled to near-neutral (timed idle beat), vignette 0.06 | Same boundary-line geometry repurposed: violation → legitimate circulation; 9 opens with zero red |
 | 9→10 | аудитории → рынок | Drawn boundary line, settled mockups, metrics at value | **Line → arc (canonical):** same 1px stroke weight, same draw direction; boundary becomes horizon |
 | 10→11 | рынок → деньги | Dived state: flame-ringed «20–35 млн ₽» + kicker | Money register continuity: flame ring → «Команда» card ring; ru-RU numerals carry |
-| 11→12 | деньги → конкуренты | Tipped beam + «2,5 года» stamp | Stamping cadence: the notary continues down a ledger (11's verdict → 12's ✗/✓ wall) |
+| 11→12 | деньги → конкуренты | Locked good card + flame-struck «1,5 млн ₽» + risen verdict line (SUPERSEDED 2026-06-13: was «Tipped beam + «2,5 года» stamp») | Money/flame continuity: 11's locked flame card + struck cost → 12's ✗/✓ verdict wall. The stamping-cadence handoff is softened — 11 no longer slams; 12 opens the notary register itself. |
 | 12→13 | конкуренты → финал | Full table, dimmed rivals, lit pentagon + verdict (auto-chained) | Closed pentagon → line forward: 13's entrance draws the timeline; flame travels verdict → «+12 мес» ring |
 | 13 | финал | Near-black, three refrain lines, static ember | Deck ends in stillness; further gestures no-op |
 
 **Gesture map (presenter contract, amended 2026-06-12):** slides 1, 2, 4, 5, 7, 9, 12 → one gesture each. Slides **3, 6, 8, 10, 11, 13** → two gestures (build, then exit) — **18 gestures** to the built finale. Mnemonic for the speaker: *«парадокс, продукт, деньги и финал — по два нажатия»* (3 paradox, 6/8 product demo, 10/11 money, 13 finale). → always does the safe thing (finish entrance → play build → advance). Home/End jump to frozen states.
 
-**Frozen-state registry:** 1 headline+ghost word · 2 scorched field · 3 built: antithesis over dimmed cards / settled: undimmed evidence (build pending) · 4 verdict wall, ring breathing · 5 wordmark+glow · 6 built world+ticker · 7 ranked feed (re-rank consumed) · 8 post-leak wounded-cool · 9 circulating boundary · 10 dived клин view · 11 tipped scale+stamp · 12 table+quote+pentagon · 13 refrain epitaph.
+**Frozen-state registry:** 1 headline+ghost word · 2 scorched field · 3 built: antithesis over dimmed cards / settled: undimmed evidence (build pending) · 4 verdict wall, ring breathing · 5 wordmark+glow · 6 built world+ticker · 7 ranked feed (re-rank consumed) · 8 post-leak wounded-cool · 9 circulating boundary · 10 dived клин view · 11 locked good card + flame-struck «1,5 млн ₽» + verdict (SUPERSEDED 2026-06-13: was «tipped scale+stamp») · 12 table+quote+pentagon · 13 refrain epitaph.
 
 ---
 
@@ -592,7 +592,49 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 ---
 
-### Slide 11 — Монетизация · «Весы окупаемости»
+### Slide 11 — Монетизация · «Окупаемость» (casino lock-in)
+
+> **SUPERSEDED 2026-06-13 (Zone D only).** The «Весы окупаемости» tipping
+> beam was replaced by a **casino lock-in flicker** (user: less text, simpler
+> object). Zones A/B/C (headline + strike, tariff cards, cost machine) are
+> UNCHANGED — the amendment is scoped to Zone D and the build/idle/reduced
+> beats that touched it. New Zone D: two equal fog cards in a 2-col grid
+> (`max-w-[300px] lg:max-w-[560px]`) — left «1,5 млн ₽» (`[data-sum-bad]`,
+> text-sterile 17/22px semibold tabular) «замена плохого найма» with a flame
+> strike SVG `[data-strike-sum]` over the sum (headline-strike pattern: viewBox
+> 0 0 100 10, `M0 6.5 L100 3.5`, non-scaling-stroke, no inline dasharray);
+> right «588 тыс ₽» (text-flame) «год „Команды“». Each card carries a
+> pre-rendered radial-flame `[data-card-glow]` (opacity-only). Below the grid:
+> `[data-verdict]` «один предотвращённый найм = 2,5 года „Команды“» (13/16px) +
+> `[data-shrm]` «SHRM: замена = 100% годовой зарплаты». **The long stamp
+> sentence «Один предотвращённый плохой найм окупает „Команду“ на 2,5 года»
+> dies.** Vertical budget ≈116px (was ≈150px) — fits 1366 and 375.
+>
+> - **Wow-moment** (supersedes the beam tip): a **slowing roulette** — the
+>   highlight alternates between the two cards at decelerating gaps and LOCKS
+>   on the cheaper year (the right card). All flicker states are instant
+>   `.set` pairs, so `build.progress(1)` ≡ `setFrozen("built")`.
+> - **Build beats (≤3.1s, one-shot; lg midpoint gesture / <lg auto-chain):**
+>   0.00 zone wakes 0.4→1 (0.35s) + «1,5 млн ₽» count-up rolls during the
+>   flicker (sanctioned, PAN_OPTS) + both cards dip to opacity 0.55 · swaps at
+>   0.45/0.60/0.75/0.95/1.25 (bad→good→bad→good→bad, decelerating; hi card =
+>   `rgba(255,90,31,0.6)` border + glow 0.6 + opacity 1, lo card = LINE + glow
+>   0 + opacity 0.55) · 1.70 LOCK on good + scale pop 1→1.04→1 · 1.85 bad
+>   settles to opacity 0.45 · 1.90 flame strike draws over «1,5 млн ₽»
+>   (DrawSVG 0→100%, 0.35s) · 2.30 verdict RISES (autoAlpha + y, 0.4s — NO
+>   notary slam, §2.3) · 2.70 SHRM fades in.
+> - **Idle (built only):** the locked flame glow `[data-card-good]
+>   [data-card-glow]` breathes 0.5↔0.62 on a 4s sine (amplitude 0.12 ≤0.15,
+>   §2.5). The beam ±0.3°/±0.4° sways are deleted. Sheen + «$1–3» breathe
+>   (Zones B/C) are unchanged.
+> - **Reduced motion / frozen:** `setFrozen("built")` renders the locked state
+>   instantly — flame-bordered good card + glow, dimmed (0.45) bad card with
+>   the strike drawn, verdict + SHRM visible. Settled (pre-build): zone at 0.4,
+>   both cards neutral (LINE border, glow 0), strike undrawn, verdict hidden.
+> - **Impl note:** the flicker is built from instant `.set` pairs with FRESH
+>   `vars` objects per `.set` (gsap mutates `vars` in place); the build
+>   timeline stays `gsap.timeline({ paused: true })` on one line (lint). No
+>   `[data-beam]`/`[data-pan-*]`/`[data-stamp]` remain.
 
 **Intent & copy.** The slide must read as accounting, not marketing: a machine that visibly earns. Three claims in speech order — model, cost, payback — each with its own physical metaphor: tariff cards (model), a stacking cost bar (cost), a tipping beam scale (payback). On-screen copy, verbatim: headline «Платят за завершённую сессию. Не за кресла.»; cards «Пилот» 15 000 ₽ · 1 позиция · 100 кандидатов / «Команда» 49 000 ₽/мес · 5 позиций · 1 000 кандидатов + chip «основной» / «Рост» 149 000 ₽/мес · 20 позиций · 4 000 кандидатов + аналитика / «Энтерпрайз» от 400 000 ₽/год + локальное развёртывание; cost strip «Себестоимость сессии $1–3» with segments «контейнер $0,15» · «ИИ-напарник $0,5–2» · «внешний канал и оценка — остальное» and «Маржа: ~70% на Пилоте, 75–85% на Энтерпрайзе»; scale pans «1,5 млн ₽ — замена плохого найма» / «588 тыс ₽ — год „Команды“»; stamp «Один предотвращённый плохой найм окупает „Команду“ на 2,5 года»; source line «SHRM: замена = 100% годовой зарплаты».
 
@@ -600,7 +642,7 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 **Layout — mobile (375 × ~660svh).** Headline ~26px, two lines. Tariffs become a 2×2 grid of compact cards (~165×104px): name 13px, price 16px semibold, limits collapsed to one 11px line («5 позиций · 1 000 кандидатов»). Cost track shrinks to 18px tall; segment labels move below as a 3-chip legend, margin line merges into the legend row. Beam strip keeps the metaphor but compresses: pans become 2-line chips, beam span ~320px, stamp text wraps to two lines at 15px. Nothing is cut — only compressed; SHRM source line is the single sacrifice if 660svh is exceeded (moves into the stamp card as a 10px footer).
 
-**Signature wow-moment.** The beam scale tipping: «1,5 млн ₽» counts up, its pan physically drops, the beam rotates around the flame fulcrum, and the verdict «…окупает „Команду“ на 2,5 года» slams in like a notary stamp with a 2px jolt — the argument that buys, made physical.
+**Signature wow-moment.** ~~The beam scale tipping…~~ — SUPERSEDED 2026-06-13 by the casino lock-in (see the Zone-D banner at the top of this section): a slowing roulette that locks on the cheaper year.
 
 **Animation timeline.** (fires only after snap fixation)
 1. t=0, 0.6s, expo.out — headline SplitText by words, `y:16→0, opacity:0→1`, stagger 0.05.
@@ -620,9 +662,9 @@ All 12 boundaries are **static-cut + semantic handoff**: the outgoing frozen fra
 
 **Transition out.** The stamp gesture is the deliberate motif handoff: slide 12's verdict table stamps ✗/✓ with the same slam-scale language. The «2,5 года» stamp is the last thing moving; slide 12's first ✗ feels like the same notary continuing down a ledger.
 
-**Reduced motion.** Everything renders instantly in the FINAL post-build state: headline with strike-through, cards with «Команда» featured, full cost bar with «$1–3», beam already tipped at −7°, stamp and SHRM line visible. No loops, no sway, no pin.
+**Reduced motion.** Everything renders instantly in the FINAL post-build state: headline with strike-through, cards with «Команда» featured, full cost bar with «$1–3», ~~beam already tipped at −7°, stamp~~ (SUPERSEDED 2026-06-13: Zone D = locked good card + glow, dimmed bad card with the «1,5 млн ₽» strike drawn, verdict + SHRM visible) and SHRM line visible. No loops, no sway, no pin.
 
-**Implementation notes.** `components/scenes/11-monetization.tsx` + child `payback-scale.tsx` (pure SVG: beam `<g>` with `transform-box: fill-box; transform-origin` at fulcrum; pans as `<foreignObject>`-free HTML cards positioned via the same rotation group — simpler: HTML cards absolutely positioned, rotated via GSAP on a shared wrapper, counter-rotated individually). Plugins: ScrollTrigger (fixation + pin + internal snap), SplitText (headline), DrawSVGPlugin (flame ring, strike-through). Count-ups need a timeline-driven variant of `useCountUp` — the existing hook fires at `top 80%`, which violates the fixation-gated rule; add a `paused` mode the master timeline plays. `will-change: transform` on the beam wrapper only during the build. All motion is transform/opacity/stroke; segments use `scaleX`, never width.
+**Implementation notes.** `components/scenes/11-monetization.tsx` + child `payback-scale.tsx` (pure SVG: beam `<g>` with `transform-box: fill-box; transform-origin` at fulcrum; pans as `<foreignObject>`-free HTML cards positioned via the same rotation group — simpler: HTML cards absolutely positioned, rotated via GSAP on a shared wrapper, counter-rotated individually). Plugins: ScrollTrigger (fixation + pin + internal snap), SplitText (headline), DrawSVGPlugin (flame ring, strike-through). Count-ups need a timeline-driven variant of `useCountUp` — the existing hook fires at `top 80%`, which violates the fixation-gated rule; add a `paused` mode the master timeline plays. ~~`will-change: transform` on the beam wrapper only during the build.~~ All motion is transform/opacity/stroke; segments use `scaleX`, never width. **SUPERSEDED 2026-06-13 (Zone D):** `payback-scale.tsx` now renders the two-card lock-in frozen state (no beam `<g>`/pans). The build flicker is built from instant `.set` pairs (`swap(t, hi)` toggling `borderColor`/`opacity` + glow `autoAlpha`, FRESH `vars` objects per `.set`); the strike uses DrawSVG (no inline `stroke-dasharray`); the locked-glow idle is a `breathe()`. `build.progress(1)` ≡ `setFrozen("built")` by construction (all flicker beats are `.set`s). The build timeline keeps `gsap.timeline({ paused: true })` on one physical line (deck-contract lint).
 
 **Risks.** (1) 1366×768 vertical overflow — the biggest risk; mitigated by the `py-8` override, 190px card cap, `line-clamp-1` on tariff limit lines; verify at exactly 768 with browser chrome. (2) «Энтерпрайз» wrapping in a 165px mobile card — drop card title to 12px with `tracking-tight`; never hyphenate (verbatim rule). (3) Counter-rotated pan text shimmering on non-integer transforms — round the settle angle, `backface-visibility:hidden`. (4) Featured-card scale clipping neighbors — `overflow:visible` on the grid, `z-10` on «Команда». (5) Build-step pin fighting Lenis snap — reuse the exact two-phase ScrollTrigger pattern already proven in scene 06-data-trap. (6) `scaleX` distorting segment label text — labels live OUTSIDE the scaled bars, positioned under the track.
 
@@ -799,3 +841,5 @@ Gates run against `npm run dev`, headless Chromium (`/tmp/deck-verify/ui-fix-03b
 4. **Slide 9 — pilot-target metrics + honesty eyebrow:** the admitted-mockup metric values 84% / 9,1/10 / 38% are replaced with pilot targets «завершают сессию» ≥ 70% · «NPS кандидата» ≥ 40 · «фидбэк» 100%, under a new eyebrow «целевые метрики пилота». `MetricChip` gained an optional `prefix` rendered as a STATIC `text-mute` sibling span OUTSIDE the counted node; `data-chip-value` moved onto an inner `<span>` so count-up's per-frame `textContent` rewrite never erases the «≥». «фидбэк 100%» is documented as a product promise («по построению»), not a pitch KPI. Verified (`/tmp/deck-verify/ui-fix-s9metrics.mjs`, green at 375 / 1366 / 1920): the three `[data-chip-value]` spans read exactly «70» / «40» / «100» (full chip text «70%» / «40» / «100%»); no «≥» inside any `[data-chip-value]`; eyebrow is the first `<p>` in the metrics block; «завершают сессию» label not clipped at 375; srSummary no longer contains «84»; `npm run lint:deck` green.
 
 5. **Slide 6 — step-card declutter:** each card's orange budget is reduced to the **numeral only** (+ card-3 rec dot + the self-clearing ember flash on «30 секунд» during the build). The flame-text plaques become `text-mute` (no `line-strong` pill-border wrapper at any viewport), the «Никогда.» flame **underline SVG is deleted** (selector const, frozen/dormant drawSVG sets, and the entrance `fromTo` all removed — they lived in `entrance`, so the build count stays 18), «Никогда.» is now a plain `font-semibold text-paper` span, card-1 detail un-bolds «1–3 строки», and all in-card `→` arrows become middots (chevrons stay the slide's only arrows). One body accent per type-zone kept: «один раз» (card 1 tagline) + «Никогда.» (card 1 plaque); `[data-chip-30s]` `<b>` preserved. Spacing rhythm mt-2 / mt-1.5 / mt-2, detail `leading-relaxed`. Verified (`/tmp/deck-verify/ui-fix-s6.mjs`, 69/69 green at 375 / 1366 / 1920, settled **and** built): `[data-plaque-underline]` count = 0; every `[data-plaque]` color `rgb(161, 161, 170)`; «Никогда.» semibold paper with no wrapper/SVG sibling; card-1 detail has no `font-semibold text-paper` token; no `→` inside any `[data-step]`; `[data-chip-30s]` `<b>` semibold paper present; no `[data-step]`/slide/document horizontal overflow at 375; no page errors; `npm run lint:deck` green.
+
+6. **Slide 11 — casino lock-in replaces the payback seesaw:** `payback-scale.tsx` is rewritten to render two equal fog cards (left «1,5 млн ₽» `[data-sum-bad]` + flame strike `[data-strike-sum]` / right «588 тыс ₽`), each with a radial-flame `[data-card-glow]`, and a risen `[data-verdict]` «один предотвращённый найм = 2,5 года „Команды“» + `[data-shrm]`; the long stamp sentence and the beam/pans are gone. `11-monetization.tsx` rewires Zone D to `cardBad/cardGood/glows/goodGlow/sumBad/strikeSum/verdict/shrm` (+ a `token()` helper, `LINE`, `FLAME_HI = rgba(255,90,31,0.6)`), deletes `setZoneCommon`, and replaces the build with a **slowing-roulette flicker** (instant `.set` swaps at 0.45/0.60/0.75/0.95/1.25 → LOCK on the good card at 1.70 with a scale pop → bad dims to 0.45 → strike draws → verdict rises → SHRM fades). The locked-glow `breathe(goodGlow, 0.5, 0.62, 4)` replaces the deleted beam sways; `build.progress(1)` ≡ `setFrozen("built")` (all flicker beats are `.set`s). Verified (`/tmp/deck-verify/ui-fix-s11.mjs`, 64/64 green): @1366/@1920 build-play AND @375 tap-build AND End→back frozen-parity all assert `[data-beam]` count = 0, good-card border `rgba(255, 90, 31, 0.6)`, good `[data-card-glow]` opacity ≥ 0.4, bad-card opacity 0.45, strike fully drawn, `[data-verdict]` text exact, `[data-sum-bad]` = «1,5 млн ₽»; settled state = zone 0.4, neutral cards, strike undrawn, verdict hidden; reduced-motion 21/21 green at 375/1366/1920; full forward walk = 18 gestures to a built finale; no horizontal overflow; no page errors; `npm run lint:deck` green.
