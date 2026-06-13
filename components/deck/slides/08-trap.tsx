@@ -106,6 +106,14 @@ export function Slide08Trap() {
       const statEl = q("[data-quote-stat]")[0];
       const vignette = q("[data-vignette]")[0];
       const flareEl = q("[data-flare]")[0];
+      // The ghost's coordinate origin: the ghost is absolute inside this
+      // `inset-0` layer, so its transform x/y resolve against the layer's
+      // PAINTED top-left — which is the reliable reference. (The sticky
+      // `.slide`'s getBoundingClientRect can report its flow box, not its
+      // pinned-paint box, mid-fixation — measuring travel against it strands
+      // the ghost at lg/1920.) The flare overlay shares this `inset-0` box.
+      const ghostLayerEl =
+        root.querySelector<HTMLElement>("[data-ghost-layer]") ?? stageEl;
 
       // Boundary — only the visible instance (vertical lg / horizontal <lg);
       // a resize across the breakpoint rebuilds the whole context.
@@ -161,45 +169,70 @@ export function Slide08Trap() {
         if (avgEl) avgEl.textContent = String(Math.round(v));
       };
 
-      /* ---- travel geometry (measured pristine, pre-dormant) ------------ */
+      /* ---- travel geometry --------------------------------------------- */
+      // clearProps + lgTravel + runLen are breakpoint-stable within a ctx and
+      // measured once at create. The per-pixel coords are re-measured at build
+      // PLAY (onBuildStart) so a no-resize reflow (late font settle) can't
+      // strand the ghost below the target — see the slide-08 §4 implementation
+      // note. geom is mutable; the build set/to read it and onBuildStart
+      // rewrites the tagged tweens' vars + invalidate()s them.
       gsap.set(
         [paneL, paneR, chipEl, ghostEl, contentEl].filter(Boolean),
         { clearProps: "transform" },
       );
-      const stageRect = stageEl.getBoundingClientRect();
-      const chipRect = chipEl?.getBoundingClientRect() ?? stageRect;
       const lgTravel = Boolean(inputRow && vis(inputRow)); // horizontal arc
       const targetEl = lgTravel ? inputRow : leakMsg;
-      const tRect = targetEl?.getBoundingClientRect() ?? stageRect;
-      const bRect = boundaryEl?.getBoundingClientRect() ?? null;
+      const bRectInit = boundaryEl?.getBoundingClientRect() ?? null;
+      const runLen = bRectInit
+        ? (lgTravel ? bRectInit.height : bRectInit.width)
+        : 0;
 
-      const sx = chipRect.left - stageRect.left;
-      const sy = chipRect.top - stageRect.top;
-      const ex = tRect.left - stageRect.left + 10;
-      const ey = lgTravel
-        ? tRect.top - stageRect.top +
-          Math.max(0, (tRect.height - chipRect.height) / 2)
-        : tRect.top - stageRect.top + 6;
-      // Shallow arc: apex above the straight line (lg) / bowed right (<lg).
-      const ax = lgTravel ? (sx + ex) / 2 : Math.max(sx, ex) + 28;
-      const ay = lgTravel ? Math.min(sy, ey) - 36 : (sy + ey) / 2;
-      const runLen = bRect ? (lgTravel ? bRect.height : bRect.width) : 0;
+      const geom = { sx: 0, sy: 0, ex: 0, ey: 0, ax: 0, ay: 0 };
+      const measureTravel = () => {
+        // The pulse idle may be mid-cycle when playBuild kills idles, so the
+        // chip rect must be read at scale 1 (otherwise sx/sy drift).
+        gsap.set(chipEl, { scale: 1 });
+        // Origin = the ghost layer's painted box (the ghost's containing
+        // block), NOT the sticky `.slide` — see ghostLayerEl note above.
+        const originRect = ghostLayerEl.getBoundingClientRect();
+        const chipRect = chipEl?.getBoundingClientRect() ?? originRect;
+        const tRect = targetEl?.getBoundingClientRect() ?? originRect;
+        const bRect = boundaryEl?.getBoundingClientRect() ?? null;
 
-      // Flare epicenter = where the arc crosses the boundary.
-      const flareX = lgTravel
-        ? (bRect ? bRect.left + bRect.width / 2 - stageRect.left : ax)
-        : ax + chipRect.width / 2;
-      const flareY = lgTravel
-        ? ay + chipRect.height / 2
-        : (bRect ? bRect.top + bRect.height / 2 - stageRect.top : ay);
-      if (flareEl) {
-        const pct = (v: number, span: number) =>
-          `${gsap.utils.clamp(5, 95, (v / Math.max(span, 1)) * 100)}%`;
-        gsap.set(flareEl, {
-          "--flare-x": pct(flareX, stageRect.width),
-          "--flare-y": pct(flareY, stageRect.height),
-        });
-      }
+        geom.sx = chipRect.left - originRect.left;
+        geom.sy = chipRect.top - originRect.top;
+        geom.ex = tRect.left - originRect.left + 10;
+        geom.ey = lgTravel
+          ? tRect.top - originRect.top +
+            Math.max(0, (tRect.height - chipRect.height) / 2)
+          : tRect.top - originRect.top + 6;
+        // Shallow arc: apex above the straight line (lg) / bowed right (<lg).
+        geom.ax = lgTravel
+          ? (geom.sx + geom.ex) / 2
+          : Math.max(geom.sx, geom.ex) + 28;
+        geom.ay = lgTravel
+          ? Math.min(geom.sy, geom.ey) - 36
+          : (geom.sy + geom.ey) / 2;
+
+        // Flare epicenter = where the arc crosses the boundary. The flare
+        // overlay shares the ghost layer's `inset-0` box, so vars resolve
+        // against originRect (same painted frame, scroll-stable dimensions).
+        const flareX = lgTravel
+          ? (bRect ? bRect.left + bRect.width / 2 - originRect.left : geom.ax)
+          : geom.ax + chipRect.width / 2;
+        const flareY = lgTravel
+          ? geom.ay + chipRect.height / 2
+          : (bRect ? bRect.top + bRect.height / 2 - originRect.top : geom.ay);
+        if (flareEl) {
+          const pct = (v: number, span: number) =>
+            `${gsap.utils.clamp(5, 95, (v / Math.max(span, 1)) * 100)}%`;
+          gsap.set(flareEl, {
+            "--flare-x": pct(flareX, originRect.width),
+            "--flare-y": pct(flareY, originRect.height),
+          });
+        }
+      };
+      measureTravel(); // sane dormant values at create
 
       const split = titleEl ? new SplitText(titleEl, { type: "words" }) : null;
 
@@ -374,7 +407,32 @@ export function Slide08Trap() {
       });
 
       /* ---- build (one-shot ≤3.2s; the leak) ----------------------------- */
-      const build = gsap.timeline({ paused: true });
+      // Re-measure the travel geometry at PLAY (after killIdles, before the
+      // ghost moves) and rewrite the two tagged tweens. MotionPath caches the
+      // parsed path on vars, so we must assign a FRESH object literal, not
+      // mutate the old one, then invalidate() both tweens.
+      const onBuildStart = () => {
+        measureTravel();
+        const origin = build.getById("ghost-origin");
+        if (origin) {
+          origin.vars.x = geom.sx;
+          origin.vars.y = geom.sy;
+          origin.invalidate();
+        }
+        const travel = build.getById("ghost-travel");
+        if (travel) {
+          travel.vars.motionPath = {
+            path: [
+              { x: geom.sx, y: geom.sy },
+              { x: geom.ax, y: geom.ay },
+              { x: geom.ex, y: geom.ey },
+            ],
+            curviness: 1.25,
+          };
+          travel.invalidate();
+        }
+      };
+      const build = gsap.timeline({ paused: true, onStart: onBuildStart });
       // Freeze pre-build idle leftovers; arm will-change for the hot phase.
       build.set([ghostEl, flareEl].filter(Boolean), {
         willChange: "transform, opacity",
@@ -383,16 +441,21 @@ export function Slide08Trap() {
       build.set(caretEl, { opacity: 1 }, 0);
       build.set(chipEl, { scale: 1 }, 0);
       // 7 — chip clone lifts and travels the arc; glow ramps as it nears.
-      build.set(ghostEl, { x: sx, y: sy, autoAlpha: 1, scale: 1 }, 0);
+      build.set(
+        ghostEl,
+        { id: "ghost-origin", x: geom.sx, y: geom.sy, autoAlpha: 1, scale: 1 },
+        0,
+      );
       build.to(ghostEl, { scale: 1.06, duration: 0.15, ease: "power1.out" }, 0);
       build.to(
         ghostEl,
         {
+          id: "ghost-travel",
           motionPath: {
             path: [
-              { x: sx, y: sy },
-              { x: ax, y: ay },
-              { x: ex, y: ey },
+              { x: geom.sx, y: geom.sy },
+              { x: geom.ax, y: geom.ay },
+              { x: geom.ex, y: geom.ey },
             ],
             curviness: 1.25,
           },

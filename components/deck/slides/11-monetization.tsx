@@ -6,8 +6,8 @@
  *
  * P3 MOTION. Director's cut readability staging is binding: tariff PRICES
  * render STATICALLY (price tags, not measurements) — the only two count-ups
- * are «$1–3» and «1,5 млн ₽»; zone D holds DORMANT at 40% opacity with the
- * beam LEVEL until the build.
+ * are «$1–3» and «1,5 млн ₽»; zone D holds DORMANT at 40% opacity with both
+ * lock-in cards neutral until the build.
  *
  * Entrance (≤3.8s):
  *   0.0  headline SplitText words rise (y16→0, expo.out, stagger 0.05);
@@ -18,19 +18,20 @@
  *   1.8  cost machine: track fade 0.2s; segments stack scaleX left→right
  *        (labels OUTSIDE the scaled bars); «$1–3» count-up finishes ≈2.9;
  *        margin readout 2.8–3.1
- *   3.2  zone D appears DORMANT (beam level, 40% opacity, no stamp)
+ *   3.2  zone D appears DORMANT (cards neutral, 40% opacity, no verdict)
  *   3.4  closing wink: flame strike-through DrawSVG across «за кресла» 0.4s
- * Build (one-shot ≤3.2s, midpoint gesture at lg / auto-chain <lg):
- *   0.0  zone D wakes to 1; «1,5 млн ₽» counts up 0.8s, pan label brightens
- *   0.5  beam −8° over 0.9s power3.inOut (quart) → settles to −7° (the 1°
- *        overshoot); pans counter-rotate mirror so text stays level
- *   1.45 STAMP «…окупает „Команду“ на 2,5 года» slams 1.4→1 power4.out
- *        with a 2px y-jolt on the zone (sanctioned slam, §2.3)
- *   1.9  SHRM line fades → done ≈2.3s
+ * Build — casino lock-in (one-shot ≤3.1s; midpoint gesture at lg / auto-chain
+ * <lg), SUPERSEDED 2026-06-13 (was a physical beam tip + notary stamp):
+ *   0.0  zone D wakes to 1; «1,5 млн ₽» rolls up 0.8s; both cards dip to 0.55
+ *   0.45 a slowing roulette: highlight alternates bad→good→bad→good→bad at
+ *        decelerating gaps (.45/.60/.75/.95/1.25) — instant .set pairs
+ *   1.7  LOCK on the cheaper year (right card) + scale pop 1→1.04→1
+ *   1.85 left card settles dimmed (0.45); 1.9 flame strike across «1,5 млн ₽»
+ *   2.3  verdict «…= 2,5 года „Команды“» RISES (no slam); 2.7 SHRM fades in
  * Idles: SETTLED — sheen across the «Команда» ring every ~6s, «$1–3»
- *   breathe 1↔0.85, beam ±0.3° waiting sway; BUILT — beam ±0.4° micro-sway
- *   around −7°, sheen + breathe continue.
- * Reduced motion: instant final TIPPED state (hook calls setFrozen("built")).
+ *   breathe 1↔0.85; BUILT — the locked flame glow breathes 0.5↔0.62, sheen +
+ *   «$1–3» breathe continue.
+ * Reduced motion: instant final LOCKED state (hook calls setFrozen("built")).
  *
  * Vertical budgets (zero internal scroll) — unchanged from the P2 audit:
  *   375×620 ≈ 554 ✓ · 1366×768 ≈ 574 ✓ · 1920×1080 with air.
@@ -91,6 +92,12 @@ export function Slide11Monetization() {
       const all = (sel: string) =>
         Array.from(root.querySelectorAll<HTMLElement>(sel));
 
+      const docStyle = getComputedStyle(document.documentElement);
+      const token = (name: string, fallback: string) =>
+        docStyle.getPropertyValue(name).trim() || fallback;
+      const LINE = token("--color-line", "#1f1f24");
+      const FLAME_HI = "rgba(255,90,31,0.6)";
+
       /* ---- targets ---------------------------------------------------- */
       const headlineEl = one("[data-headline]")!;
       const strike = root.querySelector<SVGPathElement>("[data-strike] path")!;
@@ -105,11 +112,15 @@ export function Slide11Monetization() {
       const total = one("[data-total]")!;
       const margin = one("[data-margin]")!;
       const zoneD = one("[data-zone-d]")!;
-      const beam = one("[data-beam]")!;
-      const pans = all("[data-pan-left], [data-pan-right]");
-      const panNum = one("[data-pan-num]");
-      const panLabel = one("[data-pan-label]")!;
-      const stamp = one("[data-stamp]")!;
+      const cardBad = one("[data-card-bad]")!;
+      const cardGood = one("[data-card-good]")!;
+      const glows = all("[data-card-glow]");
+      const goodGlow = one("[data-card-good] [data-card-glow]");
+      const sumBad = one("[data-sum-bad]");
+      const strikeSum = root.querySelector<SVGPathElement>(
+        "[data-strike-sum] path",
+      );
+      const verdict = one("[data-verdict]")!;
       const shrm = one("[data-shrm]")!;
 
       const FEAT_SCALE = lg ? 1.04 : 1.02;
@@ -142,10 +153,6 @@ export function Slide11Monetization() {
       let stage: "settled" | "built" = "settled";
 
       /* ---- state setters ------------------------------------------------ */
-      const setZoneCommon = () => {
-        gsap.set(pans, { transformOrigin: "50% 0%" });
-      };
-
       const setDormant = () => {
         stage = "settled";
         if (headlineSplit)
@@ -160,13 +167,17 @@ export function Slide11Monetization() {
         gsap.set(segLabels, { autoAlpha: 0 });
         writeTotal(0);
         gsap.set(margin, { autoAlpha: 0 });
-        setZoneCommon();
+        // Zone D — casino lock-in (dormant: zone hidden, cards neutral).
         gsap.set(zoneD, { autoAlpha: 0, y: 12 });
-        gsap.set(beam, { rotation: 0 });
-        gsap.set(pans, { rotation: 0 });
-        if (panNum) panNum.textContent = countUpText(1.5, PAN_OPTS);
-        gsap.set(panLabel, { clearProps: "color" });
-        gsap.set(stamp, { autoAlpha: 0, scale: 1.4 });
+        gsap.set([cardBad, cardGood], {
+          borderColor: LINE,
+          opacity: 1,
+          scale: 1,
+        });
+        gsap.set(glows, { autoAlpha: 0 });
+        gsap.set(strikeSum, { drawSVG: "0%" });
+        if (sumBad) sumBad.textContent = countUpText(1.5, PAN_OPTS);
+        gsap.set(verdict, { autoAlpha: 0, y: 8 });
         gsap.set(shrm, { autoAlpha: 0 });
       };
 
@@ -184,22 +195,28 @@ export function Slide11Monetization() {
         gsap.set(segLabels, { autoAlpha: 1 });
         writeTotal(3);
         gsap.set(margin, { autoAlpha: 1 });
-        setZoneCommon();
-        if (panNum) panNum.textContent = countUpText(1.5, PAN_OPTS);
+        // Zone D — casino lock-in (frozen state).
+        if (sumBad) sumBad.textContent = countUpText(1.5, PAN_OPTS);
         if (stage === "built") {
           gsap.set(zoneD, { autoAlpha: 1, y: 0 });
-          gsap.set(beam, { rotation: -7 });
-          gsap.set(pans, { rotation: 7 });
-          gsap.set(panLabel, { color: "var(--color-paper)" });
-          gsap.set(stamp, { autoAlpha: 1, scale: 1 });
-          gsap.set(shrm, { autoAlpha: 1 });
+          // Right card LOCKED (the roulette stopped on the cheaper year).
+          gsap.set(cardGood, { borderColor: FLAME_HI, opacity: 1, scale: 1 });
+          gsap.set(goodGlow, { autoAlpha: 0.6 });
+          // Left card dimmed + flame-struck «1,5 млн ₽».
+          gsap.set(cardBad, { borderColor: LINE, opacity: 0.45, scale: 1 });
+          gsap.set(strikeSum, { drawSVG: "100%" });
+          gsap.set([verdict, shrm], { autoAlpha: 1, y: 0 });
         } else {
-          // Director's cut: zone D dormant at 40%, beam LEVEL, no stamp.
+          // Director's cut: zone D dormant at 40%, cards neutral, no verdict.
           gsap.set(zoneD, { autoAlpha: 0.4, y: 0 });
-          gsap.set(beam, { rotation: 0 });
-          gsap.set(pans, { rotation: 0 });
-          gsap.set(panLabel, { clearProps: "color" });
-          gsap.set(stamp, { autoAlpha: 0, scale: 1.4 });
+          gsap.set([cardBad, cardGood], {
+            borderColor: LINE,
+            opacity: 1,
+            scale: 1,
+          });
+          gsap.set(glows, { autoAlpha: 0 });
+          gsap.set(strikeSum, { drawSVG: "0%" });
+          gsap.set(verdict, { autoAlpha: 0, y: 8 });
           gsap.set(shrm, { autoAlpha: 0 });
         }
       };
@@ -270,7 +287,7 @@ export function Slide11Monetization() {
       );
       entrance
         .to(margin, { autoAlpha: 1, duration: 0.3, ease: "power1.out" }, 2.8)
-        // Zone D appears DORMANT: beam level, 40% opacity, numbers dim.
+        // Zone D appears DORMANT: cards neutral, 40% opacity (lock-in waits).
         .to(zoneD, { autoAlpha: 0.4, y: 0, duration: 0.5, ease: "power2.out" }, 3.2)
         // Closing wink: flame strike-through across «за кресла».
         .to(strike, { drawSVG: "100%", duration: 0.4, ease: "power2.inOut" }, 3.4)
@@ -279,35 +296,55 @@ export function Slide11Monetization() {
           revertHeadlineSplit();
         });
 
-      /* ---- build: the scale tips (one-shot, done ≈2.3s ≤3.2) ------------ */
+      /* ---- build: casino lock-in (one-shot ≤3.1s) ----------------------- */
+      // A slowing roulette: the highlight alternates between the two cards
+      // with decelerating gaps, then LOCKS on the cheaper year. All flicker
+      // states are instant .set pairs, so build.progress(1) ≡ setFrozen.
+      // Highlight one card, dim the other. FRESH vars objects per .set
+      // (gsap mutates vars in place — never reuse one across .set calls).
+      const swap = (t: number, hi: "bad" | "good") => {
+        const hiCard = hi === "good" ? cardGood : cardBad;
+        const loCard = hi === "good" ? cardBad : cardGood;
+        const hiGlow = hi === "good" ? goodGlow : glows[0];
+        const loGlow = hi === "good" ? glows[0] : goodGlow;
+        build
+          .set(hiCard, { borderColor: FLAME_HI, opacity: 1 }, t)
+          .set(hiGlow, { autoAlpha: 0.6 }, t)
+          .set(loCard, { borderColor: LINE, opacity: 0.55 }, t)
+          .set(loGlow, { autoAlpha: 0 }, t);
+      };
       const build = gsap.timeline({ paused: true });
       build
-        .set(beam, { willChange: "transform" }, 0)
-        // (a) zone D wakes; «1,5 млн ₽» counts up; pan label brightens.
-        .to(zoneD, { autoAlpha: 1, duration: 0.4, ease: "power1.inOut" }, 0)
-        .to(panLabel, { color: "var(--color-paper)", duration: 0.4 }, 0);
-      addCountUp(build, 0, panNum, PAN_OPTS);
+        // (a) zone wakes; «1,5 млн ₽» rolls during the flicker; cards dip.
+        .to(zoneD, { autoAlpha: 1, duration: 0.35, ease: "power1.inOut" }, 0)
+        .set([cardBad, cardGood], { opacity: 0.55 }, 0);
+      addCountUp(build, 0, sumBad, PAN_OPTS);
+      // (b) the slowing roulette: bad→good→bad→good→bad (decelerating gaps).
+      swap(0.45, "bad");
+      swap(0.6, "good");
+      swap(0.75, "bad");
+      swap(0.95, "good");
+      swap(1.25, "bad");
+      // (c) LOCK on the cheaper year — the roulette stops + a scale pop.
+      swap(1.7, "good");
       build
-        // (b) beam tips −8° (quart.inOut) and settles to −7° — the 1°
-        // overshoot; pans counter-rotate in mirror so text stays level.
-        .to(beam, { rotation: -8, duration: 0.9, ease: "power3.inOut" }, 0.5)
-        .to(pans, { rotation: 8, duration: 0.9, ease: "power3.inOut" }, 0.5)
-        .to(beam, { rotation: -7, duration: 0.3, ease: "power2.out" }, 1.4)
-        .to(pans, { rotation: 7, duration: 0.3, ease: "power2.out" }, 1.4)
-        // (c) the verdict STAMP (sanctioned slam, §2.3) + 2px y-jolt.
-        .fromTo(
-          stamp,
-          { autoAlpha: 0, scale: 1.4 },
-          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power4.out" },
-          1.45,
-        )
+        .to(cardGood, { scale: 1.04, duration: 0.16, ease: "power2.out" }, 1.7)
+        .to(cardGood, { scale: 1, duration: 0.24, ease: "power2.inOut" }, 1.86)
+        // (d) the losing card settles to its dimmed lock state.
+        .set(cardBad, { opacity: 0.45 }, 1.85)
+        // (e) the prevented cost is struck out.
         .to(
-          zoneD,
-          { keyframes: { y: [0, 2, 0] }, duration: 0.12, ease: "none" },
-          1.55,
+          strikeSum,
+          { drawSVG: "100%", duration: 0.35, ease: "power2.inOut" },
+          1.9,
         )
-        .to(shrm, { autoAlpha: 1, duration: 0.4, ease: "power1.out" }, 1.9)
-        .set(beam, { willChange: "auto" }, 2.3)
+        // (f) the verdict RISES (no notary slam — §2.3 reservation dropped).
+        .to(
+          verdict,
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+          2.3,
+        )
+        .to(shrm, { autoAlpha: 1, duration: 0.4, ease: "power1.out" }, 2.7)
         .call(() => {
           stage = "built";
         });
@@ -325,31 +362,8 @@ export function Slide11Monetization() {
           idles.push(sweep);
         }
         idles.push(breathe(total, 1, 0.85, 2));
-        idles.push(
-          stage === "built"
-            ? gsap.fromTo(
-                beam,
-                { rotation: -7.4 },
-                {
-                  rotation: -6.6,
-                  duration: 2,
-                  ease: "sine.inOut",
-                  yoyo: true,
-                  repeat: -1,
-                },
-              )
-            : gsap.fromTo(
-                beam,
-                { rotation: -0.3 },
-                {
-                  rotation: 0.3,
-                  duration: 1.5,
-                  ease: "sine.inOut",
-                  yoyo: true,
-                  repeat: -1,
-                },
-              ),
-        );
+        // Built: the locked flame glow breathes (§2.5, amplitude 0.12 ≤0.15).
+        if (stage === "built") idles.push(breathe(goodGlow, 0.5, 0.62, 4));
         return idles;
       };
 
@@ -519,7 +533,7 @@ export function Slide11Monetization() {
         </p>
       </div>
 
-      {/* ---- Zone D: payback beam — dormant 40% until the build tips it ---- */}
+      {/* ---- Zone D: casino lock-in — dormant 40% until the build flickers ---- */}
       <PaybackScale className="mt-4 lg:mt-5" />
     </Slide>
   );

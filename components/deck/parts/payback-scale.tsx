@@ -1,93 +1,106 @@
 /**
- * <PaybackScale> — slide 11 zone D: «Весы окупаемости» (landing_v2.md §4
- * slide 11 + Director's cut).
+ * <PaybackScale> — slide 11 zone D: «Окупаемость» casino lock-in (landing_v2.md
+ * §4 slide 11 + Director's cut, SUPERSEDED 2026-06-13: the physical payback
+ * beam was replaced by a two-card lock-in flicker).
  *
- * JSX renders the FROZEN POST-BUILD state (beam tipped −7°, pans
- * counter-rotated +7°, stamp + SHRM visible) — the SSR/noscript frame.
- * At runtime the slide's gsap hooks own every state:
- *   DORMANT  — zone hidden, beam level, stamp/SHRM hidden.
- *   SETTLED  — zone at 40% opacity, beam LEVEL (±0.3° waiting sway idle),
- *              numbers dim, no stamp (Director's cut readability staging).
- *   BUILT    — «1,5 млн ₽» counted up, beam −7° (1° overshoot settle),
- *              pans counter-rotated (text stays level), stamp slammed
- *              (sanctioned, §2.3), SHRM line visible; ±0.4° micro-sway.
+ * JSX renders the FROZEN POST-BUILD state (the roulette has stopped on the
+ * cheaper year) — the SSR/noscript frame. At runtime the slide's gsap hooks
+ * own every state:
+ *   DORMANT  — zone hidden, both cards neutral, glows off, strike undrawn.
+ *   SETTLED  — zone at 40% opacity, both cards neutral, no verdict
+ *              (Director's cut readability staging).
+ *   BUILT    — the right card («год „Команды“») is LOCKED (flame border +
+ *              glow); the left card («1,5 млн ₽» — замена плохого найма) is
+ *              dimmed with a flame strike across the sum; the verdict line has
+ *              risen below.
  *
- * Geometry: rotate(-7deg) drops the LEFT end (CSS positive = clockwise),
- * i.e. the heavier «замена плохого найма» pan sinks — real-scale physics.
+ * The two cards are equal-weight on purpose — the flicker, not the layout,
+ * carries the meaning (a slowing roulette that locks on the cheaper year).
  */
 import { cn } from "@/lib/cn";
 
 export function PaybackScale({ className }: { className?: string }) {
   return (
     <div data-zone-d className={cn("text-center", className)}>
-      {/* Stamp zone floats above the fulcrum (spec zone D). */}
+      {/* Two equal lock-in cards: cost of a bad hire vs a year of «Команда». */}
+      <div className="mx-auto grid max-w-[300px] grid-cols-2 gap-2 lg:max-w-[560px] lg:gap-3">
+        {/* Left — the cost of a bad hire (sterile tone, struck out on lock). */}
+        <div
+          data-card-bad
+          className="relative overflow-hidden rounded-xl border border-line bg-fog px-2 py-2 lg:px-3 lg:py-3"
+        >
+          <span
+            data-card-glow
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-0"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, rgba(255,90,31,0.35), transparent 70%)",
+            }}
+          />
+          <span className="relative inline-block whitespace-nowrap">
+            <span
+              data-sum-bad
+              className="font-display text-[17px] font-semibold tabular-nums text-sterile lg:text-[22px]"
+            >
+              1,5 млн ₽
+            </span>
+            {/* Flame strike over the prevented cost — DrawSVG on lock. */}
+            <svg
+              data-strike-sum
+              aria-hidden="true"
+              className="absolute left-0 top-1/2 h-[0.2em] w-full -translate-y-1/2 overflow-visible"
+              viewBox="0 0 100 10"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0 6.5 L100 3.5"
+                fill="none"
+                stroke="var(--color-flame)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          </span>
+          <p className="mt-0.5 text-[10px] leading-snug text-mute lg:text-[12px]">
+            замена плохого найма
+          </p>
+        </div>
+
+        {/* Right — a year of «Команда» (flame tone, the locked winner). */}
+        <div
+          data-card-good
+          className="relative overflow-hidden rounded-xl border border-line bg-fog px-2 py-2 lg:px-3 lg:py-3"
+        >
+          <span
+            data-card-glow
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-0"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, rgba(255,90,31,0.35), transparent 70%)",
+            }}
+          />
+          <span className="font-display relative whitespace-nowrap text-[17px] font-semibold tabular-nums text-flame lg:text-[22px]">
+            588 тыс ₽
+          </span>
+          <p className="mt-0.5 text-[10px] leading-snug text-mute lg:text-[12px]">
+            год „Команды“
+          </p>
+        </div>
+      </div>
+
+      {/* Verdict rises on lock; SHRM anchor stays the small print. */}
       <p
-        data-stamp
-        className="font-display mx-auto max-w-[36ch] text-[14px] leading-snug text-paper lg:text-[length:var(--text-lede)]"
+        data-verdict
+        className="mx-auto mt-3 max-w-[42ch] text-[13px] leading-snug text-paper lg:mt-4 lg:text-[16px]"
       >
-        Один предотвращённый плохой найм окупает «Команду» на 2,5 года
+        один предотвращённый найм = 2,5 года „Команды“
       </p>
       <p data-shrm className="mt-1 text-[11px] text-dim lg:text-meta">
         SHRM: замена = 100% годовой зарплаты
       </p>
-
-      {/* Beam assembly — mobile beam span ~300px, desktop ~560px. */}
-      <div className="relative mx-auto mt-2 h-[88px] w-full max-w-[300px] lg:mt-3 lg:h-[104px] lg:max-w-[560px]">
-        {/* Flame fulcrum (static triangle, below the beam line). */}
-        <svg
-          aria-hidden="true"
-          className="absolute left-1/2 top-[10px] h-[18px] w-[20px] -translate-x-1/2"
-          viewBox="0 0 20 18"
-        >
-          <path d="M10 0 L20 18 L0 18 Z" fill="var(--color-flame)" />
-        </svg>
-
-        {/* Beam, tipped −7°: left (heavy) end down. */}
-        <div
-          data-beam
-          className="absolute left-0 right-0 top-[8px] origin-center -rotate-[7deg]"
-        >
-          <div className="h-1 w-full rounded-full bg-line-strong" />
-
-          {/* Left pan — sterile tone: the cost of a bad hire. */}
-          <div
-            data-pan-left
-            className="absolute left-0 top-1 w-[136px] origin-top rotate-[7deg] lg:w-[200px]"
-          >
-            <div className="mx-auto h-3 w-px bg-line-strong" />
-            <div className="rounded-xl border border-sterile/40 bg-fog px-2 py-1.5">
-              <p
-                data-pan-label
-                className="text-[10px] leading-snug text-mute lg:text-[12px]"
-              >
-                <span
-                  data-pan-num
-                  className="font-display whitespace-nowrap font-semibold tabular-nums text-sterile"
-                >
-                  1,5 млн ₽
-                </span>{" "}
-                — замена плохого найма
-              </p>
-            </div>
-          </div>
-
-          {/* Right pan — flame tone: a year of «Команда». */}
-          <div
-            data-pan-right
-            className="absolute right-0 top-1 w-[136px] origin-top rotate-[7deg] lg:w-[200px]"
-          >
-            <div className="mx-auto h-3 w-px bg-line-strong" />
-            <div className="rounded-xl border border-flame/50 bg-fog px-2 py-1.5">
-              <p className="text-[10px] leading-snug text-mute lg:text-[12px]">
-                <span className="font-display whitespace-nowrap font-semibold tabular-nums text-flame">
-                  588 тыс ₽
-                </span>{" "}
-                — год „Команды“
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

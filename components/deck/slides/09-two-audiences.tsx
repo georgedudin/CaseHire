@@ -9,10 +9,11 @@
  *   rise → teamlead micro-story (four status marks pop back.out(2) stagger
  *   0.12; layer-4 ticks 65→100% via textContent, then its flame % flips to
  *   a trust ✓) → boundary reveals top→bottom (clip-path on the svg — DrawSVG
- *   would destroy the 6/10 dash pattern, see deviation note) + label pill →
+ *   would destroy the 6/10 dash pattern, see deviation note) →
  *   CandidateIde rises, editor lines reveal via clip-path stagger 0.09 +
  *   caret → metric chips flip up rotationX −28°→0 WITH transformPerspective
- *   600 (binding) + count-ups (84% / 9,1/10 / 38%).
+ *   600 (binding) + count-ups (0→70% / 0→40 / 0→100%, static «≥» outside the
+ *   counted node on chips 1–2; eyebrow «целевые метрики пилота»).
  *
  *   FIRST PULSE at t≈3.5 INSIDE the entrance tl: a 12px ember orb is born at
  *   the IDE status bar (tests flash trust), travels the measured path via
@@ -48,9 +49,9 @@ import { CandidateIde } from "@/components/mockups/candidate-ide";
 import { addCountUp, countUpText, type CountUpOpts } from "@/lib/motion/count-up";
 
 const METRICS: CountUpOpts[] = [
-  { to: 84, suffix: "%", duration: 0.8, ease: "power2.out" },
-  { to: 9.1, decimals: 1, suffix: "/10", duration: 0.8, ease: "power2.out" },
-  { to: 38, suffix: "%", duration: 0.8, ease: "power2.out" },
+  { to: 70, suffix: "%", duration: 0.8, ease: "power2.out" },
+  { to: 40, duration: 0.8, ease: "power2.out" },
+  { to: 100, suffix: "%", duration: 0.8, ease: "power2.out" },
 ];
 const PULSE_AT = 3.5; // first pulse — inside the entrance tl
 const TRAVEL = 1.1;
@@ -94,7 +95,6 @@ export function Slide09TwoAudiences() {
       const strokes = boundarySvg
         ? Array.from(boundarySvg.querySelectorAll("[data-boundary-stroke]"))
         : [];
-      const pill = q("[data-pill]")[0];
       const ideLines = q("[data-ide-line]").filter(vis);
       const ideCaret = q("[data-ide-caret]")[0];
       const testsEl = q("[data-ide-tests]")[0];
@@ -221,7 +221,6 @@ export function Slide09TwoAudiences() {
         if (dot4) gsap.set(dot4, { clearProps: "backgroundColor" });
         if (boundarySvg) gsap.set(boundarySvg, { clipPath: CLIP_SHUT });
         gsap.set(strokes, { strokeDashoffset: 0 });
-        gsap.set(pill, { autoAlpha: 0, scale: 0.92 });
         gsap.set(ideLines, { clipPath: "inset(0% 100% 0% 0%)" });
         gsap.set(ideCaret, { autoAlpha: 0 });
         if (testsEl) gsap.set(testsEl, { clearProps: "color" });
@@ -266,7 +265,6 @@ export function Slide09TwoAudiences() {
         }
         if (dot4) gsap.set(dot4, { backgroundColor: TRUST });
         if (boundarySvg) gsap.set(boundarySvg, { clipPath: CLIP_OPEN });
-        gsap.set(pill, { autoAlpha: 1, scale: 1 });
         gsap.set(ideLines, { clipPath: "inset(0% 0% 0% 0%)" });
         gsap.set(ideCaret, { autoAlpha: 1 });
         if (testsEl) gsap.set(testsEl, { clearProps: "color" });
@@ -358,7 +356,7 @@ export function Slide09TwoAudiences() {
       if (dot4) {
         entrance.to(dot4, { backgroundColor: TRUST, duration: 0.3 }, 1.8);
       }
-      // Boundary reveal top→bottom + label pill.
+      // Boundary reveal top→bottom.
       if (boundarySvg) {
         entrance.fromTo(
           boundarySvg,
@@ -367,12 +365,6 @@ export function Slide09TwoAudiences() {
           1.0,
         );
       }
-      entrance.fromTo(
-        pill,
-        { autoAlpha: 0, scale: 0.92 },
-        { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" },
-        1.55,
-      );
       // Candidate side: IDE rises, code "types itself" via line clip reveals.
       entrance.fromTo(
         riseCand,
@@ -480,7 +472,7 @@ export function Slide09TwoAudiences() {
       ref={ref}
       id="09-two-audiences"
       title="Две аудитории: один продукт, две аудитории первого класса"
-      srSummary="Сторона заказчика: HR живёт в канбане позиций и ранжированной ленте, тимлид заполняет четыре слоя один раз. Сторона кандидата: веб-IDE потребительского уровня и метрики здоровья платформы — 84% завершивших, лояльность 9,1 из 10, 38% вернувшихся. Заказчик и кандидат разделены живой границей, через которую циркулирует ценность."
+      srSummary="Сторона заказчика: HR живёт в канбане позиций и ранжированной ленте, тимлид заполняет четыре слоя один раз. Сторона кандидата: веб-IDE потребительского уровня и целевые метрики пилота — доля завершающих сессию ≥ 70%, NPS кандидата ≥ 40, обратная связь каждому кандидату (100%). Заказчик и кандидат разделены живой границей, через которую циркулирует ценность."
       className="py-5 md:py-10 2xl:py-12"
     >
       <h3
@@ -525,7 +517,7 @@ export function Slide09TwoAudiences() {
 
         {/* -------------------------------------------------------------
          * Boundary — same geometry as slide 8, circulation tone (no red).
-         * Vertical at lg, horizontal <lg; fog pill at mid-height.
+         * Vertical at lg, horizontal <lg.
          * ----------------------------------------------------------- */}
         <div
           data-divider
@@ -541,12 +533,6 @@ export function Slide09TwoAudiences() {
             orientation="horizontal"
             className="h-4 lg:hidden"
           />
-          <span
-            data-pill
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-line bg-fog px-3 py-0.5 text-[10px] text-mute lg:px-3 lg:py-1 lg:text-[11px]"
-          >
-            заказчик ↔ кандидат
-          </span>
         </div>
 
         {/* -------------------------------------------------------------
@@ -566,10 +552,13 @@ export function Slide09TwoAudiences() {
             <CandidateIde compact caret />
           </div>
           <div data-rise-cand>
-            <div className="grid grid-cols-3 gap-2 lg:gap-3">
-              <MetricChip label="% завершивших" value="84%" />
-              <MetricChip label="лояльность" value="9,1/10" />
-              <MetricChip label="% вернувшихся" value="38%" />
+            <p className="text-[9px] uppercase tracking-[0.2em] text-dim lg:text-[10px]">
+              целевые метрики пилота
+            </p>
+            <div className="mt-1.5 grid grid-cols-3 gap-2 lg:mt-2 lg:gap-3">
+              <MetricChip label="завершают сессию" value="70%" prefix="≥" />
+              <MetricChip label="NPS кандидата" value="40" prefix="≥" />
+              <MetricChip label="фидбэк" value="100%" />
             </div>
             {/* Flame underline — sweeps on each pulse arrival (idle). */}
             <div

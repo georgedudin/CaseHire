@@ -128,8 +128,9 @@ export function Slide13Finale() {
   const { ref } = useDeckSlide({
     id: "13-finale",
     hasBuild: true,
-    // <lg: Act II auto-chains after the dual-matrix fill settles (~3.8s).
-    autoChainMs: 3000, // after entrance settles — breathing room before the epitaph
+    // No timer anywhere (amended 2026-06-12): the epitaph waits for a
+    // gesture — key/wheel at lg+, tap on <lg (controller's handleTap).
+    autoChainMs: 0,
     create: ({ root, reduced }) => {
       const lg = window.matchMedia("(min-width: 1024px)").matches;
       const all = <T extends Element = HTMLElement>(sel: string) =>
@@ -178,7 +179,7 @@ export function Slide13Finale() {
       // Self-heal guard: revert a previous split if a rebuild ever races
       // the ctx revert (double-splitting nests spans and breaks metrics).
       type Splittable = HTMLElement & { _chSplit?: SplitText };
-      const split = (el: HTMLElement, type: "words" | "chars") => {
+      const split = (el: HTMLElement, type: "words" | "chars" | "words, chars") => {
         const rec = el as Splittable;
         rec._chSplit?.revert();
         const s = new SplitText(el, { type });
@@ -187,9 +188,15 @@ export function Slide13Finale() {
       };
       let headlineSplit: SplitText | null =
         !reduced && headline ? split(headline, "words") : null;
+      // Refrain lines char-rise, but split as "words, chars" — the word
+      // wrappers keep glyphs from breaking mid-word and keep the comma
+      // («единственное,») attached, so the animating split wraps identically
+      // to the reverted native text. Bare "chars" let the browser break
+      // between any glyphs (orphaned comma, ragged wrap) and then snap on
+      // revert@3.2 — the visible "jump".
       let lineSplits: SplitText[] = reduced
         ? []
-        : refrainLines.slice(0, 2).map((l) => split(l, "chars"));
+        : refrainLines.slice(0, 2).map((l) => split(l, "words, chars"));
       const revertHeadlineSplit = () => {
         headlineSplit?.revert();
         headlineSplit = null;
@@ -581,7 +588,7 @@ export function Slide13Finale() {
                   <li key={m.label} data-node={m.label}>
                     <span
                       data-node-dot
-                      className="relative inline-block h-3 w-3"
+                      className="relative block h-3 w-3"
                     >
                       <span
                         className={cn(
@@ -590,30 +597,44 @@ export function Slide13Finale() {
                         )}
                       />
                       {m.flame ? (
-                        // SVG ring: DrawSVG stroke-in + breathe idle (the
-                        // sanctioned slide-4 ring callback).
-                        <svg
+                        // Ring: DrawSVG stroke-in (circle) + scale-pulse /
+                        // breathe idle (the sanctioned slide-4 ring callback).
+                        // The scale/opacity tweens target this SPAN, never the
+                        // <svg>: a CSS transform on an outer <svg> carries
+                        // transform-box:view-box, which real Safari renders
+                        // with a positional offset even at identity — that
+                        // floated the flame ring off the spine (Chromium and
+                        // headless WebKit don't reproduce it). A span scales
+                        // around its border-box centre identically in every
+                        // engine, and sizing the box via a non-replaced span
+                        // (not a bare inset-sized <svg>) also kills Safari's
+                        // replaced-element intrinsic-size ambiguity.
+                        <span
                           data-node-ring-svg
                           aria-hidden="true"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          className="absolute -inset-1 overflow-visible"
+                          className="absolute -inset-1 block overflow-visible [transform-box:border-box]"
                         >
-                          <circle
-                            data-node-ring
-                            cx="10"
-                            cy="10"
-                            r="9"
-                            stroke="var(--color-flame)"
-                            strokeWidth="1.5"
-                            transform="rotate(-90 10 10)"
-                          />
-                        </svg>
+                          <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className="h-full w-full overflow-visible"
+                          >
+                            <circle
+                              data-node-ring
+                              cx="10"
+                              cy="10"
+                              r="9"
+                              stroke="var(--color-flame)"
+                              strokeWidth="1.5"
+                              transform="rotate(-90 10 10)"
+                            />
+                          </svg>
+                        </span>
                       ) : null}
                     </span>
                     <p
                       className={cn(
-                        "font-display mt-1.5 text-[13px] font-semibold lg:text-[15px]",
+                        "font-display mt-5 text-[13px] font-semibold lg:text-[15px]",
                         m.flame ? "text-flame" : "text-paper",
                       )}
                     >

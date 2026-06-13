@@ -1,96 +1,83 @@
 "use client";
 
 /**
- * Slide 03 — Почему сейчас: ИИ выровнял всех · «Перцепционные ножницы»
- * (landing_v2.md §4, slide 03 + Director's cut).
+ * Slide 03 — Почему сейчас: ИИ выровнял всех · «Ощущение vs замер»
+ * (landing_v2.md §4, slide 03; build restored + chart redesigned 2026-06-12).
  *
- * P3 motion. NO build step (cut) — the antithesis AUTO-CHAINS as beats
- * appended INTO the entrance timeline after a 4s gap (chosen over a
- * makeIdles delayedCall: a gesture mid-gap hits the controller's
- * finish-entrance path and jumps dim + line to their end — exactly the
- * frozen state, so impatient presses can never strand the slide).
+ * P3 motion. BUILD slide (gesture-gated, autoChainMs: 0 — the antithesis
+ * NEVER fires on a timer): key/wheel at lg+ (mid snap point), tap on <lg
+ * (controller's handleTap). This supersedes the Director's-cut auto-chain.
  *
- * Entrance (paused master tl, played on fixation):
+ * Entrance (paused master tl, played on fixation, ends ≈3.85s):
  *   0.0   headline SplitText WORDS rise (y 24→0, stagger 0.05)
- *   0.2   scissors card fades · 0.3 zero-axis DrawSVG
- *   0.7   merged bar born at zero — both rects overlapped at axis mid-y,
- *         grown to a short neutral length (scaleX from the axis)
- *   1.2   THE SHEAR — ghost scaleX→1 right, flame scaleX→1 left, vertical
- *         separation y ±42→0, 0.9s power3.inOut; bracket DrawSVG follows
- *         (1.5); «−19%» counts DOWN −0→−19 (addCountUp, ru minus) while its
- *         color tweens paper→ember; bar-tip micro-tags fade (2.0)
+ *   0.2   perception card fades · 0.3 ZERO line DrawSVG + «0» tick
+ *   0.65  «ощущение» label fades (mirror quadrant, below the line)
+ *   0.7   ghost column RISES from the zero line (scaleY 0.02→1,
+ *         power3.out) while «+20%» counts up above its tip (sterile)
+ *   1.45  «замер» label fades (above the line)
+ *   1.5   THE DROP — flame column FALLS below the line (scaleY,
+ *         power3.inOut) while «−19%» counts DOWN −0→−19 (addCountUp, ru
+ *         minus) and its color tweens paper→ember; columns land at
+ *         proportional heights (66 vs 62.7 — almost equal, opposite
+ *         sides of zero: the paradox is the picture)
  *   1.85  trust card fades · 2.1 dial arc DrawSVG to 43% sweep + needle
  *         −90°→−9° overshoot →−12.6° fallback (the "stuck" read) + 43% count
  *   2.75  mandate card fades · 2.9/3.05 Shopify/Coinbase chips FADE in with
  *         permanent rotations PRE-SET (NO slam/jolt — stamp grammar is
  *         reserved, §2.3) · 3.35 «увольняют» flame underline scaleX + color
- *   ≈3.8  STABLE READ — the slide is fully legible here.
- *   7.8   ANTITHESIS (settle + 4s, all form factors): desktop only — cards
- *         dim to 60% / scale .965 / y −8 (0.5s quart.inOut ≡ power3.inOut);
- *         both — «Требование — есть.» word-rises first, 0.6s held pause,
- *         then the rest, «нет.» landing soft in flame (scale 1.15→1
- *         power3.out — NOT the reserved notary slam). Mobile cards do NOT
- *         dim (binding). Timeline fully settles at ≈9.9s.
+ *   ≈3.85 SETTLED — fully legible; idles run while the presenter talks.
  *
- * Idles (killed on leave): needle tries to climb +2.5° and falls back
- * (bounce ≤3°) every ~3.5s; flame-bar ember glow pulse (overlay opacity
- * 0↔0.15, 4s sine); ghost bar dashed outline drift (dashoffset, seamless
- * period). Idles start after the full chain — by then the slide is frozen
- * scenery under the antithesis.
+ * Build (one-shot, ≈2.2s, on the speaker's «Требование — есть…» beat):
+ *   0.0   cards dim to 5% / scale .965 / y −8 (slide 13's epitaph grammar,
+ *         all form factors) — the antithesis owns the frame
+ *   0.05  «Требование — есть.» word-rises · 0.6s held pause (the spoken
+ *         pause) · 1.26 the rest · 1.81 «нет.» soft flame landing (scale
+ *         1.15→1 power3.out — NOT the reserved notary slam) · 2.2 revertAnti.
  *
- * Frozen = antithesis over (desktop-only) dimmed cards — the static render.
- * Reduced motion: hooks are no-ops; the SSR markup (incl. lg:opacity-60 on
- * the card grid) IS the final frame.
+ * Idles (SETTLED only; built = stillness): needle tries to climb +2.5° and
+ * falls back (bounce ≤3°) every ~3.5s; flame-bar ember glow pulse (0↔0.15,
+ * 4s sine); ghost bar dashed outline drift (dashoffset, seamless period).
+ *
+ * Frozen: settled = undimmed cards, antithesis hidden (words re-armed for a
+ * future build); built = dimmed cards + intact antithesis line.
+ * Reduced motion: the hook applies setFrozen("built") — static final frame.
  *
  * Vertical budget:
- *   375×620 : py-6 (48) + headline ~56 + 12 + scissors card ~190 + 8 + dial
- *             card ~150 + 8 + mandate ~110 ≈ 574 → fits. Antithesis overlay
- *             adds zero flow height.
- *   1366×768: py-10 (80) + headline ~80 + 24 + grid row ~400 ≈ 584 → fits.
+ *   375×620 : py-6 (48) + headline ~56 + 12 + perception card ~180 (90px
+ *             chart + caption/source) + 8 + dial card ~150 + 8 + mandate
+ *             ~110 ≈ 560 → fits. Antithesis overlay adds zero flow height.
+ *   1366×768: py-10 (80) + headline ~80 + 24 + grid row ~390 ≈ 574 → fits.
  */
 import { gsap, SplitText } from "@/lib/gsap-setup";
 import { addCountUp, countUpText } from "@/lib/motion/count-up";
 import { breathe } from "@/lib/motion/idle";
 import { Slide } from "@/components/deck/slide";
 import { useDeckSlide } from "@/components/deck/deck-context";
-import { ScissorsChart } from "@/components/deck/parts/scissors-chart";
+import { PerceptionGapChart } from "@/components/deck/parts/perception-gap-chart";
 import { TrustDial } from "@/components/deck/parts/trust-dial";
 
 const PAPER = "#f5f5f7";
 const MUTE = "#a1a1aa";
 const EMBER = "#ff8a4c";
 
-/** Merged-bar geometry: a short neutral stub each side of the axis. */
-const GHOST_MERGED = 80 / 344;
-const FLAME_MERGED = 80 / 136;
-
 const SETTLE_T = 3.8;
-const ANTI_T = SETTLE_T + 4; // binding: 4s after entrance settles
 
 export function Slide03WhyNow() {
   const { ref } = useDeckSlide({
     id: "03-why-now",
+    hasBuild: true,
+    // Explicit 0: the antithesis NEVER auto-chains — gesture/tap only.
+    autoChainMs: 0,
     create: ({ root, reduced }) => {
-      if (reduced) {
-        // Static deck: SSR markup IS the final frame (antithesis visible,
-        // desktop cards dimmed via lg:opacity-60). Hooks are no-ops.
-        return {
-          entrance: gsap.timeline({ paused: true }),
-          setFrozen: () => {},
-          setDormant: () => {},
-        };
-      }
-
-      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-
       const headline = root.querySelector<HTMLElement>("[data-headline]")!;
       const cardsWrap = root.querySelector<HTMLElement>("[data-cards]")!;
       const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-card]"));
-      const axis = root.querySelector<SVGLineElement>("[data-axis]")!;
+      const baseline = root.querySelector<SVGLineElement>("[data-baseline]")!;
+      const zeroTick = root.querySelector<SVGTextElement>("[data-zero]")!;
       const ghost = root.querySelector<SVGRectElement>("[data-bar-ghost]")!;
       const flame = root.querySelector<SVGRectElement>("[data-bar-flame]")!;
       const glow = root.querySelector<SVGRectElement>("[data-bar-flame-glow]")!;
-      const bracket = root.querySelector<SVGPathElement>("[data-bracket]")!;
+      const statGhost = root.querySelector<HTMLElement>('[data-stat="ghost"]')!;
       const statMetr = root.querySelector<HTMLElement>('[data-stat="metr"]')!;
       const tagGhost = root.querySelector<HTMLElement>("[data-tag-ghost]")!;
       const tagFlame = root.querySelector<HTMLElement>("[data-tag-flame]")!;
@@ -100,56 +87,70 @@ export function Slide03WhyNow() {
       const chips = Array.from(root.querySelectorAll<HTMLElement>("[data-chip]"));
       const underline = root.querySelector<HTMLElement>("[data-underline]")!;
       const fireWord = root.querySelector<HTMLElement>("[data-fire-word]")!;
+      const antiWrap = root.querySelector<HTMLElement>("[data-antithesis]")!;
       const antiLine = root.querySelector<HTMLElement>("[data-antithesis] p")!;
 
       // GSAP owns the needle's transform from here (svgOrigin); drop the
       // static attribute so the parses can never stack origins.
       needle.removeAttribute("transform");
 
-      // Splits (fonts are gated by useDeckSlide; context-tracked → resize
-      // rebuild reverts them). Both are entrance-only → reverted post-use.
-      const headSplit = SplitText.create(headline, { type: "words" });
-      const antiSplit = SplitText.create(antiLine, { type: "words" });
-      const hWords = headSplit.words;
-      const aWords = antiSplit.words;
+      // Splits — motion path only (fonts are gated by useDeckSlide;
+      // context-tracked → resize rebuild reverts them). The head split is
+      // entrance-only; the anti split must SURVIVE settled freezes (the
+      // build may still play later) and reverts on build end / built freeze.
+      const headSplit = reduced ? null : SplitText.create(headline, { type: "words" });
+      const antiSplit = reduced ? null : SplitText.create(antiLine, { type: "words" });
+      const hWords = headSplit?.words ?? [];
+      const aWords = antiSplit?.words ?? [];
       // «Требование — есть.» | «Инструмента, который его проверяет, —» | «нет.»
       const iEst = aWords.findIndex((w) =>
         (w.textContent ?? "").trim().startsWith("есть"),
       );
       const wordsA = aWords.slice(0, iEst + 1);
       const wordsB = aWords.slice(iEst + 1, aWords.length - 1);
-      const wordNo = aWords[aWords.length - 1];
+      const wordNo = aWords[aWords.length - 1] ?? null;
 
-      let headAlive = true;
+      let headAlive = headSplit !== null;
       const revertHead = () => {
         if (!headAlive) return;
         headAlive = false;
-        headSplit.revert();
+        headSplit?.revert();
       };
-      let antiAlive = true;
+      let antiAlive = antiSplit !== null;
       const revertAnti = () => {
         if (!antiAlive) return;
         antiAlive = false;
-        antiSplit.revert();
+        antiSplit?.revert();
+      };
+
+      // makeIdles branches on this: BUILT returns [] (stillness is the point).
+      let stage: "settled" | "built" = "settled";
+
+      const setAntiWordsDormant = () => {
+        if (!antiAlive) return;
+        gsap.set([...wordsA, ...wordsB], { autoAlpha: 0, y: 14 });
+        if (wordNo)
+          gsap.set(wordNo, { autoAlpha: 0, scale: 1.15, transformOrigin: "50% 80%" });
       };
 
       const setDormant = () => {
-        gsap.set(hWords, { autoAlpha: 0, y: 24 });
-        // Motion owns the wrapper's opacity (overrides lg:opacity-60): cards
-        // play their entrance undimmed; the antithesis dims them later.
+        if (hWords.length) gsap.set(hWords, { autoAlpha: 0, y: 24 });
+        // Motion owns the wrapper's opacity: cards play their entrance
+        // undimmed; only the BUILD dims them.
         gsap.set(cardsWrap, { opacity: 1, scale: 1, y: 0 });
         gsap.set(cards, { autoAlpha: 0, y: 16 });
-        gsap.set(axis, { drawSVG: "0%" });
+        gsap.set(baseline, { drawSVG: "0%" });
+        gsap.set(zeroTick, { autoAlpha: 0 });
         gsap.set(ghost, {
           autoAlpha: 0,
-          scaleX: 0.02,
-          y: 42,
-          svgOrigin: "266 64",
+          scaleY: 0.02,
+          svgOrigin: "165 140",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 0, scaleX: 0.02, y: -42, svgOrigin: "266 148" });
+        gsap.set(flame, { autoAlpha: 0, scaleY: 0.02, svgOrigin: "385 140" });
         gsap.set(glow, { opacity: 0 });
-        gsap.set(bracket, { drawSVG: "0%" });
+        gsap.set(statGhost, { autoAlpha: 0 });
+        statGhost.textContent = countUpText(0, { prefix: "+", suffix: "%" });
         gsap.set(statMetr, { autoAlpha: 0, color: PAPER });
         statMetr.textContent = countUpText(-0, { suffix: "%" });
         gsap.set([tagGhost, tagFlame], { autoAlpha: 0, y: 8 });
@@ -159,33 +160,34 @@ export function Slide03WhyNow() {
         gsap.set(chips, { autoAlpha: 0, y: 8 }); // rotations stay PRE-SET
         gsap.set(underline, { scaleX: 0 });
         gsap.set(fireWord, { color: MUTE });
-        gsap.set([...wordsA, ...wordsB], { autoAlpha: 0, y: 14 });
-        gsap.set(wordNo, { autoAlpha: 0, scale: 1.15, transformOrigin: "50% 80%" });
+        gsap.set(antiWrap, { autoAlpha: 0 });
+        setAntiWordsDormant();
       };
 
-      const setFrozen = () => {
+      const setFrozen = (s: "settled" | "built") => {
+        stage = s;
         revertHead();
-        revertAnti();
         gsap.killTweensOf([needle, ghost, glow]);
         gsap.set(headline, { autoAlpha: 1 });
         gsap.set(cards, { autoAlpha: 1, y: 0 });
         gsap.set(
           cardsWrap,
-          isDesktop
-            ? { opacity: 0.6, scale: 0.965, y: -8 }
+          s === "built"
+            ? { opacity: 0.05, scale: 0.965, y: -8 }
             : { opacity: 1, scale: 1, y: 0 },
         );
-        gsap.set(axis, { drawSVG: "100%" });
+        gsap.set(baseline, { drawSVG: "100%" });
+        gsap.set(zeroTick, { autoAlpha: 1 });
         gsap.set(ghost, {
           autoAlpha: 1,
-          scaleX: 1,
-          y: 0,
-          svgOrigin: "266 64",
+          scaleY: 1,
+          svgOrigin: "165 140",
           strokeDashoffset: 0,
         });
-        gsap.set(flame, { autoAlpha: 1, scaleX: 1, y: 0, svgOrigin: "266 148" });
+        gsap.set(flame, { autoAlpha: 1, scaleY: 1, svgOrigin: "385 140" });
         gsap.set(glow, { opacity: 0 });
-        gsap.set(bracket, { drawSVG: "100%" });
+        gsap.set(statGhost, { autoAlpha: 1 });
+        statGhost.textContent = countUpText(20, { prefix: "+", suffix: "%" });
         gsap.set(statMetr, { autoAlpha: 1, clearProps: "color" });
         statMetr.textContent = countUpText(-19, { suffix: "%" });
         gsap.set([tagGhost, tagFlame], { autoAlpha: 1, y: 0 });
@@ -195,36 +197,55 @@ export function Slide03WhyNow() {
         gsap.set(chips, { autoAlpha: 1, y: 0 });
         gsap.set(underline, { scaleX: 1 });
         gsap.set(fireWord, { clearProps: "color" });
-        // Antithesis: splits reverted above → the intact line is visible.
+        if (s === "built") {
+          // Intact line over dimmed cards — the antithesis is the frame.
+          revertAnti();
+          gsap.set(antiWrap, { autoAlpha: 1 });
+        } else {
+          // Settled: antithesis hidden, words re-armed so a build after a
+          // leave-and-return re-entry still plays cleanly (build uses .to).
+          gsap.set(antiWrap, { autoAlpha: 0 });
+          setAntiWordsDormant();
+        }
       };
 
+      if (reduced) {
+        // Static deck: the hook applies setFrozen("built") itself.
+        return { entrance: gsap.timeline({ paused: true }), setFrozen, setDormant };
+      }
+
       /* ----------------------------------------------------------------
-       * Entrance + auto-chained antithesis (single timeline)
+       * Entrance (ends at the stable read — the antithesis is the BUILD)
        * ---------------------------------------------------------------- */
       const entrance = gsap.timeline({ paused: true });
       entrance
         .to(hWords, { autoAlpha: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.05 }, 0)
         .to(cards[0], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.2)
-        .to(axis, { drawSVG: "100%", duration: 0.4, ease: "power2.inOut" }, 0.3)
-        // merged bar born at zero
-        .to([ghost, flame], { autoAlpha: 1, duration: 0.25, ease: "power2.out" }, 0.7)
-        .to(ghost, { scaleX: GHOST_MERGED, duration: 0.45, ease: "power2.out" }, 0.7)
-        .to(flame, { scaleX: FLAME_MERGED, duration: 0.45, ease: "power2.out" }, 0.7)
-        // THE SHEAR
-        .to(ghost, { scaleX: 1, y: 0, duration: 0.9, ease: "power3.inOut" }, 1.2)
-        .to(flame, { scaleX: 1, y: 0, duration: 0.9, ease: "power3.inOut" }, 1.2)
-        .to(statMetr, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 1.2)
-        .to(statMetr, { color: EMBER, duration: 0.9, ease: "power2.inOut" }, 1.2)
-        .to(bracket, { drawSVG: "100%", duration: 0.5, ease: "power2.inOut" }, 1.5)
-        .to(
-          [tagGhost, tagFlame],
-          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.1 },
-          2.0,
-        );
-      addCountUp(entrance, 1.2, statMetr, {
+        .to(baseline, { drawSVG: "100%", duration: 0.4, ease: "power2.inOut" }, 0.3)
+        .to(zeroTick, { autoAlpha: 1, duration: 0.3, ease: "power1.out" }, 0.4)
+        // «ощущение» — confidence RISES above the zero line
+        .to(tagGhost, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.65)
+        .to(ghost, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, 0.7)
+        .to(ghost, { scaleY: 1, duration: 0.7, ease: "power3.out" }, 0.7)
+        .to(statGhost, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 0.7);
+      addCountUp(entrance, 0.7, statGhost, {
+        to: 20,
+        duration: 0.6,
+        ease: "power2.out",
+        prefix: "+",
+        suffix: "%",
+      });
+      entrance
+        // «замер» — THE DROP: reality falls below the zero line
+        .to(tagFlame, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1.45)
+        .to(flame, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, 1.5)
+        .to(flame, { scaleY: 1, duration: 0.8, ease: "power3.inOut" }, 1.5)
+        .to(statMetr, { autoAlpha: 1, duration: 0.25, ease: "power1.out" }, 1.5)
+        .to(statMetr, { color: EMBER, duration: 0.8, ease: "power2.inOut" }, 1.5);
+      addCountUp(entrance, 1.5, statMetr, {
         to: -19,
         from: -0,
-        duration: 0.9,
+        duration: 0.8,
         ease: "power3.inOut",
         suffix: "%",
       });
@@ -248,39 +269,49 @@ export function Slide03WhyNow() {
         .to(underline, { scaleX: 1, duration: 0.45, ease: "power2.out" }, 3.35)
         .call(revertHead, [], SETTLE_T + 0.05);
 
-      // ANTITHESIS — 4s after settle, all form factors (Director's cut).
-      if (isDesktop) {
-        entrance.to(
-          cardsWrap,
-          { opacity: 0.6, scale: 0.965, y: -8, duration: 0.5, ease: "power3.inOut" },
-          ANTI_T,
-        );
-      }
-      entrance
-        // «Требование — есть.» — last word lands ≈ ANTI_T+0.61
+      /* ----------------------------------------------------------------
+       * Build — the antithesis (gesture-gated one-shot, ≈2.2s)
+       * ---------------------------------------------------------------- */
+      const build = gsap.timeline({ paused: true });
+      build.call(
+        () => {
+          stage = "built";
+        },
+        undefined,
+        0,
+      );
+      build.set(antiWrap, { autoAlpha: 1 }, 0);
+      build.to(
+        cardsWrap,
+        { opacity: 0.05, scale: 0.965, y: -8, duration: 0.5, ease: "power3.inOut" },
+        0,
+      );
+      build
+        // «Требование — есть.» — last word lands ≈0.66
         .to(
           wordsA,
           { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out", stagger: 0.08 },
-          ANTI_T,
+          0.05,
         )
-        // 0.6s held pause, then the rest of the line
+        // 0.6s held pause (the spoken pause), then the rest of the line
         .to(
           wordsB,
           { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 },
-          ANTI_T + 1.21,
+          1.26,
         )
         // «нет.» — soft flame landing (scale 1.15→1; NOT the reserved slam)
         .to(
           wordNo,
           { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power3.out" },
-          ANTI_T + 1.76,
+          1.81,
         )
-        .call(revertAnti, [], ANTI_T + 2.15);
+        .call(revertAnti, [], 2.2);
 
       /* ----------------------------------------------------------------
-       * Idles
+       * Idles — SETTLED only (built = stillness under the antithesis)
        * ---------------------------------------------------------------- */
       const makeIdles = () => {
+        if (stage === "built") return [];
         const climb = gsap.timeline({ delay: 1.2, repeat: -1, repeatDelay: 3.1 }); // deck-contract: idle
         climb
           .to(needle, { rotation: -10.1, duration: 0.4, ease: "power1.out" })
@@ -295,7 +326,7 @@ export function Slide03WhyNow() {
         return [climb, drift, breathe(glow, 0, 0.15, 4)];
       };
 
-      return { entrance, makeIdles, setFrozen, setDormant };
+      return { entrance, build, makeIdles, setFrozen, setDormant };
     },
   });
 
@@ -303,8 +334,9 @@ export function Slide03WhyNow() {
     <Slide
       ref={ref}
       id="03-why-now"
+      hasBuild
       title="Почему сейчас: ИИ выровнял всех, но не сделал равными"
-      srSummary="METR, строгий эксперимент, 2025: опытные разработчики с ИИ работали на 19% медленнее — и были уверены, что быстрее. Только 43% разработчиков доверяют точности ответов ИИ (Stack Overflow 2024). Shopify и Coinbase: ИИ-компетенция — критерий аттестации; инженеров без неё увольняют. Требование — есть. Инструмента, который его проверяет, — нет."
+      srSummary="METR, строгий эксперимент, 2025: опытные разработчики с ИИ работали на 19% медленнее — и были уверены, что стали на 20% быстрее. Только 43% разработчиков доверяют точности ответов ИИ (Stack Overflow 2024). Shopify и Coinbase: ИИ-компетенция — критерий аттестации; инженеров без неё увольняют. Требование — есть. Инструмента, который его проверяет, — нет."
       className="py-6 lg:py-10"
     >
       <h3
@@ -314,17 +346,19 @@ export function Slide03WhyNow() {
         ИИ выровнял всех. <span className="text-mute">Но не сделал равными.</span>
       </h3>
 
-      {/* Cards — dimmed to 60% under the antithesis overlay on desktop only. */}
+      {/* Cards — JSX renders NEUTRAL (undimmed); the build/setFrozen("built")
+          dim them to 5% under the antithesis. */}
       <div
         data-cards
-        className="mt-3 grid gap-2 lg:mt-6 lg:grid-cols-12 lg:gap-6 lg:opacity-60"
+        className="mt-3 grid gap-2 lg:mt-6 lg:grid-cols-12 lg:gap-6"
       >
-        {/* Scissors card */}
+        {/* Perception-gap card — content vertically centered: the card
+            stretches to the right column's height at lg+. */}
         <div
           data-card="metr"
-          className="rounded-2xl border border-line bg-fog p-3 lg:col-span-7 lg:p-6"
+          className="flex flex-col justify-center rounded-2xl border border-line bg-fog p-3 lg:col-span-7 lg:p-6"
         >
-          <ScissorsChart />
+          <PerceptionGapChart />
           <p className="mt-2 text-[length:var(--text-meta)] leading-snug text-mute lg:mt-3">
             опытные разработчики с ИИ работали медленнее — и были уверены, что
             быстрее
@@ -393,11 +427,13 @@ export function Slide03WhyNow() {
         </div>
       </div>
 
-      {/* Antithesis — final auto-chained state, absolutely positioned overlay
-          against the .slide stage (zero flow height, Director's cut). */}
+      {/* Antithesis — the BUILD's payload, hidden in JSX (slide 13's refrain
+          pattern); setFrozen("built") and the build timeline reveal it.
+          Absolutely positioned overlay against the .slide stage (zero flow
+          height). */}
       <div
         data-antithesis
-        className="pointer-events-none absolute inset-0 flex items-center justify-center px-5"
+        className="pointer-events-none invisible absolute inset-0 flex items-center justify-center px-5 opacity-0"
       >
         <p className="font-display max-w-[22ch] text-center text-[length:var(--text-h2)] text-paper lg:text-[length:var(--text-display)]">
           Требование — есть. Инструмента, который его проверяет, —{" "}
