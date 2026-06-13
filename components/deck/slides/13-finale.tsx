@@ -582,7 +582,7 @@ export function Slide13Finale() {
                   <li key={m.label} data-node={m.label}>
                     <span
                       data-node-dot
-                      className="relative inline-block h-3 w-3"
+                      className="relative inline-block h-3 w-3 align-top"
                     >
                       <span
                         className={cn(

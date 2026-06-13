@@ -776,3 +776,7 @@ Gates run against `npm run dev`, headless Chromium (`/tmp/deck-verify/ui-fix-03b
 5. **Perception-gap chart, redesign #2 (375/1366/1920 + reduced):** ghost column sits ON the zero line, flame column hangs BELOW it; heights ∝ +20/−19 (ratio 1.053); +20% centered above its column; −19% right of the fallen column, inside the card; both labels padded off the line (the glued-text fix) and clear of columns and numbers — 12 geometry assertions × 4 contexts green.
 6. **Reduced motion:** slide 3 renders the built frame (dim 0.05 + intact line + final chart) via the hook's `setFrozen("built")`.
 7. Zero page errors in all contexts; `npm run build` + `lint:deck` clean.
+
+### §7 Addendum — 2026-06-13 (ui-fixes round batch 2: slides 13 / 8 / 9 / 6 / 11)
+
+1. **Slide 13 — milestone dots ride the spine:** the `[data-node-dot]` span gets `align-top`. The spine is `top-[5px] h-[2px]` (y 5..7, center 6); a top-aligned 12px (`h-3`) box centers at 6 — exact. The `inline-block` strut preserves the line-box height, so the milestone labels do **not** move (do not use `block`/`absolute` — they collapse the strut and shift labels ~12px up). Same className at all viewports. Verify: `|dotCenterY − spineCenterY| ≤ 1px` for all four dots at 375 / 1366 / 1920, measured at settled.
