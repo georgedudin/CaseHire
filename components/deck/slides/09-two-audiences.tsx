@@ -12,7 +12,8 @@
  *   would destroy the 6/10 dash pattern, see deviation note) →
  *   CandidateIde rises, editor lines reveal via clip-path stagger 0.09 +
  *   caret → metric chips flip up rotationX −28°→0 WITH transformPerspective
- *   600 (binding) + count-ups (84% / 9,1/10 / 38%).
+ *   600 (binding) + count-ups (0→70% / 0→40 / 0→100%, static «≥» outside the
+ *   counted node on chips 1–2; eyebrow «целевые метрики пилота»).
  *
  *   FIRST PULSE at t≈3.5 INSIDE the entrance tl: a 12px ember orb is born at
  *   the IDE status bar (tests flash trust), travels the measured path via
@@ -48,9 +49,9 @@ import { CandidateIde } from "@/components/mockups/candidate-ide";
 import { addCountUp, countUpText, type CountUpOpts } from "@/lib/motion/count-up";
 
 const METRICS: CountUpOpts[] = [
-  { to: 84, suffix: "%", duration: 0.8, ease: "power2.out" },
-  { to: 9.1, decimals: 1, suffix: "/10", duration: 0.8, ease: "power2.out" },
-  { to: 38, suffix: "%", duration: 0.8, ease: "power2.out" },
+  { to: 70, suffix: "%", duration: 0.8, ease: "power2.out" },
+  { to: 40, duration: 0.8, ease: "power2.out" },
+  { to: 100, suffix: "%", duration: 0.8, ease: "power2.out" },
 ];
 const PULSE_AT = 3.5; // first pulse — inside the entrance tl
 const TRAVEL = 1.1;
@@ -471,7 +472,7 @@ export function Slide09TwoAudiences() {
       ref={ref}
       id="09-two-audiences"
       title="Две аудитории: один продукт, две аудитории первого класса"
-      srSummary="Сторона заказчика: HR живёт в канбане позиций и ранжированной ленте, тимлид заполняет четыре слоя один раз. Сторона кандидата: веб-IDE потребительского уровня и метрики здоровья платформы — 84% завершивших, лояльность 9,1 из 10, 38% вернувшихся. Заказчик и кандидат разделены живой границей, через которую циркулирует ценность."
+      srSummary="Сторона заказчика: HR живёт в канбане позиций и ранжированной ленте, тимлид заполняет четыре слоя один раз. Сторона кандидата: веб-IDE потребительского уровня и целевые метрики пилота — доля завершающих сессию ≥ 70%, NPS кандидата ≥ 40, обратная связь каждому кандидату (100%). Заказчик и кандидат разделены живой границей, через которую циркулирует ценность."
       className="py-5 md:py-10 2xl:py-12"
     >
       <h3
@@ -551,10 +552,13 @@ export function Slide09TwoAudiences() {
             <CandidateIde compact caret />
           </div>
           <div data-rise-cand>
-            <div className="grid grid-cols-3 gap-2 lg:gap-3">
-              <MetricChip label="% завершивших" value="84%" />
-              <MetricChip label="лояльность" value="9,1/10" />
-              <MetricChip label="% вернувшихся" value="38%" />
+            <p className="text-[9px] uppercase tracking-[0.2em] text-dim lg:text-[10px]">
+              целевые метрики пилота
+            </p>
+            <div className="mt-1.5 grid grid-cols-3 gap-2 lg:mt-2 lg:gap-3">
+              <MetricChip label="завершают сессию" value="70%" prefix="≥" />
+              <MetricChip label="NPS кандидата" value="40" prefix="≥" />
+              <MetricChip label="фидбэк" value="100%" />
             </div>
             {/* Flame underline — sweeps on each pulse arrival (idle). */}
             <div
