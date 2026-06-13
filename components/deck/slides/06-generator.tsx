@@ -18,8 +18,8 @@
  *     final frame).
  *
  * Entrance (≤3.9s): header rise → step cards rise stagger 0.25 with chevron
- * DrawSVG 0.15s after each left card → plaques stamp 1.12→1 + «Никогда.»
- * underline DrawSVG → stage fades up, layer chips stagger x−8 → seed line
+ * DrawSVG 0.15s after each left card → plaques stamp 1.12→1 → stage fades
+ * up, layer chips stagger x−8 → seed line
  * TYPES (SplitText chars opacity stagger ~0.013, fixed line box, zero
  * layout motion) with the caret alive.
  *
@@ -83,7 +83,6 @@ export function Slide06Generator() {
       const steps = q("[data-step]");
       const chevrons = q("[data-chevron] path").filter(vis);
       const plaques = q("[data-plaque]");
-      const underline = q("[data-plaque-underline]").filter(vis);
       const stage = q("[data-stage]")[0];
       const stagePre = q("[data-stage-pre]")[0];
       const layerChips = q("[data-layer-chip]");
@@ -198,7 +197,6 @@ export function Slide06Generator() {
         gsap.set(steps, { autoAlpha: 1, y: 0 });
         setIf(chevrons, { drawSVG: "100%" });
         gsap.set(plaques, { autoAlpha: 1, scale: 1 });
-        setIf(underline, { drawSVG: "100%" });
         gsap.set(stage, { autoAlpha: 1, y: 0 });
       };
 
@@ -284,7 +282,6 @@ export function Slide06Generator() {
         gsap.set(steps, { autoAlpha: 0, y: 24 });
         setIf(chevrons, { drawSVG: "0%" });
         gsap.set(plaques, { autoAlpha: 0, scale: 1.12 });
-        setIf(underline, { drawSVG: "0%" });
         gsap.set(stage, { autoAlpha: 0, y: 16 });
         setPreInterior();
         // Pre-typing console: chips queued, seed un-typed, caret off.
@@ -319,7 +316,7 @@ export function Slide06Generator() {
           0.35 + i * 0.25,
         );
       });
-      // Plaques stamp + «Никогда.» flame underline.
+      // Plaques stamp.
       entrance.fromTo(
         plaques,
         { autoAlpha: 0, scale: 1.12 },
@@ -331,12 +328,6 @@ export function Slide06Generator() {
           stagger: 0.12,
         },
         1.6,
-      );
-      entrance.fromTo(
-        underline,
-        { drawSVG: "0%" },
-        { drawSVG: "100%", duration: 0.4, ease: "power2.out" },
-        1.85,
       );
       // Generator stage + console chips.
       entrance.fromTo(
@@ -591,34 +582,14 @@ export function Slide06Generator() {
           }
           detail={
             <>
-              стек → «как мы работаем» → бизнес-контекст →{" "}
-              <b className="font-semibold text-paper">1–3 строки</b> про задачу
+              стек · «как мы работаем» · бизнес-контекст · 1–3 строки про задачу
               позиции
             </>
           }
           plaque={
             <>
               Никакой выгрузки базы кода.{" "}
-              <span className="relative inline-block">
-                Никогда.
-                {/* Flame underline — DrawSVG at the plaque stamp beat. */}
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 100 4"
-                  preserveAspectRatio="none"
-                  className="absolute -bottom-1 left-0 h-[3px] w-full"
-                >
-                  <line
-                    data-plaque-underline
-                    x1="1"
-                    y1="2"
-                    x2="99"
-                    y2="2"
-                    stroke="var(--color-flame)"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </span>
+              <span className="font-semibold text-paper">Никогда.</span>
             </>
           }
         />
@@ -629,11 +600,11 @@ export function Slide06Generator() {
           keyChip="30 секунд"
           tagline={
             <>
-              ссылка →{" "}
+              ссылка ·{" "}
               <b data-chip-30s className="font-semibold text-paper">
                 30 секунд
               </b>{" "}
-              → веб-IDE
+              · веб-IDE
             </>
           }
           detail={
@@ -1002,23 +973,21 @@ function StepCard({
           {keyChip}
         </span>
       </div>
-      <p className="mt-1.5 hidden text-meta leading-snug text-mute lg:block">
+      <p className="mt-2 hidden text-meta leading-snug text-mute lg:block">
         {tagline}
       </p>
-      <p className="mt-1 hidden text-[12px] leading-snug text-dim lg:block">
+      <p className="mt-1.5 hidden text-[12px] leading-relaxed text-dim lg:block">
         {detail}
       </p>
       {plaque ? (
         <p
           data-plaque
           className={cn(
-            "mt-1.5 text-[11px] leading-snug text-flame",
+            "mt-2 text-[11px] leading-snug text-mute",
             "lg:mt-auto lg:pt-3",
           )}
         >
-          <span className="lg:rounded-lg lg:border lg:border-line-strong lg:px-2.5 lg:py-1">
-            {plaque}
-          </span>
+          {plaque}
         </p>
       ) : null}
     </article>
