@@ -16,7 +16,7 @@ export const DEFAULT_AXES: ProcessAxis[] = [
   { label: "проверка", score: 69 },
   { label: "восстановление", score: 54 },
   { label: "артикуляция", score: 73 },
-  { label: "цифровая гигиена", score: 89 },
+  { label: "безопасность данных", score: 89 },
 ];
 
 const nf = new Intl.NumberFormat("ru-RU");

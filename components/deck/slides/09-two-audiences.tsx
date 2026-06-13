@@ -551,7 +551,9 @@ export function Slide09TwoAudiences() {
           <div data-rise-cand data-pulse-from>
             <CandidateIde compact caret />
           </div>
-          <div data-rise-cand>
+          {/* Pushed to the column bottom at lg so the metrics block's lower
+              edge aligns with the teamlead stack across the boundary. */}
+          <div data-rise-cand className="lg:mt-auto">
             <p className="text-[9px] uppercase tracking-[0.2em] text-dim lg:text-[10px]">
               целевые метрики пилота
             </p>

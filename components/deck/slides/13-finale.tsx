@@ -23,7 +23,7 @@
  *   1.4  dual code reveal — lines flip opacity, a caret span hops rows;
  *        BOTH editors in parallel, human deliberately slower (0.38 vs
  *        0.32 s/line, cap 6 lines — the tail belongs to the idle loop)
- *   1.5  «+12 мес» flame ring DrawSVG + one 1→1.12→1 pulse (mobile: card)
+ *   1.5  «Агенты» flame ring DrawSVG + one 1→1.12→1 pulse (mobile: card)
  *   2.0→3.6  DualProcessMatrix fills: ember bars scaleX 0→score stagger
  *        0.14 expo.out, glass ticks land with back.out overshoot, score
  *        chips count up per axis, averages count to 74 / 81
@@ -44,12 +44,12 @@
  *
  * Idles — SETTLED stage only: both carets blink (steps(1) opacity); every
  * ~4s one more code line reveals per editor (looping the 3-line tail
- * buffer); «+12 мес» ring breathes opacity 0.8↔0.5 at 5s — the sanctioned
+ * buffer); «Агенты» ring breathes opacity 0.8↔0.5 at 5s — the sanctioned
  * callback to slide 4's ring (§2.5).
  *
  * Vertical budgets (zero internal scroll):
  *   375×620  — py-6 → 572 avail (Act I): headline ~64 + timeline rail
- *              ~48 + «+12 мес» card ~56 + chips ~52 + DualProcessMatrix
+ *              ~48 + «Агенты» card ~56 + chips ~52 + DualProcessMatrix
  *              (5 axes) ~220 + gaps 44 ≈ 484 ✓; refrain overlay ~330 ✓
  *   1366×768 — py-8 → 704 avail: headline ~64 + timeline ~110 + split
  *              ~350 (chips 24 + IDEs capped 320) + gaps 48 ≈ 572 ✓;
@@ -78,11 +78,11 @@ type Milestone = {
 const MILESTONES: Milestone[] = [
   { label: "Сейчас", desc: "один шаблон · 10 пилотов · найм джунов" },
   {
-    label: "+6 мес",
+    label: "Дальше",
     desc: "больше ролей и отраслей · генерация под описание архитектуры",
   },
   {
-    label: "+12 мес",
+    label: "Агенты",
     desc: "оценка ИИ-агентов на той же инфраструктуре",
     flame: true,
   },
@@ -538,8 +538,8 @@ export function Slide13Finale() {
       srSummary={
         <>
           Это не HR-инструмент. Это категория. Дорожная карта: сейчас — один
-          шаблон, 10 пилотов, найм джунов; через 6 месяцев — больше ролей и
-          отраслей, генерация под описание архитектуры; через 12 — оценка
+          шаблон, 10 пилотов, найм джунов; дальше — больше ролей и
+          отраслей, генерация под описание архитектуры; затем — оценка
           ИИ-агентов на той же инфраструктуре; долгосрок — субстрат оценки
           интеллекта на работе. На экране две сессии на одной задаче — Анна
           П., junior backend, и Claude Code, агент — оцениваемые одной
@@ -641,7 +641,7 @@ export function Slide13Finale() {
                       {m.label}
                     </p>
                     {/* Mobile: rail of dots + labels only; descriptions are
-                        desktop-only (the «+12 мес» card carries it below). */}
+                        desktop-only (the «Агенты» card carries it below). */}
                     <p
                       className={cn(
                         "mt-1 hidden max-w-[24ch] text-meta leading-snug lg:block",
@@ -654,7 +654,7 @@ export function Slide13Finale() {
                 ))}
               </ol>
             </div>
-            {/* Mobile-only highlighted «+12 мес» card (other descs cut —
+            {/* Mobile-only highlighted «Агенты» card (other descs cut —
                 the speaker carries them). */}
             <div
               data-mob-card
@@ -662,7 +662,7 @@ export function Slide13Finale() {
             >
               <p className="text-[13px] leading-snug text-mute">
                 <span className="font-display font-semibold text-flame">
-                  +12 мес
+                  Агенты
                 </span>{" "}
                 — оценка ИИ-агентов на той же инфраструктуре
               </p>

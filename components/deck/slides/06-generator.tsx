@@ -196,7 +196,7 @@ export function Slide06Generator() {
         gsap.set(header, { autoAlpha: 1, y: 0 });
         gsap.set(steps, { autoAlpha: 1, y: 0 });
         setIf(chevrons, { drawSVG: "100%" });
-        gsap.set(plaques, { autoAlpha: 1, scale: 1 });
+        setIf(plaques, { autoAlpha: 1, scale: 1 });
         gsap.set(stage, { autoAlpha: 1, y: 0 });
       };
 
@@ -281,7 +281,7 @@ export function Slide06Generator() {
         gsap.set(header, { autoAlpha: 0, y: 24 });
         gsap.set(steps, { autoAlpha: 0, y: 24 });
         setIf(chevrons, { drawSVG: "0%" });
-        gsap.set(plaques, { autoAlpha: 0, scale: 1.12 });
+        setIf(plaques, { autoAlpha: 0, scale: 1.12 });
         gsap.set(stage, { autoAlpha: 0, y: 16 });
         setPreInterior();
         // Pre-typing console: chips queued, seed un-typed, caret off.
@@ -316,19 +316,21 @@ export function Slide06Generator() {
           0.35 + i * 0.25,
         );
       });
-      // Plaques stamp.
-      entrance.fromTo(
-        plaques,
-        { autoAlpha: 0, scale: 1.12 },
-        {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 0.35,
-          ease: "back.out(1.4)",
-          stagger: 0.12,
-        },
-        1.6,
-      );
+      // Plaques stamp (guarded — the rail no longer renders plaques).
+      if (plaques.length) {
+        entrance.fromTo(
+          plaques,
+          { autoAlpha: 0, scale: 1.12 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.35,
+            ease: "back.out(1.4)",
+            stagger: 0.12,
+          },
+          1.6,
+        );
+      }
       // Generator stage + console chips.
       entrance.fromTo(
         stage,
@@ -586,12 +588,6 @@ export function Slide06Generator() {
               позиции
             </>
           }
-          plaque={
-            <>
-              Никакой выгрузки базы кода.{" "}
-              <span className="font-semibold text-paper">Никогда.</span>
-            </>
-          }
         />
         <Chevron />
         <StepCard
@@ -613,7 +609,6 @@ export function Slide06Generator() {
               ИИ-напарник
             </>
           }
-          plaque="20–40 минут реальной работы."
         />
         <Chevron />
         <StepCard

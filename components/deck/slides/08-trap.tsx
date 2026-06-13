@@ -31,7 +31,7 @@
  * HARD re-budget per Director's cut (1366×768, py-8, audited):
  *   py-8 (64) + top band ~59 + 14 + panes FIXED 380 + 14 + bottom band ~210
  *   ≈ 741px ✓. 375×620: pin disabled, auto-chain after settle; single-axis
- *   «цифровая гигиена» strip replaces the 5-axis matrix <lg.
+ *   «безопасность данных» strip replaces the 5-axis matrix <lg.
  *
  * RED IS ALLOWED HERE AND ONLY HERE (§2.4) — and only from the flare on:
  * pre-leak even the file chip border is gsap-set to amber (the agent text's
@@ -58,10 +58,10 @@ const TRAP_AXES = [
   { label: "точность промптов", score: 78 },
   { label: "безопасность команд", score: 80 },
   { label: "проверка", score: 71 },
-  { label: "цифровая гигиена", score: 18 }, // post-leak: crashed 89 → 18
+  { label: "безопасность данных", score: 18 }, // post-leak: crashed 89 → 18
 ];
 
-const LEAK_AXIS = "цифровая гигиена";
+const LEAK_AXIS = "безопасность данных";
 const STAT_OPTS = { to: 11, duration: 0.8, suffix: "%" };
 const CROSS = 0.9; // build: chip-meets-boundary beat
 const CRASH = 1.35; // build: matrix crash beat
@@ -520,7 +520,7 @@ export function Slide08Trap() {
         { autoAlpha: 1, scale: 1, duration: 0.35, ease: "back.out(2)" },
         CROSS + 0.15,
       );
-      // 10 — «цифровая гигиена» crashes 89→18; average rolls 80→66.
+      // 10 — «безопасность данных» crashes 89→18; average rolls 80→66.
       const scoreProxy = { v: 89 };
       build.to(
         scoreProxy,
@@ -669,7 +669,7 @@ export function Slide08Trap() {
       id="08-trap"
       hasBuild
       title="Ещё одно: ловушка на работу с данными — два чата, одна граница"
-      srSummary="Два чата с разными уровнями доверия: ИИ-напарник, который знает проект, и внешний публичный чат. Кандидат вставил файл customers.csv с пометкой «персональные данные» во внешний чат — обнаружена утечка по точному совпадению, ось «цифровая гигиена» обвалилась с 89 до 18. 11% всего, что вставляют в ChatGPT, — внутренняя информация (Cyberhaven, телеметрия 1,6 млн сотрудников)."
+      srSummary="Два чата с разными уровнями доверия: ИИ-напарник, который знает проект, и внешний публичный чат. Кандидат вставил файл customers.csv с пометкой «персональные данные» во внешний чат — обнаружена утечка по точному совпадению, ось «безопасность данных» обвалилась с 89 до 18. 11% всего, что вставляют в ChatGPT, — внутренняя информация (Cyberhaven, телеметрия 1,6 млн сотрудников)."
       className="py-6 lg:py-8"
     >
       {/* Persistent post-leak vignette — the slide's wounded-cool freeze
@@ -822,7 +822,7 @@ export function Slide08Trap() {
 
       {/* Bottom band ~210px: compact 5-axis matrix (lg, dense, animated) +
           Cyberhaven quote. <lg the matrix collapses to the spec's bespoke
-          single-axis «цифровая гигиена» strip — the leak crash stays visible
+          single-axis «безопасность данных» strip — the leak crash stays visible
           on phones (scaleX + score hooks, same build timeline). */}
       <div
         data-bottom
@@ -844,7 +844,7 @@ export function Slide08Trap() {
               data-strip-label
               className="shrink-0 text-[11px] leading-tight text-leak"
             >
-              цифровая гигиена{" "}
+              безопасность данных{" "}
               <span
                 data-strip-leakword
                 className="text-[9px] uppercase tracking-widest"

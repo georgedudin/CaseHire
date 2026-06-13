@@ -6,7 +6,7 @@
  *
  * P3 MOTION. Director's cut readability staging is binding: tariff PRICES
  * render STATICALLY (price tags, not measurements) — the only two count-ups
- * are «$1–3» and «1,5 млн ₽»; zone D holds DORMANT at 40% opacity with both
+ * are «$4,5» and «1,5 млн ₽»; zone D holds DORMANT at 40% opacity with both
  * lock-in cards neutral until the build.
  *
  * Entrance (≤3.8s):
@@ -16,7 +16,7 @@
  *   1.3  «Команда» feature beat: scale 1→1.04 back.out(1.4), flame ring
  *        DrawSVG, chip «основной» pop 0.8→1
  *   1.8  cost machine: track fade 0.2s; segments stack scaleX left→right
- *        (labels OUTSIDE the scaled bars); «$1–3» count-up finishes ≈2.9;
+ *        (labels OUTSIDE the scaled bars); «$4,5» count-up finishes ≈2.9;
  *        margin readout 2.8–3.1
  *   3.2  zone D appears DORMANT (cards neutral, 40% opacity, no verdict)
  *   3.4  closing wink: flame strike-through DrawSVG across «за кресла» 0.4s
@@ -27,10 +27,10 @@
  *        decelerating gaps (.45/.60/.75/.95/1.25) — instant .set pairs
  *   1.7  LOCK on the cheaper year (right card) + scale pop 1→1.04→1
  *   1.85 left card settles dimmed (0.45); 1.9 flame strike across «1,5 млн ₽»
- *   2.3  verdict «…= 2,5 года „Команды“» RISES (no slam); 2.7 SHRM fades in
- * Idles: SETTLED — sheen across the «Команда» ring every ~6s, «$1–3»
+ *   2.3  verdict «…= оценка ~1 000 кандидатов» RISES (no slam); 2.7 SHRM fades in
+ * Idles: SETTLED — sheen across the «Кандидат» ring every ~6s, «$4,5»
  *   breathe 1↔0.85; BUILT — the locked flame glow breathes 0.5↔0.62, sheen +
- *   «$1–3» breathe continue.
+ *   «$4,5» breathe continue.
  * Reduced motion: instant final LOCKED state (hook calls setFrozen("built")).
  *
  * Vertical budgets (zero internal scroll) — unchanged from the P2 audit:
@@ -53,21 +53,16 @@ type Tariff = {
 };
 
 const TARIFFS: Tariff[] = [
-  { name: "Пилот", price: "15 000 ₽", limits: "1 позиция · 100 кандидатов" },
+  { name: "Пилот", price: "бесплатно", limits: "первые 20 кандидатов" },
   {
-    name: "Команда",
-    price: "49 000 ₽/мес",
-    limits: "5 позиций · 1 000 кандидатов",
+    name: "Кандидат",
+    price: "1 500 ₽",
+    limits: "за оценённого кандидата · оплата по факту",
     featured: true,
   },
   {
-    name: "Рост",
-    price: "149 000 ₽/мес",
-    limits: "20 позиций · 4 000 кандидатов + аналитика",
-  },
-  {
     name: "Энтерпрайз",
-    price: "от 400 000 ₽/год",
+    price: "по запросу",
     limits: "+ локальное развёртывание",
   },
 ];
@@ -102,7 +97,7 @@ export function Slide11Monetization() {
       const headlineEl = one("[data-headline]")!;
       const strike = root.querySelector<SVGPathElement>("[data-strike] path")!;
       const cards = all("[data-card]");
-      const featured = one('[data-card="Команда"]')!;
+      const featured = one('[data-card="Кандидат"]')!;
       const ringRect = root.querySelector<SVGRectElement>("[data-ring] rect");
       const chip = one("[data-chip]");
       const sheen = one("[data-sheen]");
@@ -146,8 +141,7 @@ export function Slide11Monetization() {
       };
 
       const writeTotal = (v: number) => {
-        const hi = Math.round(v);
-        total.textContent = `$${Math.min(1, hi)}–${hi}`;
+        total.textContent = `$${v.toFixed(1).replace(".", ",")}`;
       };
 
       let stage: "settled" | "built" = "settled";
@@ -193,7 +187,7 @@ export function Slide11Monetization() {
         gsap.set(track, { autoAlpha: 1 });
         gsap.set(segs, { scaleX: 1, transformOrigin: "left center" });
         gsap.set(segLabels, { autoAlpha: 1 });
-        writeTotal(3);
+        writeTotal(4.5);
         gsap.set(margin, { autoAlpha: 1 });
         // Zone D — casino lock-in (frozen state).
         if (sumBad) sumBad.textContent = countUpText(1.5, PAN_OPTS);
@@ -273,12 +267,12 @@ export function Slide11Monetization() {
             (segAt[i] ?? 1.9) + 0.05,
           );
       });
-      // «$1–3» — one of the slide's only two count-ups; finishes ≈2.9.
+      // «$4,5» — one of the slide's only two count-ups; finishes ≈2.9.
       const totalProxy = { v: 0 };
       entrance.to(
         totalProxy,
         {
-          v: 3,
+          v: 4.5,
           duration: 1.0,
           ease: "power1.inOut",
           onUpdate: () => writeTotal(totalProxy.v),
@@ -379,15 +373,14 @@ export function Slide11Monetization() {
       title="Монетизация"
       srSummary={
         <>
-          Платят за завершённую сессию, не за кресла. Тарифы: Пилот 15 000 ₽
-          (1 позиция, 100 кандидатов); Команда 49 000 ₽/мес — основной (5
-          позиций, 1 000 кандидатов); Рост 149 000 ₽/мес (20 позиций, 4 000
-          кандидатов + аналитика); Энтерпрайз от 400 000 ₽/год + локальное
-          развёртывание. Себестоимость сессии $1–3: контейнер $0,15,
-          ИИ-напарник $0,5–2, внешний канал и оценка — остальное. Маржа: ~70%
-          на Пилоте, 75–85% на Энтерпрайзе. Один предотвращённый плохой найм
-          (1,5 млн ₽ — замена, SHRM: 100% годовой зарплаты) окупает «Команду»
-          (588 тыс ₽ в год) на 2,5 года.
+          Платят за завершённую сессию, не за кресла. Пилот — бесплатно (первые
+          20 кандидатов); Кандидат — 1 500 ₽ за каждого оценённого кандидата,
+          оплата по факту (основной); Энтерпрайз — по запросу + локальное
+          развёртывание. Это в 2–3 раза дешевле часа живого техсобеса
+          ($35–60/час). Себестоимость сессии $4,5: ИИ-напарник и оценка $2,6,
+          инфраструктура $0,9, ручной разбор и буфер $1,0. Валовая маржа ~72%.
+          Один предотвращённый плохой найм (1,5 млн ₽ — замена, SHRM: 100%
+          годовой зарплаты) окупает оценку примерно 1 000 кандидатов.
         </>
       }
       className="py-6 lg:py-10"
@@ -421,7 +414,7 @@ export function Slide11Monetization() {
       </h3>
 
       {/* ---- Zone B: tariff cards (mobile 2×2 at ~160px, desktop 4-up) ---- */}
-      <div className="mt-3 grid grid-cols-2 gap-3 lg:mt-6 lg:grid-cols-4 lg:gap-4">
+      <div className="mt-3 grid grid-cols-2 gap-3 lg:mt-6 lg:grid-cols-3 lg:gap-4">
         {TARIFFS.map((t) => (
           <div
             key={t.name}
@@ -431,6 +424,8 @@ export function Slide11Monetization() {
               t.featured
                 ? "z-10 border-transparent lg:scale-[1.04]"
                 : "border-line",
+              // Lone 3rd card spans full width on mobile (shorter + balanced).
+              t.name === "Энтерпрайз" && "col-span-2 lg:col-span-1",
             )}
           >
             {t.featured ? (
@@ -498,6 +493,11 @@ export function Slide11Monetization() {
         ))}
       </div>
 
+      {/* Value anchor — static muted line, sells the price as a discount. */}
+      <p className="mt-2 text-center text-[11px] text-dim lg:mt-3 lg:text-[13px]">
+        в 2–3 раза дешевле часа живого техсобеса ($35–60/час)
+      </p>
+
       {/* ---- Zone C: cost machine ---- */}
       <div data-cost className="mt-4 lg:mt-6">
         <div className="flex items-end justify-between">
@@ -508,7 +508,7 @@ export function Slide11Monetization() {
             data-total
             className="font-display whitespace-nowrap text-[20px] font-semibold tabular-nums text-flame lg:text-[length:var(--text-h2)]"
           >
-            $1–3
+            $4,5
           </p>
         </div>
         <div
@@ -516,20 +516,20 @@ export function Slide11Monetization() {
           className="mt-1.5 flex h-[18px] w-full overflow-hidden rounded-full border border-line bg-fog lg:mt-2 lg:h-[28px]"
         >
           {/* Segments stack via scaleX (origin left); labels live OUTSIDE. */}
-          <div data-seg="container" className="h-full w-[8%] bg-sterile/70" />
-          <div data-seg="buddy" className="h-full w-[56%] bg-glass/60" />
-          <div data-seg="rest" className="h-full w-[36%] bg-mute/30" />
+          <div data-seg="ai" className="h-full w-[58%] bg-glass/60" />
+          <div data-seg="infra" className="h-full w-[20%] bg-sterile/70" />
+          <div data-seg="buffer" className="h-full w-[22%] bg-mute/30" />
         </div>
         <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-dim lg:mt-2 lg:text-[13px]">
-          <span data-seg-label="container">контейнер $0,15</span>
-          <span data-seg-label="buddy">ИИ-напарник $0,5–2</span>
-          <span data-seg-label="rest">внешний канал и оценка — остальное</span>
+          <span data-seg-label="ai">ИИ-напарник и оценка $2,6</span>
+          <span data-seg-label="infra">инфраструктура $0,9</span>
+          <span data-seg-label="buffer">ручной разбор и буфер $1,0</span>
         </div>
         <p
           data-margin
           className="mt-1 text-right text-[11px] text-mute lg:text-[13px]"
         >
-          Маржа: ~70% на Пилоте, 75–85% на Энтерпрайзе
+          Валовая маржа ~72%
         </p>
       </div>
 
