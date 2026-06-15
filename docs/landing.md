@@ -623,14 +623,14 @@ Cost notes:
 
 | Player | ● / ○ |
 |---|---|
-| HackerRank | ● ○ ○ ● ○ ○ |
+| HackerRank | ● ○ ○ ● ● ○ |
 | Codility · Cody | ● ○ ○ ● ○ ○ |
 | CodeSignal · Cosmo | ● ○ ○ ● ○ ○ |
-| CoderPad | ● ○ ○ ○ ○ ○ |
+| hh.ru | ○ ○ ● ○ ○ ● |
 | Karat NextGen | ● ○ ○ ○ ○ ○ |
 | **КейсПодбор** | ● ● ● ● ● ● (flame on row name + all but first cell; trust on first cell) |
 
-Niche caption (`data-stagger`): `«Защищаемая ниша: ловушка на работу с данными + ориентация на джунов + асинхронность + кейс под позицию + локальное развёртывание в РФ. `<span class="text-paper">`Пять осей.`</span>` Не пересекаются ни с одним крупным игроком.»`.
+Niche caption (`data-stagger`): `«Защищаемая ниша: ловушка на работу с данными + ориентация на джунов + асинхронность + кейс под позицию + локальное развёртывание в РФ. `<span class="text-paper">`Шесть фичей.`</span>` Не пересекаются ни с одним крупным игроком.»`.
 
 **Colors.** `flame` (headline accent, Команда price/header, КейсПодбор row label + i≥1 cells); `trust` (competitor `●` and КейсПодбор's i=0 cell); `paper`/`mute`/`dim` (text hierarchy); `bg-flame/5` (КейсПодбор row tint); `bg-fog` (card/stat surfaces); `border-line-strong` (default borders); `border-flame/30` (cost note 2); `border-flame/50 + ring-flame/30` (Команда card highlight).
 
