@@ -625,8 +625,8 @@ Cost notes:
 |---|---|
 | HackerRank | ● ○ ○ ● ● ○ |
 | Codility · Cody | ● ○ ○ ● ○ ○ |
+| CodeSignal · Cosmo | ● ○ ○ ● ○ ○ |
 | hh.ru | ○ ○ ● ○ ○ ● |
-| Skillaz | ○ ○ ○ ○ ○ ● |
 | Karat NextGen | ● ○ ○ ○ ○ ○ |
 | **КейсПодбор** | ● ● ● ● ● ● (flame on row name + all but first cell; trust on first cell) |
 
